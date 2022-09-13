@@ -7,7 +7,6 @@ type User {
   username: String!
   email: String!
   status: UserStatus!
-  password: String!
   phoneNumber: String
 }
 
@@ -18,21 +17,14 @@ enum UserStatus {
   INVISIBLE
 }
 
-type AuthUser {
-  id: Int!
-  username: String!
-  email: String!
-  status: UserStatus!
-  phoneNumber: String
-}
-
 type LoginResponse {
-  user: AuthUser!
+  me: User!
 }
 
 type Query {
-  users: [AuthUser!]!
+  users: [User!]!
   user(id: Int!): User!
+  me: User!
 }
 
 type Mutation {

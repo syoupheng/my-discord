@@ -3,13 +3,12 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { AuthUser } from './dto/auth-user';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => [AuthUser], { name: 'users' })
+  @Query(() => [User], { name: 'users' })
   @UseGuards(JwtAuthGuard)
   findAllUsers() {
     return this.usersService.findAll();

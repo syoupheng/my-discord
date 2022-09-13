@@ -15,8 +15,7 @@ export class User {
   @Field(type => UserStatus)
   status: UserStatus;
 
-  @Field()
-  password: string;
+  password?: string;
 
   @Field({ nullable: true })
   phoneNumber?: string;

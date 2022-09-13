@@ -6,14 +6,14 @@ import {
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { RegisterUserInput } from 'src/auth/dto/register-user.input';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthUser } from './dto/auth-user';
+import { User } from './entities/user.entity';
 import { UserStatus } from './enums/user-status.enum';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registerUserInput: RegisterUserInput): Promise<AuthUser> {
+  async create(registerUserInput: RegisterUserInput): Promise<User> {
     try {
       const newUser = await this.prisma.user.create({
         data: registerUserInput,
@@ -32,7 +32,7 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<AuthUser[]> {
+  async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany();
     return users.map(({ password, status, ...rest }) => ({
       status: UserStatus[status],
