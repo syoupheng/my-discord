@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { RegisterUserInput } from 'src/auth/dto/register-user.input';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from './entities/user.entity';
 import { UserStatus } from './enums/user-status.enum';
@@ -13,10 +13,10 @@ import { UserStatus } from './enums/user-status.enum';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(registerUserInput: RegisterUserInput): Promise<User> {
+  async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
     try {
       const newUser = await this.prisma.user.create({
-        data: registerUserInput,
+        data: userCreateInput,
       });
       const { password, status, ...result } = newUser;
       return { ...result, status: UserStatus[status] };

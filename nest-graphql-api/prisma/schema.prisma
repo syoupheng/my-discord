@@ -11,14 +11,42 @@ datasource db {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  username    String     @unique
-  email       String     @unique
-  status      UserStatus @default(INVISIBLE)
-  password    String
-  phoneNumber String?
+  id                     Int             @id @default(autoincrement())
+  username               String          @unique
+  email                  String          @unique
+  status                 UserStatus      @default(INVISIBLE)
+  password               String
+  phoneNumber            String?
+  createdAt              DateTime        @default(now())
+  friendRequestsSent     FriendRequest[] @relation("friendRequestsSent")
+  friendRequestsReceived FriendRequest[] @relation("friendRequestsReceived")
+  isFriendsWith          FriendsWith[]   @relation("hasFriends")
+  hasFriends             FriendsWith[]   @relation("isFriendsWith")
 
   @@map("users")
+}
+
+model FriendRequest {
+  sender      User     @relation(name: "friendRequestsSent", fields: [senderId], references: [id])
+  senderId    Int
+  recipient   User     @relation(name: "friendRequestsReceived", fields: [recipientId], references: [id])
+  recipientId Int
+  createdAt   DateTime @default(now())
+
+  @@id([senderId, recipientId])
+  @@map("friend_requests")
+}
+
+model FriendsWith {
+  isFriendsWith   User         @relation(name: "isFriendsWith", fields: [isFriendsWithId], references: [id])
+  isFriendsWithId Int
+  hasFriends      User         @relation(name: "hasFriends", fields: [hasFriendsId], references: [id])
+  hasFriendsId    Int
+  status          FriendStatus
+  createdAt       DateTime     @default(now())
+
+  @@id([isFriendsWithId, hasFriendsId])
+  @@map("friends_with")
 }
 
 enum UserStatus {
@@ -26,4 +54,9 @@ enum UserStatus {
   INACTIVE
   DO_NOT_DISTURB
   INVISIBLE
+}
+
+enum FriendStatus {
+  FRIENDS
+  BLOCKED
 }

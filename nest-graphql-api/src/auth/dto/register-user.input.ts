@@ -1,5 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 @InputType()
 export class RegisterUserInput {
@@ -14,7 +14,8 @@ export class RegisterUserInput {
   email: string;
 
   @IsString()
-  @IsNotEmpty()
+  @MinLength(8)
+  @MaxLength(20)
   @Field()
   password: string;
 

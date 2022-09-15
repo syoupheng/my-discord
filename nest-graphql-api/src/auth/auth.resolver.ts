@@ -4,9 +4,10 @@ import { User } from '../users/entities/user.entity';
 import { AuthService } from './auth.service';
 import { LoginResponse } from './dto/login-response';
 import { LoginUserInput } from './dto/login-user.input';
+import { LogoutResponse } from './dto/logout-response';
 import { RegisterUserInput } from './dto/register-user.input';
-import { GqlAuthGuard } from './gql-auth.guard';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { GqlAuthGuard } from './guards/gql-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 const dayjs = require('dayjs');
 
@@ -33,6 +34,13 @@ export class AuthResolver {
     const { user, token } = await this.authService.register(registerUserInput);
     ctx.req.res?.cookie("access_token", token, HTTP_ONLY_COOKIE);
     return { me: user };
+  }
+
+  @Mutation(returns => LogoutResponse)
+  @UseGuards(JwtAuthGuard)
+  logout(@Context() ctx) {
+    ctx.req.res?.clearCookie('access_token');
+    return { success: true };
   }
 
   @Query(returns => User, { name: 'me' })

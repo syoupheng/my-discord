@@ -21,6 +21,10 @@ type LoginResponse {
   me: User!
 }
 
+type LogoutResponse {
+  success: Boolean!
+}
+
 type Query {
   users: [User!]!
   user(id: Int!): User!
@@ -30,6 +34,7 @@ type Query {
 type Mutation {
   login(loginUserInput: LoginUserInput!): LoginResponse!
   register(registerUserInput: RegisterUserInput!): LoginResponse!
+  logout: LogoutResponse!
 }
 
 input LoginUserInput {
