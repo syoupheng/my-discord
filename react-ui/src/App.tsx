@@ -1,9 +1,11 @@
+import { Outlet } from "react-router-dom";
+
 const App = () => {
   return (
-    <div className="text-blue-500">
-      Hello World !
+    <div className="App">
+      <Outlet />
     </div>
-  )
-}
+  );
+};
 
 export default App;
