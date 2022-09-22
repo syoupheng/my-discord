@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       cors: {
-        origin: process.env.CLIENT_URL,
+        origin: process.env.CLIENT_URL ?? '*',
         credentials: true
       }
     }),

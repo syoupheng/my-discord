@@ -13,7 +13,11 @@ export const registerSchema = z.object({
     .max(20, "Votre mot de passe doit contenir moins de 20 caractères"),
 });
 
+export const loginSchema = registerSchema.pick({ email: true, password: true });
+
 export type RegisterInput = z.infer<typeof registerSchema>;
+
+export type LoginInput = z.infer<typeof loginSchema>;
 
 export type UserStatus = 'ONLINE' | 'INACTIVE' | 'DO_NOT_DISTURB' | 'INVISIBLE';
 

@@ -2,14 +2,16 @@ import { ReactNode } from "react";
 
 interface Props {
   children: ReactNode,
-  type?: 'submit'
+  type?: 'submit',
+  disabled?: boolean
 }
 
-const Button = ({ children, ...props }: Props) => {
+const Button = ({ children, disabled = false, ...props }: Props) => {
   return (
     <button
       {...props}
-      className="bg-blue hover:bg-blue-hov transition ease-in-out duration-150 text-white w-full rounded-sm h-11 text-[15.3px] cursor-pointer"
+      disabled={disabled}
+      className={`${disabled ? 'bg-secondary' : 'bg-blue hover:bg-blue-hov cursor-pointer'} transition ease-in-out duration-150 text-white w-full rounded-sm h-11 text-[15.3px]`}
     >
       {children}
     </button>

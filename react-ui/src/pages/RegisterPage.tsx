@@ -18,10 +18,8 @@ const RegisterPage = () => {
 
   const [registerUser, { data: authUser, loading, error }] = useRegister();
 
-  const onSubmit = async (formData: RegisterInput) => {
-    alert(JSON.stringify(filterEmptyFields(formData)));
-    await registerUser({ variables: { input: filterEmptyFields(formData) } });
-    alert(authUser);
+  const onSubmit = (formData: RegisterInput) => {
+    registerUser({ variables: { input: filterEmptyFields(formData, registerSchema) } });
   };
 
   return (

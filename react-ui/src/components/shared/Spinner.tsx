@@ -6,7 +6,7 @@ interface Props {
 
 const sizes = {
   sm: "1.75",
-  md: "2.5",
+  md: "2",
   lg: "3.5",
 };
 

@@ -17,8 +17,12 @@ enum UserStatus {
   INVISIBLE
 }
 
-type LoginResponse {
-  me: User!
+type AuthUser {
+  id: Int!
+  username: String!
+  email: String!
+  status: UserStatus!
+  phoneNumber: String
 }
 
 type LogoutResponse {
@@ -28,12 +32,12 @@ type LogoutResponse {
 type Query {
   users: [User!]!
   user(id: Int!): User!
-  me: User!
+  me: AuthUser!
 }
 
 type Mutation {
-  login(loginUserInput: LoginUserInput!): LoginResponse!
-  register(registerUserInput: RegisterUserInput!): LoginResponse!
+  login(loginUserInput: LoginUserInput!): AuthUser!
+  register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: LogoutResponse!
 }
 
