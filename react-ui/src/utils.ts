@@ -1,6 +1,6 @@
 import { z, ZodRawShape } from "zod";
 
-export function filterEmptyFields<TFormData extends ZodRawShape>(formData: Object, zodSchema: z.ZodObject<TFormData>) {
+export const filterEmptyFields = <TZodSchema extends ZodRawShape>(formData: Object, zodSchema: z.ZodObject<TZodSchema>) => {
   const filteredArray = Object.entries(formData).filter(
     (entry) => entry[1] !== "" && entry[1] !== null
   );

@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
-import { RegisterInput, User } from "../types/auth";
+import { useNavigate } from "react-router-dom";
+import { RegisterInput, User } from "../../types/auth";
 
 const REGISTER_USER = gql`
   mutation RegisterUser($input: RegisterUserInput!) {
@@ -14,7 +15,12 @@ const REGISTER_USER = gql`
 `;
 
 const useRegister = () => {
-  return useMutation<User, { input: RegisterInput }>(REGISTER_USER);
+
+  const navigate = useNavigate();
+  
+  return useMutation<User, { input: RegisterInput }>(REGISTER_USER, {
+    onCompleted: () => navigate('/channels/@me')
+  });
 }
  
 export default useRegister;

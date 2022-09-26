@@ -24,7 +24,7 @@ export class UsersService {
       if (err instanceof PrismaClientKnownRequestError) {
         if (err.code === 'P2002') {
           throw new ConflictException(
-            'This username or email already exists !',
+            'Ce nom d\'utilisateur ou email existe déjà !',
           );
         }
       }
@@ -45,7 +45,7 @@ export class UsersService {
       where: { id },
     });
 
-    if (!user) throw new NotFoundException('User not found...');
+    if (!user) throw new NotFoundException('Cet utilisateur n\'existe pas');
     return user;
   }
 
@@ -54,7 +54,7 @@ export class UsersService {
       where: { email },
     });
 
-    if (!user) throw new NotFoundException('User not found...');
+    if (!user) throw new NotFoundException('Aucun utilisateur n\'existe avec cet email');
     return user;
   }
 }

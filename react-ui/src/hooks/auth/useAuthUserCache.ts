@@ -1,5 +1,5 @@
 import { gql, useApolloClient } from "@apollo/client";
-import { User } from "../types/auth";
+import { User } from "../../types/auth";
 
 const useAuthUserCache = (): User | null => {
   const client = useApolloClient();

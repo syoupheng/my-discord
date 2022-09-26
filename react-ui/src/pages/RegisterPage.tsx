@@ -4,10 +4,12 @@ import FormContainer from "../components/Form/FormContainer";
 import FormGroup from "../components/Form/FormGroup";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../components/Form/FormInput";
-import SubmitButton from "../components/shared/buttons/SubmitButton";
 import { registerSchema, RegisterInput } from "../types/auth";
 import { filterEmptyFields } from "../utils";
-import useRegister from "../hooks/useRegister";
+import useRegister from "../hooks/auth/useRegister";
+import Button from "../components/shared/buttons/Button";
+import Spinner from "../components/shared/Spinner";
+import FormError from "../components/Form/FormError";
 
 const RegisterPage = () => {
   const {
@@ -16,7 +18,7 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm<RegisterInput>({ resolver: zodResolver(registerSchema) });
 
-  const [registerUser, { data: authUser, loading, error }] = useRegister();
+  const [registerUser, { loading, error: gqlError }] = useRegister();
 
   const onSubmit = (formData: RegisterInput) => {
     registerUser({ variables: { input: filterEmptyFields(formData, registerSchema) } });
@@ -33,6 +35,7 @@ const RegisterPage = () => {
             label="E-mail"
             required
             error={errors.email}
+            gqlError={gqlError}
             {...register("email")}
           />
         </FormGroup>
@@ -41,6 +44,7 @@ const RegisterPage = () => {
             label="Nom d'utilisateur"
             required
             error={errors.username}
+            gqlError={gqlError}
             {...register("username")}
           />
         </FormGroup>
@@ -48,6 +52,7 @@ const RegisterPage = () => {
           <FormInput
             label="Numéro de téléphone"
             error={errors.phoneNumber}
+            gqlError={gqlError}
             {...register("phoneNumber")}
           />
         </FormGroup>
@@ -56,11 +61,15 @@ const RegisterPage = () => {
             label="Mot de passe"
             required
             error={errors.password}
+            gqlError={gqlError}
             type="password"
             {...register("password")}
           />
         </FormGroup>
-        <SubmitButton value="Continuer" />
+        <Button type="submit" disabled={loading}>
+          {loading ? <Spinner white /> : "Connexion"}
+        </Button>
+        {gqlError && <FormError message={gqlError.message} />}
         <div className="text-sm mt-2">
           <Link to="/login" className="hover:underline text-link">
             Tu as déjà un compte ?

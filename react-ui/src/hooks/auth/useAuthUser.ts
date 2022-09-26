@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
+import { User } from "../../types/auth";
 
 const GET_AUTH_USER = gql`
   query GetAuthUser {
@@ -12,6 +13,6 @@ const GET_AUTH_USER = gql`
   }
 `;
 
-const useAuthUser = () => useQuery(GET_AUTH_USER);
+const useAuthUser = () => useQuery<User>(GET_AUTH_USER);
  
 export default useAuthUser;

@@ -21,10 +21,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 
 export type UserStatus = 'ONLINE' | 'INACTIVE' | 'DO_NOT_DISTURB' | 'INVISIBLE';
 
-export interface User {
+export interface User extends Omit<RegisterInput, 'password'> {
   id: number,
-  username: string,
-  email: string,
-  phoneNumber?: string,
   status: UserStatus
 }

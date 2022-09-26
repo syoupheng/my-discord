@@ -5,10 +5,11 @@ import FormInput from "../components/Form/FormInput";
 import { useForm } from "react-hook-form";
 import { LoginInput, loginSchema } from "../types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useLogin from "../hooks/useLogin";
+import useLogin from "../hooks/auth/useLogin";
 import Button from "../components/shared/buttons/Button";
 import Spinner from "../components/shared/Spinner";
-import useAuthUserCache from "../hooks/useAuthUserCache";
+import useAuthUserCache from "../hooks/auth/useAuthUserCache";
+import FormError from "../components/Form/FormError";
 
 const LoginPage = () => {
   const {
@@ -17,7 +18,7 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
-  const [loginUser, { loading }] = useLogin();
+  const [loginUser, { loading, error: gqlError }] = useLogin();
 
   const authUser = useAuthUserCache();
 
@@ -36,13 +37,14 @@ const LoginPage = () => {
           Ha, te revoilà !
         </h1>
         <p className="text-center text-secondary font-light text-[15.3px] mb-5">
-          Nous sommes si heureux de te revoir {authUser?.username ?? 'Not logged in'}! 
+          Nous sommes si heureux de te revoir !
         </p>
         <FormGroup>
           <FormInput
             label="E-mail"
             required
             error={errors.email}
+            gqlError={gqlError}
             {...register("email")}
           />
         </FormGroup>
@@ -51,11 +53,15 @@ const LoginPage = () => {
             label="Mot de passe"
             required
             error={errors.password}
+            gqlError={gqlError}
             type="password"
             {...register("password")}
           />
         </FormGroup>
-        <Button type="submit" disabled={loading}>{loading ? <Spinner />: 'Connexion'}</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? <Spinner white /> : "Connexion"}
+        </Button>
+        {gqlError && <FormError message={gqlError.message} />}
         <div className="text-sm mt-2">
           <span className="text-secondary">Besoin d'un compte ? </span>
           <Link to="/register" className="hover:underline text-link">

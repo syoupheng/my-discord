@@ -1,16 +1,25 @@
 import { Outlet } from "react-router-dom";
+import FormContainer from "./components/Form/FormContainer";
+import PublicBackground from "./components/layouts/PublicBackground";
 import Spinner from "./components/shared/Spinner";
-import useAuthUser from "./hooks/useAuthUser";
+import useAuthUser from "./hooks/auth/useAuthUser";
 
 const App = () => {
 
-  const { data: authUser, loading, error } = useAuthUser();
+  const { loading } = useAuthUser();
 
-  if (loading) return <Spinner size="lg" />;
+  if (loading) {
+    return (
+      <PublicBackground>
+        <FormContainer animate={false}>
+          <Spinner size="lg" white />
+        </FormContainer>
+      </PublicBackground>
+    );
+  }
 
   return (
     <div className="App">
-      <p>{authUser?.username ?? 'Not logged in'}</p>
       <Outlet />
     </div>
   );

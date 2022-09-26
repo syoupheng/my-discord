@@ -1,3 +1,4 @@
+import { ApolloError } from "@apollo/client";
 import { forwardRef } from "react";
 import { FieldError } from "react-hook-form";
 
@@ -8,11 +9,12 @@ interface Props {
   error?: FieldError | undefined;
   label: string;
   required?: boolean;
+  gqlError: ApolloError | undefined
 }
 
 const FormInput = forwardRef<HTMLInputElement, Props>(
   (
-    { type = "text", name, label, required = false, error, ...props }: Props,
+    { type = "text", name, label, required = false, error, gqlError, ...props }: Props,
     ref
   ) => {
     return (
@@ -21,10 +23,15 @@ const FormInput = forwardRef<HTMLInputElement, Props>(
           <label
             htmlFor={name}
             className={`text-secondary uppercase text-xs font-bold mb-2 ${
-              required && !error && "after:content-['*'] after:ml-1 after:text-red"
-            } ${error ? 'text-danger' : 'text-secondary'}`}
+              required &&
+              !error &&
+              "after:content-['*'] after:ml-1 after:text-red"
+            } ${error || gqlError ? "text-danger" : "text-secondary"}`}
           >
-            {label}{error && (<span className="italic normal-case"> - {error.message}</span>)}
+            {label}
+            {error && (
+              <span className="italic normal-case"> - {error.message}</span>
+            )}
           </label>
         )}
         <input
