@@ -1,7 +1,7 @@
+import { FaDiscord } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
 import FormContainer from "./components/Form/FormContainer";
 import PublicBackground from "./components/layouts/PublicBackground";
-import Spinner from "./components/shared/Spinner";
 import useAuthUser from "./hooks/auth/useAuthUser";
 
 const App = () => {
@@ -11,8 +11,8 @@ const App = () => {
   if (loading) {
     return (
       <PublicBackground>
-        <FormContainer animate={false}>
-          <Spinner size="lg" white />
+        <FormContainer>
+          <FaDiscord size={80} className='text-white mx-auto animate-alt-spin' />
         </FormContainer>
       </PublicBackground>
     );

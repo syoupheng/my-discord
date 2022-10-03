@@ -6,13 +6,13 @@ import { FiLogOut } from "react-icons/fi";
 import useLogout from "../../hooks/auth/useLogout";
 import Spinner from "../shared/Spinner";
 
-const ChannelsLayout = () => {
+const MainLayout = () => {
 
   const [logout, { loading }] = useLogout();
 
   return (
-    <div className="pl-[72px]">
-      <Sidebar>
+    <div className="flex">
+      <Sidebar className="bg-tertiary w-[72px] pt-1">
         <Link to="/channels/@me">
           <SidebarItem tooltipTxt="Messages privés" active>
             <FaDiscord size={30} />
@@ -27,4 +27,4 @@ const ChannelsLayout = () => {
   );
 }
  
-export default ChannelsLayout;
+export default MainLayout;

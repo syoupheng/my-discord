@@ -11,7 +11,7 @@ const Button = ({ children, disabled = false, ...props }: Props) => {
     <button
       {...props}
       disabled={disabled}
-      className={`${disabled ? 'bg-secondary cursor-not-allowed' : 'bg-blue hover:bg-blue-hov cursor-pointer'} transition ease-in-out duration-150 text-white w-full rounded-sm h-11 text-[15.3px]`}
+      className={`${disabled ? 'bg-h-secondary cursor-not-allowed' : 'bg-blue hover:bg-blue-hov cursor-pointer'} transition ease-in-out duration-150 text-white w-full rounded-sm h-11 text-[15.3px]`}
     >
       {children}
     </button>

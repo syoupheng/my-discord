@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useLogin from "../hooks/auth/useLogin";
 import Button from "../components/shared/buttons/Button";
 import Spinner from "../components/shared/Spinner";
-import useAuthUserCache from "../hooks/auth/useAuthUserCache";
 import FormError from "../components/Form/FormError";
 
 const LoginPage = () => {
@@ -19,8 +18,6 @@ const LoginPage = () => {
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   const [loginUser, { loading, error: gqlError }] = useLogin();
-
-  const authUser = useAuthUserCache();
 
   const onSubmit = (formData: LoginInput) => {
     if (!loading) {
@@ -36,7 +33,7 @@ const LoginPage = () => {
         <h1 className="text-white font-bold text-2xl text-center mb-2">
           Ha, te revoilà !
         </h1>
-        <p className="text-center text-secondary font-light text-[15.3px] mb-5">
+        <p className="text-center text-h-secondary font-light text-[15.3px] mb-5">
           Nous sommes si heureux de te revoir !
         </p>
         <FormGroup>
@@ -63,7 +60,7 @@ const LoginPage = () => {
         </Button>
         {gqlError && <FormError message={gqlError.message} />}
         <div className="text-sm mt-2">
-          <span className="text-secondary">Besoin d'un compte ? </span>
+          <span className="text-h-secondary">Besoin d'un compte ? </span>
           <Link to="/register" className="hover:underline text-link">
             S'inscrire
           </Link>

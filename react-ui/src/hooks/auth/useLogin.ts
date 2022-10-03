@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { DEFAULT_ROUTE } from "../../main";
 import { LoginInput, User } from "../../types/auth";
 
 const LOGIN_USER = gql`
@@ -19,7 +20,7 @@ const useLogin = () => {
   const navigate = useNavigate();
 
   return useMutation<User, { input: LoginInput }>(LOGIN_USER, {
-    onCompleted: () => navigate('/channels/@me')
+    onCompleted: () => navigate(DEFAULT_ROUTE)
   });
 }
  

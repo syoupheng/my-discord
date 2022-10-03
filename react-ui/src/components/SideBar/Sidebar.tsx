@@ -1,12 +1,13 @@
 import { ReactNode } from "react";
 
 interface Props {
-  children: ReactNode
+  children: ReactNode,
+  className?: string
 }
 
-const Sidebar = ({ children }: Props) => {
+const Sidebar = ({ children, className }: Props) => {
   return (
-    <nav className="bg-dark w-[72px] h-screen fixed top-0 left-0 m-0 flex flex-col">
+    <nav className={`h-screen flex flex-col shrink-0 ${className}`}>
       {children}
     </nav>
   );
