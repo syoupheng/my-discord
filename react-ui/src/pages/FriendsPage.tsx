@@ -1,31 +1,29 @@
-import FriendsIcon from "../components/FriendsPage/FriendIcon";
-import FriendsNavlink from "../components/FriendsPage/FriendsNavlink";
-import NewPrivateGroupIcon from "../components/FriendsPage/NewPrivateGroupIcon";
-import useAuthUserCache from "../hooks/auth/useAuthUserCache";
+import FriendListItem from "../components/FriendsPage/FriendListItem";
+import FriendsNav from "../components/FriendsPage/FriendsNav";
+import FriendsRightSidebar from "../components/FriendsPage/FriendsRightSidebar";
+import FriendsSearchbar from "../components/FriendsPage/FriendsSearchbar";
 
 const FriendsPage = () => {
-
-  const authUser = useAuthUserCache();
-
   return (
     <div className="flex flex-col w-full overflow-hidden">
-      <section className="h-12 flex items-center px-2 border-b-[1px] border-tertiary text-h-secondary">
-        <div className="flex flex-auto items-center overflow-hidden">
-          <FriendsIcon className="mx-2"  />
-          <h3 className="font-bold text-white mr-2">Amis</h3>
-          <div className="w-px h-6 mx-2 shrink-0 grow-0 bg-grey-hov"></div>
-          <div className="flex">
-            <FriendsNavlink text="En ligne" />
-            <FriendsNavlink text="Tous" />
-            <FriendsNavlink text="En attente" />
-            <FriendsNavlink text="Bloqué" />
-            <FriendsNavlink text="Ajouter un ami" green />
+      <FriendsNav />
+      <div className="flex overflow-hidden h-full">
+        <div className="flex flex-col flex-auto overflow-hidden">
+          <FriendsSearchbar />
+          <div>
+            <h2 className="mt-4 mr-5 mb-2 ml-[30px] flex-auto text-h-secondary whitespace-nowrap overflow-hidden uppercase text-xs font-medium">En ligne - 3</h2>
+          </div>
+          <div className="overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto">
+            <div>
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+            </div>
           </div>
         </div>
-        <div className="shrink-0 mx-2">
-          <NewPrivateGroupIcon />
-        </div>
-      </section>
+        <FriendsRightSidebar />
+      </div>
     </div>
   );
 }
