@@ -13,8 +13,18 @@ const FriendsPage = () => {
           <div>
             <h2 className="mt-4 mr-5 mb-2 ml-[30px] flex-auto text-h-secondary whitespace-nowrap overflow-hidden uppercase text-xs font-medium">En ligne - 3</h2>
           </div>
-          <div className="overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto">
-            <div>
+          <div className="overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto relative">
+            <div className="absolute w-full">
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
+              <FriendListItem />
               <FriendListItem />
               <FriendListItem />
               <FriendListItem />

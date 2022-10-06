@@ -18,7 +18,8 @@ module.exports = {
         blue: "#5966f3",
         "blue-hov": "#4153af",
         link: "#00aff5",
-        "grey-border": "hsl(217 8% 33% / 0.48)"
+        "grey-border": "hsl(217 8% 33% / 0.48)",
+        "mod-hov": "hsl(217 8% 33% / 0.4)",
       },
       fontSize: {
         "btw-sm-xs": ['13px', '18px'],
