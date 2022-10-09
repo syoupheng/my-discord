@@ -1,30 +1,36 @@
-import DiscordAvatar from "../shared/DiscordAvatar";
+import { User } from "../../types/user";
+import MessageIcon from "../Icons/MessageIcon";
+import MoreOptionsIcon from "../Icons/MoreOptionsIcon";
+import FriendActionBtn from "./FriendActionBtn";
+import FriendItemTag from "./FriendItemTag";
 
-const FriendListItem = () => {
+interface Props {
+  friend: User;
+  index: number;
+}
+
+const FriendListItem = ({ friend, index }: Props) => {
   return (
-    <div className="flex h-[62px] ml-[30px] mr-5 font-medium overflow-hidden cursor-pointer border-t border-t-grey-border group hover:bg-mod-hov hover:border-t-0">
-      <div className="flex grow items-center max-w-full justify-between">
-        <div className="flex overflow-hidden">
-          <DiscordAvatar className="mr-3 w-8 h-8 shrink-0" />
-          <div className="flex flex-col overflow-hidden">
-            <div className="flex overflow-hidden grow items-end justify-start leading-[1.1]">
-              <span className="whitespace-nowrap overflow-hidden font-semibold block flex-initial text-white">
-                batman
-              </span>
-              <span className="text-h-secondary invisible text-sm leading-4 group-hover:visible">
-                #5463
-              </span>
-            </div>
-            <div className="text-h-secondary">
-              <div className="whitespace-nowrap overflow-hidden text-btw-sm-xs font-medium">
-                En ligne
-              </div>
-            </div>
-          </div>
+    <div className="flex h-[62px] ml-[30px] mr-5 font-medium cursor-pointer group">
+      <span className="group-hover:bg-mod-hov h-full w-2 rounded-l-lg bg-transparent"></span>
+      <div className="flex grow items-center max-w-full justify-between border-t border-t-grey-border hover:border-t-transparent group-hover:bg-mod-hov">
+        <FriendItemTag friend={friend} />
+        <div className="ml-2 flex">
+          <FriendActionBtn
+            icon={<MessageIcon />}
+            description="Envoyer un MP"
+            isFirst={index === 0}
+          />
+          <FriendActionBtn
+            icon={<MoreOptionsIcon />}
+            description="Plus"
+            isFirst={index === 0}
+          />
         </div>
       </div>
+      <span className="group-hover:bg-mod-hov h-full w-2 rounded-r-lg bg-transparent"></span>
     </div>
   );
-}
- 
+};
+
 export default FriendListItem;

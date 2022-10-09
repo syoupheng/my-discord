@@ -8,7 +8,7 @@ const FriendsSearchbar = () => {
           type="text"
           placeholder="Rechercher"
           aria-label="Rechercher"
-          className="py-0 px-2 h-[30px] bg-transparent flex-1 m-px min-w-[48px] focus:outline-none"
+          className="py-0 px-2 h-[30px] bg-transparent flex-1 m-px min-w-[48px] focus:outline-none text-secondary-light text-btw-base-sm"
         />
         <div className="h-8 w-8 flex items-center justify-center cursor-text">
           <div className="cursor-text h-5 w-5">

@@ -20,10 +20,11 @@ module.exports = {
         link: "#00aff5",
         "grey-border": "hsl(217 8% 33% / 0.48)",
         "mod-hov": "hsl(217 8% 33% / 0.4)",
+        "grey-selected": "hsl(217 8% 33% / 0.6)",
       },
       fontSize: {
-        "btw-sm-xs": ['13px', '18px'],
-        "btw-base-sm": ['15px', '22px']
+        "btw-sm-xs": ["13px", "18px"],
+        "btw-base-sm": ["15px", "22px"],
       },
       keyframes: {
         drop: {
@@ -32,12 +33,12 @@ module.exports = {
         },
         "alt-spin": {
           "0%": { transform: "rotate(90deg)" },
-          "100%": { transform: "rotate(-90deg)" }
-        }
+          "100%": { transform: "rotate(-90deg)" },
+        },
       },
       animation: {
         drop: "drop 0.4s ease-out 1",
-        "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate"
+        "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate",
       },
     },
   },

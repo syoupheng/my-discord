@@ -18,10 +18,3 @@ export const loginSchema = registerSchema.pick({ email: true, password: true });
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export type LoginInput = z.infer<typeof loginSchema>;
-
-export type UserStatus = 'ONLINE' | 'INACTIVE' | 'DO_NOT_DISTURB' | 'INVISIBLE';
-
-export interface User extends Omit<RegisterInput, 'password'> {
-  id: number,
-  status: UserStatus
-}
