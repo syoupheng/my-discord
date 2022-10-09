@@ -1,4 +1,5 @@
-import FriendListItem from "../components/FriendsPage/FriendListItem";
+import { useState } from "react";
+import FriendsList from "../components/FriendsPage/FriendsList";
 import FriendsNav from "../components/FriendsPage/FriendsNav";
 import FriendsRightSidebar from "../components/FriendsPage/FriendsRightSidebar";
 import FriendsSearchbar from "../components/FriendsPage/FriendsSearchbar";
@@ -50,26 +51,17 @@ const friends: Array<User> = [
 ];
 
 const FriendsPage = () => {
+  const [search, setSearch] = useState("");
+  const filteredFriends = friends.filter((friend) =>
+    friend.username.includes(search)
+  );
   return (
     <div className="flex flex-col w-full overflow-hidden">
       <FriendsNav />
       <div className="flex h-full relative" id="tooltip-container">
         <div className="flex flex-col flex-auto overflow-hidden">
-          <FriendsSearchbar />
-          <div>
-            <h2 className="mt-4 mr-5 mb-2 ml-[30px] flex-auto text-h-secondary whitespace-nowrap overflow-hidden uppercase text-xs font-medium">
-              En ligne - 3
-            </h2>
-          </div>
-          <div className="relative overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto">
-            <div className="absolute w-full">
-              {friends.length > 0
-                ? friends.map((friend, idx) => (
-                    <FriendListItem friend={friend} index={idx} />
-                  ))
-                : "Vous n'avez pas d'amis pour le moment"}
-            </div>
-          </div>
+          <FriendsSearchbar search={search} handleChange={setSearch} />
+          <FriendsList friends={filteredFriends} />
         </div>
         <FriendsRightSidebar />
       </div>

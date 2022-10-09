@@ -1,35 +1,41 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Navigate,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import AuthGuard from "./components/guards/AuthGuard";
 import NoAuthGuard from "./components/guards/NoAuthGuard";
 import MainLayout from "./components/layouts/MainLayout";
 import MeSidebar from "./components/layouts/MeSidebar";
 import FriendsPage from "./pages/FriendsPage";
-    
+import FriendsTabProvider from "./providers/FriendsTabProvider";
+
 const client = new ApolloClient({
   uri: import.meta.env.VITE_API_URL,
   cache: new InMemoryCache({
     typePolicies: {
       AuthUser: {
-        keyFields: []
-      }
-    }
+        keyFields: [],
+      },
+    },
   }),
-  credentials: 'include'
+  credentials: "include",
 });
 
-export const DEFAULT_ROUTE = '/channels/@me';
+export const DEFAULT_ROUTE = "/channels/@me";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-
       {/* Public routes that should only be accessible to unauthenticated users */}
       <Route element={<NoAuthGuard />}>
         <Route path="login" element={<LoginPage />} />
@@ -55,7 +61,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <RouterProvider router={router} />
+      <FriendsTabProvider>
+        <RouterProvider router={router} />
+      </FriendsTabProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

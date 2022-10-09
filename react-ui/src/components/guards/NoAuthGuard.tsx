@@ -3,7 +3,6 @@ import useAuthUserCache from "../../hooks/auth/useAuthUserCache";
 import PublicBackground from "../layouts/PublicBackground";
 
 const NoAuthGuard = () => {
-
   const authUser = useAuthUserCache();
 
   return authUser ? (
@@ -13,6 +12,6 @@ const NoAuthGuard = () => {
       <Outlet />
     </PublicBackground>
   );
-}
- 
+};
+
 export default NoAuthGuard;

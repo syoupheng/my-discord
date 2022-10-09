@@ -1,20 +1,32 @@
+import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
+import { FriendsTabValues } from "../../providers/FriendsTabProvider";
+
+const selectedTabTextMap = {
+  ALL: "Tous",
+  ONLINE: "En ligne",
+  PENDING: "En attente",
+  BLOCKED: "Bloqué",
+};
+
 interface Props {
-  text: string,
-  green?: boolean
+  tab: FriendsTabValues;
 }
 
-const FriendsNavlink = ({ text, green = false }: Props) => {
+const FriendsNavlink = ({ tab }: Props) => {
+  const [selectedTab, setSelectedTab] = useFriendsTab();
   return (
     <div
-      className={`mx-2 px-2 text-center align-middle min-w-[40px] shrink-0 rounded font-medium cursor-pointer text-btw-base-sm ${
-        green
-          ? "text-white bg-green-700"
-          : "hover:bg-grey-hov hover:text-secondary-light"
+      onClick={setSelectedTab && (() => setSelectedTab(tab))}
+      className={`mx-2 px-2 text-center align-middle min-w-[40px] shrink-0 rounded font-medium text-btw-base-sm
+      ${
+        selectedTab === tab
+          ? "bg-grey-selected cursor-default text-white"
+          : "cursor-pointer"
       }`}
     >
-      {text}
+      {selectedTabTextMap[tab]}
     </div>
   );
-}
- 
+};
+
 export default FriendsNavlink;
