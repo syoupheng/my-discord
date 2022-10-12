@@ -21,6 +21,7 @@ module.exports = {
         "grey-border": "hsl(217 8% 33% / 0.48)",
         "mod-hov": "hsl(217 8% 33% / 0.4)",
         "grey-selected": "hsl(217 8% 33% / 0.6)",
+        positive: "#45c46d",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],

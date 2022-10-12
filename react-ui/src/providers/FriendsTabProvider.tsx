@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useState } from "react";
 
-export type FriendsTabValues = "ALL" | "ONLINE" | "PENDING" | "BLOCKED";
+export type FriendsTabValues = "ALL" | "ONLINE" | "PENDING" | "BLOCKED" | "ADD_FRIEND";
 
 type TFriendsTabContext = [FriendsTabValues, (tab: FriendsTabValues) => void];
 

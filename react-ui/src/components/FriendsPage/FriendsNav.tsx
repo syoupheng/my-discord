@@ -1,7 +1,6 @@
-import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
 import FriendsIcon from "./FriendIcon";
 import FriendsNavlink from "./FriendsNavlink";
-import NewPrivateGroupIcon from "./NewPrivateGroupIcon";
+import NewPrivateGroupIcon from "../Icons/NewPrivateGroupIcon";
 
 const FriendsNav = () => {
   return (
@@ -15,9 +14,7 @@ const FriendsNav = () => {
           <FriendsNavlink tab="ALL" />
           <FriendsNavlink tab="PENDING" />
           <FriendsNavlink tab="BLOCKED" />
-          <div className="mx-2 px-2 text-center align-middle min-w-[40px] shrink-0 rounded font-medium text-btw-base-sm text-white bg-green-700 cursor-pointer">
-            Ajouter un ami
-          </div>
+          <FriendsNavlink tab="ADD_FRIEND" />
         </div>
       </div>
       <div className="shrink-0 mx-2">
