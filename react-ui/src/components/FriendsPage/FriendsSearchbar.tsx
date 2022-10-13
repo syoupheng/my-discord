@@ -28,7 +28,7 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
             {search === "" ? (
               <SearchIcon className="text-h-secondary h-full w-full" />
             ) : (
-              <ClearIcon className="text-h-secondary h-full w-full" />
+              <ClearIcon className="text-h-secondary h-full w-full animate-spin-45" />
             )}
           </div>
         </div>
