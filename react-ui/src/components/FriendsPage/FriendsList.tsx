@@ -18,7 +18,7 @@ interface Props {
 const FriendsList = ({ friends }: Props) => {
   const [selectedTab] = useFriendsTab();
 
-  const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 180 });
+  const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 200 });
 
   return (
     <>

@@ -36,10 +36,16 @@ module.exports = {
           "0%": { transform: "rotate(90deg)" },
           "100%": { transform: "rotate(-90deg)" },
         },
+        tooltip: {
+          "0%": { transform: "scale(1) translateX(-50%)", opacity: 0 },
+          "50%": { transform: "scale(1.07) translateX(-50%)", opacity: 0.5 },
+          "100%": { transform: "scale(1) translateX(-50%)", opacity: 1 },
+        },
       },
       animation: {
         drop: "drop 0.4s ease-out 1",
         "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate",
+        tooltip: "tooltip 0.2s ease-in-out",
       },
     },
   },
