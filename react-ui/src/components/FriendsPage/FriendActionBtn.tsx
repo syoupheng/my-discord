@@ -1,6 +1,5 @@
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode } from "react";
 import useTooltip from "../../hooks/ui/useTooltip";
-import Portal from "../shared/Portal";
 import Tooltip from "../shared/Tooltip";
 
 interface Props {

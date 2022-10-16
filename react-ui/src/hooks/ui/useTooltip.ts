@@ -2,7 +2,12 @@ import { useRef, useState } from "react";
 import { TooltipDirection } from "../../types/tooltip";
 import { getTooltipPositionFromDirection } from "../../utils/ui";
 
-const useTooltip = (direction: TooltipDirection = "up") => {
+interface TParams {
+  direction?: TooltipDirection;
+  gap?: number;
+}
+
+const useTooltip = ({ direction = "up", gap = 6 }: TParams = { direction: "up", gap: 6 }) => {
   const [position, setPosition] = useState({ left: 0, top: 0 });
   const [isShown, setIsShown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -10,7 +15,7 @@ const useTooltip = (direction: TooltipDirection = "up") => {
   const handleHover = () => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (rect) {
-      setPosition(getTooltipPositionFromDirection(direction, rect));
+      setPosition(getTooltipPositionFromDirection(direction, rect, gap));
       setIsShown(true);
     }
   };

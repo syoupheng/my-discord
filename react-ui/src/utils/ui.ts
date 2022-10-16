@@ -1,30 +1,34 @@
 import { TooltipDirection, TPosition } from "../types/tooltip";
 
-export const getTooltipPositionFromDirection = (direction: TooltipDirection, rect: DOMRect) => {
+export const getTooltipPositionFromDirection = (
+  direction: TooltipDirection,
+  rect: DOMRect,
+  gap: number
+) => {
   let position: TPosition;
   switch (direction) {
     case "up":
       position = {
-        left: rect.x + 8,
-        top: rect.y - 12 + window.scrollY,
+        left: rect.x + rect.width / 2,
+        top: rect.y - gap + window.scrollY,
       };
       break;
     case "down":
       position = {
-        left: rect.x + 8,
-        top: rect.y + rect.height + window.scrollY + 12,
+        left: rect.x + rect.width / 2,
+        top: rect.bottom + window.scrollY + gap,
       };
       break;
     case "right":
       position = {
-        left: rect.x + rect.width + 5,
-        top: rect.y + window.scrollY,
+        left: rect.right + gap,
+        top: rect.y + rect.height / 2 + window.scrollY,
       };
       break;
     case "left":
       position = {
-        left: rect.x,
-        top: rect.y + window.scrollY,
+        left: rect.x + gap,
+        top: rect.y + rect.height / 2 + window.scrollY,
       };
       break;
     default:

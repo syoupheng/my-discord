@@ -36,12 +36,7 @@ module.exports = {
           "0%": { transform: "rotate(90deg)" },
           "100%": { transform: "rotate(-90deg)" },
         },
-        "tooltip-x": {
-          "0%": { transform: "scale(1)", opacity: 0 },
-          "50%": { transform: "scale(1.07)", opacity: 0.5 },
-          "100%": { transform: "scale(1)", opacity: 1 },
-        },
-        "tooltip-y": {
+        "tooltip-up": {
           "0%": {
             transform: "scale(1) translateX(-50%) translateY(-100%)",
             opacity: 0,
@@ -55,6 +50,48 @@ module.exports = {
             opacity: 1,
           },
         },
+        "tooltip-down": {
+          "0%": {
+            transform: "scale(1) translateX(-50%)",
+            opacity: 0,
+          },
+          "50%": {
+            transform: "scale(1.07) translateX(-50%)",
+            opacity: 0.5,
+          },
+          "100%": {
+            transform: "scale(1) translateX(-50%)",
+            opacity: 1,
+          },
+        },
+        "tooltip-left": {
+          "0%": {
+            transform: "scale(1) translateY(-50%) translateX(-100%)",
+            opacity: 0,
+          },
+          "50%": {
+            transform: "scale(1.07) translateY(-50%) translateX(-100%)",
+            opacity: 0.5,
+          },
+          "100%": {
+            transform: "scale(1) translateY(-50%) translateX(-100%)",
+            opacity: 1,
+          },
+        },
+        "tooltip-right": {
+          "0%": {
+            transform: "scale(1) translateY(-50%)",
+            opacity: 0,
+          },
+          "50%": {
+            transform: "scale(1.07) translateY(-50%)",
+            opacity: 0.5,
+          },
+          "100%": {
+            transform: "scale(1) translateY(-50%)",
+            opacity: 1,
+          },
+        },
         "spin-45": {
           "0%": { transform: "rotate(45deg)" },
           "100%": { transform: "rotate(0deg)" },
@@ -63,8 +100,10 @@ module.exports = {
       animation: {
         drop: "drop 0.4s ease-out 1",
         "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate",
-        "tooltip-x": "tooltip-x 0.2s ease-in-out",
-        "tooltip-y": "tooltip-y 0.2s ease-in-out",
+        "tooltip-up": "tooltip-up 0.2s ease-in-out",
+        "tooltip-down": "tooltip-down 0.2s ease-in-out",
+        "tooltip-right": "tooltip-right 0.2s ease-in-out",
+        "tooltip-left": "tooltip-left 0.2s ease-in-out",
         "spin-45": "spin-45 0.1s linear",
       },
     },
