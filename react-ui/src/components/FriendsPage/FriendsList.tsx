@@ -30,9 +30,7 @@ const FriendsList = ({ friends }: Props) => {
       <div className="relative overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto">
         <div ref={friendsListRef} className="absolute w-full">
           {friends.length > 0
-            ? friends.map((friend, idx) => (
-                <FriendListItem key={friend.id} friend={friend} index={idx} />
-              ))
+            ? friends.map((friend) => <FriendListItem key={friend.id} friend={friend} />)
             : "Vous n'avez pas d'amis pour le moment"}
         </div>
       </div>

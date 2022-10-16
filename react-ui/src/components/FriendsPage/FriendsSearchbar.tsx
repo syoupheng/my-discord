@@ -1,3 +1,4 @@
+import { ChangeEvent, useRef } from "react";
 import ClearIcon from "../Icons/ClearIcon";
 import SearchIcon from "../Icons/SearchIcon";
 
@@ -7,6 +8,12 @@ interface Props {
 }
 
 const FriendsSearchbar = ({ search, handleChange }: Props) => {
+  const isDirty = useRef(false);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleChange(e.target.value);
+    isDirty.current = true;
+  };
+
   return (
     <div className="flex flex-none mt-4 mr-5 mb-2 ml-[30px] overflow-hidden rounded bg-tertiary">
       <div className="flex flex-row flex-wrap p-px flex-auto min-w-0 items-center">
@@ -16,7 +23,7 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
           aria-label="Rechercher"
           className="py-0 px-2 h-[30px] bg-transparent flex-1 m-px min-w-[48px] focus:outline-none text-secondary-light text-btw-base-sm"
           value={search}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={onChange}
         />
         <div
           onClick={search !== "" ? () => handleChange("") : undefined}
@@ -26,7 +33,9 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
         >
           <div className="h-5 w-5">
             {search === "" ? (
-              <SearchIcon className="text-h-secondary h-full w-full" />
+              <SearchIcon
+                className={`text-h-secondary h-full w-full ${isDirty.current && "animate-spin-45"}`}
+              />
             ) : (
               <ClearIcon className="text-h-secondary h-full w-full animate-spin-45" />
             )}
