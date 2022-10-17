@@ -6,6 +6,7 @@ import { RegisterUserInput } from './dto/register-user.input';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 import { UserStatus } from '../users/enums/user-status.enum';
+import { AuthUser } from './dto/auth-user';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     private config: ConfigService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(email: string, password: string): Promise<AuthUser> {
     const user = await this.usersService.findOneByEmail(email);
     if (user && (await argon.verify(user?.password, password))) {
       const { password, status, ...result } = user;

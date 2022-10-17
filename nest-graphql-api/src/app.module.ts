@@ -8,6 +8,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { FriendRequestsModule } from './friend-requests/friend-requests.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UsersModule,
     PrismaModule,
-    AuthModule
+    AuthModule,
+    FriendRequestsModule,
+    FriendsModule
   ],
   controllers: [AppController],
   providers: [AppService],

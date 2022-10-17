@@ -2,12 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
+type FriendRequestParticipant {
+  id: Int!
+  username: String!
+}
+
+type FriendRequest {
+  sender: FriendRequestParticipant!
+  recipient: FriendRequestParticipant!
+}
+
+type AuthUser {
   id: Int!
   username: String!
   email: String!
   status: UserStatus!
   phoneNumber: String
+  friendRequests: [FriendRequest!]!
 }
 
 enum UserStatus {
@@ -17,21 +28,11 @@ enum UserStatus {
   INVISIBLE
 }
 
-type AuthUser {
-  id: Int!
-  username: String!
-  email: String!
-  status: UserStatus!
-  phoneNumber: String
-}
-
 type LogoutResponse {
   success: Boolean!
 }
 
 type Query {
-  users: [User!]!
-  user(id: Int!): User!
   me: AuthUser!
 }
 
@@ -39,6 +40,8 @@ type Mutation {
   login(loginUserInput: LoginUserInput!): AuthUser!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: LogoutResponse!
+  sendFriendRequest(friendTag: FriendTag!): FriendRequest!
+  deleteFriendRequest(senderId: Int!, recipientId: Int!): LogoutResponse!
 }
 
 input LoginUserInput {
@@ -51,4 +54,9 @@ input RegisterUserInput {
   email: String!
   password: String!
   phoneNumber: String
+}
+
+input FriendTag {
+  id: Int!
+  username: String!
 }
