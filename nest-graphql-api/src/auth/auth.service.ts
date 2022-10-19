@@ -6,7 +6,9 @@ import { RegisterUserInput } from './dto/register-user.input';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 import { UserStatus } from '../users/enums/user-status.enum';
-import { AuthUser } from './dto/auth-user';
+import { AuthUser } from './entities/auth-user.entity';
+
+const dayjs = require('dayjs');
 
 @Injectable()
 export class AuthService {
@@ -41,5 +43,17 @@ export class AuthService {
       status: UserStatus.ONLINE,
     });
     return this.login(user);
+  }
+
+  generateCookie(req, token: string) {
+    const HTTP_ONLY_COOKIE = {
+      secure: false,
+      httpOnly: true,
+      expires: dayjs()
+        .add(process.env.HTTP_ONLY_COOKIE_EXP_TIME ?? 1, 'days')
+        .toDate(),
+    };
+
+    return req.res?.cookie('access_token', token, HTTP_ONLY_COOKIE);
   }
 }

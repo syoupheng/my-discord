@@ -4,7 +4,7 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FriendTag } from './dto/friend-tag.input';
-import { LogoutResponse } from '../auth/dto/logout-response';
+import { SuccessResponse } from '../auth/dto/success-response';
 
 @Resolver(() => FriendRequest)
 export class FriendRequestsResolver {
@@ -16,7 +16,7 @@ export class FriendRequestsResolver {
     return this.friendRequestsService.create(friendTag, ctx.req.user);
   }
 
-  @Mutation((returns) => LogoutResponse)
+  @Mutation((returns) => SuccessResponse)
   @UseGuards(JwtAuthGuard)
   async deleteFriendRequest(
     @Args('senderId', { type: () => Int }) senderId: number,

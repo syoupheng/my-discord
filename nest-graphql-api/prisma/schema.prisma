@@ -42,7 +42,7 @@ model FriendsWith {
   isFriendsWithId Int
   hasFriends      User         @relation(name: "hasFriends", fields: [hasFriendsId], references: [id])
   hasFriendsId    Int
-  status          FriendStatus
+  status          FriendStatus @default(FRIENDS)
   createdAt       DateTime     @default(now())
 
   @@id([isFriendsWithId, hasFriendsId])

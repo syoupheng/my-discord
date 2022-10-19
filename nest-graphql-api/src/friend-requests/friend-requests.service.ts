@@ -1,30 +1,41 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { FriendsService } from '../friends/friends.service';
 import { User } from '../users/entities/user.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { FriendTag } from './dto/friend-tag.input';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Prisma } from '@prisma/client';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class FriendRequestsService {
-  constructor(private friendsService: FriendsService, private prisma: PrismaService) {}
+  constructor(private usersService: UsersService, private prisma: PrismaService) {}
 
   async create(friendTag: FriendTag, sender: User): Promise<FriendRequest> {
-    const { id: recipientId, username } = friendTag;
+    const { id: recipientId, username: recipientName } = friendTag;
     const { id: senderId, username: senderName } = sender;
-    const recipient = await this.friendsService.findById(recipientId);
-    if (recipient.username !== username || senderId === recipientId)
+    const recipient = await this.usersService.findOneById(recipientId);
+    if (recipient.username !== recipientName || senderId === recipientId)
       throw new NotFoundException('Tag incorrect !');
     if (await this.findOne({ senderId: recipientId, recipientId: senderId }))
       throw new BadRequestException("Cet utilisateur t'a déjà envoyé une demande !");
-    // TODO : Checck if they are not already friends
+    if (
+      await this.prisma.friendsWith.findFirst({
+        where: {
+          OR: [
+            { isFriendsWithId: senderId, hasFriendsId: recipientId },
+            { isFriendsWithId: recipientId, hasFriendsId: senderId },
+          ],
+        },
+      })
+    )
+      throw new ForbiddenException('Tu es déjà ami(e) avec utilisateur !');
     try {
       await this.prisma.friendRequest.create({ data: { senderId, recipientId } });
       return {

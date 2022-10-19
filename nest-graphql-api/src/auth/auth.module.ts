@@ -7,11 +7,13 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { FriendRequestsModule } from '../friend-requests/friend-requests.module';
+import { FriendsModule } from '../friends/friends.module';
 
 @Module({
   imports: [
     UsersModule,
     FriendRequestsModule,
+    FriendsModule,
     PassportModule,
     JwtModule.register({
       signOptions: { expiresIn: process.env.JWT_EXP_TIME ?? '1d' },

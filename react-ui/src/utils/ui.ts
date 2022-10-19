@@ -27,7 +27,7 @@ export const getTooltipPositionFromDirection = (
       break;
     case "left":
       position = {
-        left: rect.x + gap,
+        left: rect.x - gap,
         top: rect.y + rect.height / 2 + window.scrollY,
       };
       break;

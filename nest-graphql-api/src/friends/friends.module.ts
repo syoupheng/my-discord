@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 import { FriendsResolver } from './friends.resolver';
-import { UsersModule } from '../users/users.module';
+import { FriendRequestsModule } from '../friend-requests/friend-requests.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [FriendRequestsModule],
   providers: [FriendsResolver, FriendsService],
   exports: [FriendsService],
 })

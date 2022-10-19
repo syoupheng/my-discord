@@ -1,30 +1,23 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Friend } from '../friends/entities/friends.entity';
 import { FriendRequest } from '../friend-requests/entities/friend-request.entity';
 import { FriendRequestsService } from '../friend-requests/friend-requests.service';
 import { AuthService } from './auth.service';
-import { AuthUser } from './dto/auth-user';
+import { AuthUser } from './entities/auth-user.entity';
 import { LoginUserInput } from './dto/login-user.input';
-import { LogoutResponse } from './dto/logout-response';
+import { SuccessResponse } from './dto/success-response';
 import { RegisterUserInput } from './dto/register-user.input';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
-const dayjs = require('dayjs');
-
-const HTTP_ONLY_COOKIE = {
-  secure: false,
-  httpOnly: true,
-  expires: dayjs()
-    .add(process.env.HTTP_ONLY_COOKIE_EXP_TIME ?? 1, 'days')
-    .toDate(),
-};
+import { FriendsService } from '../friends/friends.service';
 
 @Resolver((of) => AuthUser)
 export class AuthResolver {
   constructor(
     private authService: AuthService,
     private friendRequestsService: FriendRequestsService,
+    private friendsService: FriendsService,
   ) {}
 
   @Mutation((returns) => AuthUser)
@@ -33,11 +26,8 @@ export class AuthResolver {
     @Args('loginUserInput') loginUserInput: LoginUserInput,
     @Context() ctx,
   ): Promise<AuthUser> {
-    // await new Promise((resolve) => {
-    //   setTimeout(() => resolve('timeout'), 4000);
-    // });
     const { user, token } = await this.authService.login(ctx.user);
-    ctx.req.res?.cookie('access_token', token, HTTP_ONLY_COOKIE);
+    this.authService.generateCookie(ctx.req, token);
     return user;
   }
 
@@ -47,11 +37,11 @@ export class AuthResolver {
     @Context() ctx,
   ): Promise<AuthUser> {
     const { user, token } = await this.authService.register(registerUserInput);
-    ctx.req.res?.cookie('access_token', token, HTTP_ONLY_COOKIE);
+    this.authService.generateCookie(ctx.req, token);
     return user;
   }
 
-  @Mutation((returns) => LogoutResponse)
+  @Mutation((returns) => SuccessResponse)
   @UseGuards(JwtAuthGuard)
   logout(@Context() ctx) {
     ctx.req.res?.clearCookie('access_token');
@@ -68,5 +58,11 @@ export class AuthResolver {
   getFriendRequests(@Parent() authUser: AuthUser) {
     const { id: userId } = authUser;
     return this.friendRequestsService.findAll(userId);
+  }
+
+  @ResolveField('friends', (returns) => [Friend])
+  getFriends(@Parent() authUser: AuthUser) {
+    const { id: userId } = authUser;
+    return this.friendsService.findAll(userId);
   }
 }

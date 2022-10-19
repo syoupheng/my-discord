@@ -1,8 +1,14 @@
 import FriendsIcon from "./FriendIcon";
 import FriendsNavlink from "./FriendsNavlink";
 import NewPrivateGroupIcon from "../Icons/NewPrivateGroupIcon";
+import useTooltip from "../../hooks/ui/useTooltip";
+import Tooltip from "../shared/Tooltip";
 
 const FriendsNav = () => {
+  const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({
+    direction: "left",
+  });
+
   return (
     <section className="h-12 flex items-center px-2 border-b-[1px] border-tertiary text-h-secondary">
       <div className="flex flex-auto items-center overflow-hidden">
@@ -17,7 +23,20 @@ const FriendsNav = () => {
           <FriendsNavlink tab="ADD_FRIEND" />
         </div>
       </div>
-      <div className="shrink-0 mx-2">
+      <div
+        onMouseOver={handleHover}
+        onMouseLeave={() => setIsShown(false)}
+        ref={containerRef}
+        className="shrink-0 mx-2 cursor-pointer hover:text-secondary-light"
+      >
+        {isShown && (
+          <Tooltip
+            direction="left"
+            tooltipTxt="Nouveau groupe privé"
+            position={position}
+            size="sm"
+          />
+        )}
         <NewPrivateGroupIcon />
       </div>
     </section>
