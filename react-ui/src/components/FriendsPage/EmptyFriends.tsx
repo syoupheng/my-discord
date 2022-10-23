@@ -24,10 +24,10 @@ const selectedTabMap: Record<
     width: "415px",
   },
   ADD_FRIEND: {
-    imageUrl: "",
-    text: "",
-    height: "",
-    width: "",
+    imageUrl: "/no_friends.svg",
+    text: "Wumpus attend des amis. Mais rien ne t'oblige à en ajouter !",
+    height: "162px",
+    width: "376px",
   },
   BLOCKED: {
     imageUrl: "/no_friends_blocked.svg",

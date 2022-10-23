@@ -30,9 +30,7 @@ const LoginPage = () => {
   return (
     <FormContainer>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <h1 className="text-white font-bold text-2xl text-center mb-2">
-          Ha, te revoilà !
-        </h1>
+        <h1 className="text-white font-bold text-2xl text-center mb-2">Ha, te revoilà !</h1>
         <p className="text-center text-h-secondary font-light text-[15.3px] mb-5">
           Nous sommes si heureux de te revoir !
         </p>
@@ -55,7 +53,7 @@ const LoginPage = () => {
             {...register("password")}
           />
         </FormGroup>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="w-full h-11 text-btw-base-sm">
           {loading ? <Spinner white /> : "Connexion"}
         </Button>
         {gqlError && <FormError message={gqlError.message} />}

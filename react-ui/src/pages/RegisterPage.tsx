@@ -64,7 +64,7 @@ const RegisterPage = () => {
             {...register("password")}
           />
         </FormGroup>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="w-full h-11 text-btw-base-sm">
           {loading ? <Spinner white /> : "Connexion"}
         </Button>
         {gqlError && <FormError message={gqlError.message} />}

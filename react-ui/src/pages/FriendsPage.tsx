@@ -21,10 +21,10 @@ const FriendsPage = () => {
       <FriendsNav />
       <div className="flex h-full relative" id="tooltip-container">
         <div className="flex flex-col flex-auto overflow-hidden">
-          {friendItems.length <= 0 ? (
-            <EmptyFriends />
-          ) : selectedTab === "ADD_FRIEND" ? (
+          {selectedTab === "ADD_FRIEND" ? (
             <AddFriendSection />
+          ) : friendItems.length <= 0 ? (
+            <EmptyFriends />
           ) : (
             <FriendsContent
               selectedTab={selectedTab}

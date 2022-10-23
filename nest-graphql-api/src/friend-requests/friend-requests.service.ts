@@ -20,7 +20,7 @@ export class FriendRequestsService {
 
   async create(friendTag: FriendTag, sender: User): Promise<FriendRequest> {
     const { id: recipientId, username: recipientName } = friendTag;
-    const { id: senderId, username: senderName } = sender;
+    const { id: senderId } = sender;
     const recipient = await this.usersService.findOneById(recipientId);
     if (recipient.username !== recipientName || senderId === recipientId)
       throw new NotFoundException('Tag incorrect !');
@@ -36,7 +36,7 @@ export class FriendRequestsService {
         },
       })
     )
-      throw new ForbiddenException('Tu es déjà ami(e) avec utilisateur !');
+      throw new ForbiddenException('Tu es déjà ami(e) avec cet utilisateur !');
     try {
       await this.prisma.friendRequest.create({ data: { senderId, recipientId } });
       return {

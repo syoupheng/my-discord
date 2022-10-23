@@ -14,13 +14,15 @@ interface Props {
   icon: ReactNode;
   description?: string;
   hoverColor?: THoverColor;
+  action?: any;
 }
 
-const FriendActionBtn = ({ icon, description = "", hoverColor = "normal" }: Props) => {
+const FriendActionBtn = ({ icon, description = "", hoverColor = "normal", action }: Props) => {
   const { handleHover, setIsShown, containerRef, isShown, position } = useTooltip();
 
   return (
     <div
+      onClick={action}
       onMouseOver={handleHover}
       onMouseLeave={() => setIsShown(false)}
       ref={containerRef}
