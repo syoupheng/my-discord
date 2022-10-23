@@ -1,29 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
+import { AUTH_USER_FIELDS } from "../../fragments/auth";
 import { User } from "../../types/user";
 
 const GET_AUTH_USER = gql`
+  ${AUTH_USER_FIELDS}
   query GetAuthUser {
     me {
-      id
-      username
-      email
-      status
-      phoneNumber
-      friends {
-        id
-        username
-        status
-      }
-      friendRequests {
-        sender {
-          id
-          username
-        }
-        recipient {
-          id
-          username
-        }
-      }
+      ...AuthUserFields
     }
   }
 `;

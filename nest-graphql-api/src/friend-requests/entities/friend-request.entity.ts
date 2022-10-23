@@ -1,12 +1,9 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, OmitType } from '@nestjs/graphql';
 import { Friend } from '../../friends/entities/friends.entity';
-import { FriendRequestParticipant } from '../dto/friend-req-participant';
+import { FriendRequestStatus } from '../enums/friend-request-status.enum';
 
 @ObjectType()
-export class FriendRequest {
-  @Field((type) => FriendRequestParticipant)
-  sender: FriendRequestParticipant;
-
-  @Field((type) => FriendRequestParticipant)
-  recipient: FriendRequestParticipant;
+export class FriendRequest extends OmitType(Friend, ['status']) {
+  @Field((type) => FriendRequestStatus)
+  requestStatus: FriendRequestStatus;
 }

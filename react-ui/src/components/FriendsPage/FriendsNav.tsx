@@ -3,6 +3,7 @@ import FriendsNavlink from "./FriendsNavlink";
 import NewPrivateGroupIcon from "../Icons/NewPrivateGroupIcon";
 import useTooltip from "../../hooks/ui/useTooltip";
 import Tooltip from "../shared/Tooltip";
+import FriendRequestsCount from "../FriendRequestsCount";
 
 const FriendsNav = () => {
   const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({
@@ -18,7 +19,9 @@ const FriendsNav = () => {
         <div className="flex">
           <FriendsNavlink tab="ONLINE" />
           <FriendsNavlink tab="ALL" />
-          <FriendsNavlink tab="PENDING" />
+          <FriendsNavlink tab="PENDING">
+            <FriendRequestsCount />
+          </FriendsNavlink>
           <FriendsNavlink tab="BLOCKED" />
           <FriendsNavlink tab="ADD_FRIEND" />
         </div>

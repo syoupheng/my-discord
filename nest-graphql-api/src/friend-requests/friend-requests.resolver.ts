@@ -19,13 +19,10 @@ export class FriendRequestsResolver {
   @Mutation((returns) => SuccessResponse)
   @UseGuards(JwtAuthGuard)
   async deleteFriendRequest(
-    @Args('senderId', { type: () => Int }) senderId: number,
-    @Args('recipientId', { type: () => Int }) recipientId: number,
+    @Args('friendId', { type: () => Int }) friendId: number,
     @Context() ctx,
   ) {
-    if (![senderId, recipientId].includes(ctx.req.user.id))
-      throw new ForbiddenException("Vous ne pouvez pas supprimer cette demande d'ami !");
-    await this.friendRequestsService.delete({ senderId, recipientId });
+    await this.friendRequestsService.delete(ctx.req.user.id, friendId);
     return { success: true };
   }
 }

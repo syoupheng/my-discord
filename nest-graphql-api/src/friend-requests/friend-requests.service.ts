@@ -12,6 +12,7 @@ import { FriendTag } from './dto/friend-tag.input';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Prisma } from '@prisma/client';
 import { UsersService } from '../users/users.service';
+import { FriendRequestStatus } from './enums/friend-request-status.enum';
 
 @Injectable()
 export class FriendRequestsService {
@@ -39,11 +40,9 @@ export class FriendRequestsService {
     try {
       await this.prisma.friendRequest.create({ data: { senderId, recipientId } });
       return {
-        recipient,
-        sender: {
-          id: senderId,
-          username: senderName,
-        },
+        id: recipientId,
+        username: recipientName,
+        requestStatus: FriendRequestStatus.SENT,
       };
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2002') {
@@ -54,7 +53,7 @@ export class FriendRequestsService {
   }
 
   async findAll(userId: number): Promise<FriendRequest[]> {
-    const friendRequests = await this.prisma.friendRequest.findMany({
+    const rawFriendRequests = await this.prisma.friendRequest.findMany({
       where: {
         OR: [{ senderId: userId }, { recipientId: userId }],
       },
@@ -74,6 +73,16 @@ export class FriendRequestsService {
       },
     });
 
+    const friendRequests = rawFriendRequests.map((request) => {
+      const { id, username } = request.sender.id === userId ? request.recipient : request.sender;
+      return {
+        id,
+        username,
+        requestStatus:
+          request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
+      };
+    });
+
     return friendRequests;
   }
 
@@ -85,12 +94,16 @@ export class FriendRequestsService {
     });
   }
 
-  async delete(uniqueInput: Prisma.FriendRequestSenderIdRecipientIdCompoundUniqueInput) {
-    if (!(await this.findOne(uniqueInput)))
-      throw new NotFoundException("Cette demande d'ami n'existe pas !");
-    return this.prisma.friendRequest.delete({
+  async delete(userId: number, friendId: number) {
+    // if (!(await this.findOne(uniqueInput)))
+    //   throw new NotFoundException("Cette demande d'ami n'existe pas !");
+    return this.prisma.friendRequest.deleteMany({
       where: {
-        senderId_recipientId: uniqueInput,
+        OR: [
+          { senderId: userId, recipientId: friendId },
+          { senderId: friendId, recipientId: userId },
+        ],
+        // senderId_recipientId: uniqueInput,
       },
     });
   }
