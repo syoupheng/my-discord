@@ -60,6 +60,7 @@ export class FriendRequestsService {
       where: {
         OR: [{ senderId: userId }, { recipientId: userId }],
       },
+      orderBy: { createdAt: 'desc' },
       include: {
         sender: {
           select: {
@@ -97,15 +98,12 @@ export class FriendRequestsService {
   }
 
   async delete(userId: number, friendId: number) {
-    // if (!(await this.findOne(uniqueInput)))
-    //   throw new NotFoundException("Cette demande d'ami n'existe pas !");
-    return this.prisma.friendRequest.deleteMany({
+    await this.prisma.friendRequest.deleteMany({
       where: {
         OR: [
           { senderId: userId, recipientId: friendId },
           { senderId: friendId, recipientId: userId },
         ],
-        // senderId_recipientId: uniqueInput,
       },
     });
   }

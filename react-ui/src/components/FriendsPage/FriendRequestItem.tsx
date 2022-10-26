@@ -12,7 +12,7 @@ interface Props {
 }
 
 const FriendRequestItem = ({ friendRequest }: Props) => {
-  const [deleteRequest] = useDeleteFriendRequest();
+  const [deleteRequest] = useDeleteFriendRequest(friendRequest.id);
   const [confirmRequest] = useConfirmFriend();
 
   return (
@@ -27,12 +27,7 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
               description="Accepter"
               hoverColor="green"
             />
-            <FriendActionBtn
-              action={() => deleteRequest({ variables: { friendId: friendRequest.id } })}
-              icon={<CancelIcon />}
-              description="Ignorer"
-              hoverColor="red"
-            />
+            <FriendActionBtn action={deleteRequest} icon={<CancelIcon />} description="Ignorer" hoverColor="red" />
           </>
         ) : (
           <FriendActionBtn

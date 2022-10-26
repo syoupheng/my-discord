@@ -6,10 +6,7 @@ import { Friend } from './entities/friends.entity';
 
 @Injectable()
 export class FriendsService {
-  constructor(
-    private friendRequestsService: FriendRequestsService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private friendRequestsService: FriendRequestsService, private prisma: PrismaService) {}
 
   async findById(friendId: number, authUserId: number): Promise<Friend> {
     const friend = await this.prisma.friendsWith.findFirst({
@@ -49,6 +46,7 @@ export class FriendsService {
       where: {
         OR: [{ isFriendsWithId: authUserId }, { hasFriendsId: authUserId }],
       },
+      orderBy: { createdAt: 'desc' },
       include: {
         hasFriends: {
           select: {
@@ -81,8 +79,7 @@ export class FriendsService {
       recipientId: authUserId,
     };
     const friendRequest = await this.friendRequestsService.findOne(uniqueInput);
-    if (!friendRequest)
-      throw new ForbiddenException("Cet utilisateur ne vous a pas envoyé de demande d'ami !");
+    if (!friendRequest) throw new ForbiddenException("Cet utilisateur ne vous a pas envoyé de demande d'ami !");
     const deleteFriendRequest = this.prisma.friendRequest.delete({
       where: {
         senderId_recipientId: uniqueInput,

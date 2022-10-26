@@ -32,7 +32,6 @@ export class AuthResolver {
   }
 
   @Mutation((returns) => SuccessResponse)
-  @UseGuards(JwtAuthGuard)
   logout(@Context() ctx) {
     ctx.req.res?.clearCookie('access_token');
     return { success: true };
