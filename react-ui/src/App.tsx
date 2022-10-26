@@ -5,14 +5,13 @@ import PublicBackground from "./components/layouts/PublicBackground";
 import useAuthUser from "./hooks/auth/useAuthUser";
 
 const App = () => {
-
   const { loading } = useAuthUser();
 
   if (loading) {
     return (
       <PublicBackground>
         <FormContainer>
-          <FaDiscord size={80} className='text-white mx-auto animate-alt-spin' />
+          <FaDiscord size={80} className="text-white mx-auto animate-alt-spin" />
         </FormContainer>
       </PublicBackground>
     );

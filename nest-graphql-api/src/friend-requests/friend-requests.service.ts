@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { User } from '../users/entities/user.entity';
 import { PrismaService } from '../prisma/prisma.service';
@@ -13,17 +7,18 @@ import { FriendRequest } from './entities/friend-request.entity';
 import { Prisma } from '@prisma/client';
 import { UsersService } from '../users/users.service';
 import { FriendRequestStatus } from './enums/friend-request-status.enum';
+import { PUB_SUB } from '../pubsub/pubsub.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class FriendRequestsService {
-  constructor(private usersService: UsersService, private prisma: PrismaService) {}
+  constructor(private usersService: UsersService, private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   async create(friendTag: FriendTag, sender: User): Promise<FriendRequest> {
     const { id: recipientId, username: recipientName } = friendTag;
-    const { id: senderId } = sender;
+    const { id: senderId, username: senderName } = sender;
     const recipient = await this.usersService.findOneById(recipientId);
-    if (recipient.username !== recipientName || senderId === recipientId)
-      throw new NotFoundException('Tag incorrect !');
+    if (recipient.username !== recipientName || senderId === recipientId) throw new NotFoundException('Tag incorrect !');
     if (await this.findOne({ senderId: recipientId, recipientId: senderId }))
       throw new BadRequestException("Cet utilisateur t'a déjà envoyé une demande !");
     if (
@@ -39,6 +34,14 @@ export class FriendRequestsService {
       throw new ForbiddenException('Tu es déjà ami(e) avec cet utilisateur !');
     try {
       await this.prisma.friendRequest.create({ data: { senderId, recipientId } });
+      this.pubSub.publish('friendRequestReceived', {
+        friendRequestReceived: {
+          recipientId,
+          id: senderId,
+          username: senderName,
+          requestStatus: FriendRequestStatus.RECEIVED,
+        },
+      });
       return {
         id: recipientId,
         username: recipientName,
@@ -78,8 +81,7 @@ export class FriendRequestsService {
       return {
         id,
         username,
-        requestStatus:
-          request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
+        requestStatus: request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
       };
     });
 

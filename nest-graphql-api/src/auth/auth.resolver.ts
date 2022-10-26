@@ -14,28 +14,18 @@ import { FriendsService } from '../friends/friends.service';
 
 @Resolver((of) => AuthUser)
 export class AuthResolver {
-  constructor(
-    private authService: AuthService,
-    private friendRequestsService: FriendRequestsService,
-    private friendsService: FriendsService,
-  ) {}
+  constructor(private authService: AuthService, private friendRequestsService: FriendRequestsService, private friendsService: FriendsService) {}
 
   @Mutation((returns) => AuthUser)
   @UseGuards(GqlAuthGuard)
-  async login(
-    @Args('loginUserInput') loginUserInput: LoginUserInput,
-    @Context() ctx,
-  ): Promise<AuthUser> {
+  async login(@Args('loginUserInput') loginUserInput: LoginUserInput, @Context() ctx): Promise<AuthUser> {
     const { user, token } = await this.authService.login(ctx.user);
     this.authService.generateCookie(ctx.req, token);
     return user;
   }
 
   @Mutation((returns) => AuthUser)
-  async register(
-    @Args('registerUserInput') registerUserInput: RegisterUserInput,
-    @Context() ctx,
-  ): Promise<AuthUser> {
+  async register(@Args('registerUserInput') registerUserInput: RegisterUserInput, @Context() ctx): Promise<AuthUser> {
     const { user, token } = await this.authService.register(registerUserInput);
     this.authService.generateCookie(ctx.req, token);
     return user;

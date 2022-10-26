@@ -70,3 +70,7 @@ input FriendTag {
   id: Int!
   username: String!
 }
+
+type Subscription {
+  friendRequestReceived(userId: Int!): FriendRequest!
+}

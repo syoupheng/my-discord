@@ -12,11 +12,7 @@ const dayjs = require('dayjs');
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    private config: ConfigService,
-  ) {}
+  constructor(private usersService: UsersService, private jwtService: JwtService, private config: ConfigService) {}
 
   async validateUser(email: string, password: string): Promise<AuthUser> {
     const user = await this.usersService.findOneByEmail(email);

@@ -1,35 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Navigate,
-  Route,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import AuthGuard from "./components/guards/AuthGuard";
 import NoAuthGuard from "./components/guards/NoAuthGuard";
 import MainLayout from "./components/layouts/MainLayout";
 import MeSidebar from "./components/layouts/MeSidebar";
 import FriendsPage from "./pages/FriendsPage";
 import FriendsTabProvider from "./providers/FriendsTabProvider";
-
-const client = new ApolloClient({
-  uri: import.meta.env.VITE_API_URL,
-  cache: new InMemoryCache({
-    typePolicies: {
-      AuthUser: {
-        keyFields: [],
-      },
-    },
-  }),
-  credentials: "include",
-});
+import { client } from "./apollo.config";
 
 export const DEFAULT_ROUTE = "/channels/@me";
 

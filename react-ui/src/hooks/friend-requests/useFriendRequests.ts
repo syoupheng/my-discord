@@ -1,6 +1,7 @@
 import { FriendRequest } from "../../types/user";
 
 import { gql, useApolloClient } from "@apollo/client";
+import { GET_AUTH_USER } from "../auth/useAuthUser";
 
 const useFriendRequests = (): FriendRequest[] => {
   const client = useApolloClient();
@@ -16,6 +17,8 @@ const useFriendRequests = (): FriendRequest[] => {
       }
     `,
   });
+
+  const result = client.watchQuery({ query: GET_AUTH_USER });
 
   return friendRequests;
 };

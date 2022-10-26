@@ -3,15 +3,21 @@ import EmptyFriends from "../components/FriendsPage/EmptyFriends";
 import FriendsContent from "../components/FriendsPage/FriendsContent";
 import FriendsNav from "../components/FriendsPage/FriendsNav";
 import FriendsRightSidebar from "../components/FriendsPage/FriendsRightSidebar";
+import useAuthUser from "../hooks/auth/useAuthUser";
 import useFriendRequests from "../hooks/friend-requests/useFriendRequests";
+import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequestSub";
 import useFriends from "../hooks/friends/useFriends";
 import useFriendsTab from "../hooks/friendsNavTab/useFriendsTab";
 import { filterFriendsByTab } from "../utils/friends";
 
 const FriendsPage = () => {
   const [selectedTab] = useFriendsTab();
-  const friends = useFriends();
-  const friendRequests = useFriendRequests();
+  // const friends = useFriends();
+  // const friendRequests = useFriendRequests();
+  const { data } = useAuthUser();
+
+  if (!data) return null;
+  const { friends, friendRequests } = data.me;
 
   const selectedFriends = filterFriendsByTab(friends, selectedTab);
   const friendItems = selectedTab === "PENDING" ? friendRequests : selectedFriends;
@@ -26,11 +32,7 @@ const FriendsPage = () => {
           ) : friendItems.length <= 0 ? (
             <EmptyFriends />
           ) : (
-            <FriendsContent
-              selectedTab={selectedTab}
-              selectedFriends={selectedFriends}
-              friendRequests={friendRequests}
-            />
+            <FriendsContent selectedTab={selectedTab} selectedFriends={selectedFriends} friendRequests={friendRequests} />
           )}
         </div>
         <FriendsRightSidebar />

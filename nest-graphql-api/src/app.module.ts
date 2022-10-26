@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { FriendRequestsModule } from './friend-requests/friend-requests.module';
 import { FriendsModule } from './friends/friends.module';
+import { PubsubModule } from './pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -18,17 +19,22 @@ import { FriendsModule } from './friends/friends.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       cors: {
         origin: process.env.CLIENT_URL ?? '*',
-        credentials: true
-      }
+        credentials: true,
+      },
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
     }),
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
     }),
     UsersModule,
     PrismaModule,
     AuthModule,
     FriendRequestsModule,
-    FriendsModule
+    FriendsModule,
+    PubsubModule,
   ],
   controllers: [AppController],
   providers: [AppService],
