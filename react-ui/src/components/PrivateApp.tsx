@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import useFriendReqDeletedSub from "../hooks/friend-requests/useFriendReqDeletedSub";
 import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequestSub";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 
 const PrivateApp = ({ children }: Props) => {
   useNewFriendRequestSub();
+  useFriendReqDeletedSub();
 
   return <>{children}</>;
 };

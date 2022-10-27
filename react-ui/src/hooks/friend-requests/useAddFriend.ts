@@ -1,4 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
+import { AUTH_USER_CACHE_ID } from "../../apollo.config";
 import { FriendRequest } from "../../types/user";
 
 const ADD_FRIEND = gql`
@@ -19,7 +20,7 @@ const useAddFriend = () => {
   return useMutation<MutationResponse>(ADD_FRIEND, {
     update(cache, { data }) {
       cache.modify({
-        id: "AuthUser:{}",
+        id: AUTH_USER_CACHE_ID,
         fields: {
           friendRequests(existingFriendRequestRefs = [], { readField }) {
             const { sendFriendRequest: newData } = data as MutationResponse;

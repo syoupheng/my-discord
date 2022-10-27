@@ -25,6 +25,7 @@ const useNewFriendRequestSub = () => {
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const newFriendRequest = subscriptionData.data.friendRequestReceived;
+          if (prev.me.friendRequests.some((request) => request.id === newFriendRequest.id)) return prev;
           const newData = { ...prev.me, friendRequests: [newFriendRequest, ...prev.me.friendRequests] };
 
           return { me: newData };

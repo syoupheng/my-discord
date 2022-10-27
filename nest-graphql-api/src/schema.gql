@@ -73,4 +73,5 @@ input FriendTag {
 
 type Subscription {
   friendRequestReceived(userId: Int!): FriendRequest!
+  friendRequestDeleted(userId: Int!): Int!
 }

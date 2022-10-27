@@ -26,3 +26,5 @@ export const client = new ApolloClient({
     },
   }),
 });
+
+export const AUTH_USER_CACHE_ID = "AuthUser:{}";

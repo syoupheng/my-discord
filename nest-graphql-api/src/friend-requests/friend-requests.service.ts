@@ -98,7 +98,7 @@ export class FriendRequestsService {
   }
 
   async delete(userId: number, friendId: number) {
-    await this.prisma.friendRequest.deleteMany({
+    const friendRequest = await this.prisma.friendRequest.findFirst({
       where: {
         OR: [
           { senderId: userId, recipientId: friendId },
@@ -106,5 +106,15 @@ export class FriendRequestsService {
         ],
       },
     });
+
+    if (!friendRequest) throw new NotFoundException("Vous n'avez pas envoyé de demande d'ami à cet utilisateur !");
+    const { senderId, recipientId } = friendRequest;
+    await this.prisma.friendRequest.delete({
+      where: {
+        senderId_recipientId: { senderId, recipientId },
+      },
+    });
+
+    if (userId === senderId) this.pubSub.publish('friendRequestDeleted', { friendRequestDeleted: { senderId, recipientId } });
   }
 }

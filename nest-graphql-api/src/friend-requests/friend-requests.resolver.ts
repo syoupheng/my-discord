@@ -35,4 +35,15 @@ export class FriendRequestsResolver {
   friendRequestReceived(@Args('userId', { type: () => Int }) userId: number) {
     return this.pubSub.asyncIterator('friendRequestReceived');
   }
+
+  @Subscription((returns) => Int, {
+    filter: (payload, variables) => payload.friendRequestDeleted.recipientId === variables.userId,
+    resolve: ({ friendRequestDeleted }) => {
+      const { senderId } = friendRequestDeleted;
+      return senderId;
+    },
+  })
+  friendRequestDeleted(@Args('userId', { type: () => Int }) userId: number) {
+    return this.pubSub.asyncIterator('friendRequestDeleted');
+  }
 }
