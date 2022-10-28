@@ -1,4 +1,5 @@
 import useDeleteFriendRequest from "../../hooks/friend-requests/useDeleteFriendRequest";
+import useIgnoreFriendRequest from "../../hooks/friend-requests/useIgnoreFriendRequest";
 import useConfirmFriend from "../../hooks/friends/useConfirmFriend";
 import { FriendRequest } from "../../types/user";
 import CancelIcon from "../Icons/CancelIcon";
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const FriendRequestItem = ({ friendRequest }: Props) => {
+  const [ignoreRequest] = useIgnoreFriendRequest(friendRequest.id);
   const [deleteRequest] = useDeleteFriendRequest(friendRequest.id);
   const [confirmRequest] = useConfirmFriend();
 
@@ -27,7 +29,7 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
               description="Accepter"
               hoverColor="green"
             />
-            <FriendActionBtn action={deleteRequest} icon={<CancelIcon />} description="Ignorer" hoverColor="red" />
+            <FriendActionBtn action={ignoreRequest} icon={<CancelIcon />} description="Ignorer" hoverColor="red" />
           </>
         ) : (
           <FriendActionBtn

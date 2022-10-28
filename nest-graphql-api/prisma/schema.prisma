@@ -31,6 +31,7 @@ model FriendRequest {
   senderId    Int
   recipient   User     @relation(name: "friendRequestsReceived", fields: [recipientId], references: [id])
   recipientId Int
+  ignored     Boolean  @default(false)
   createdAt   DateTime @default(now())
 
   @@id([senderId, recipientId])

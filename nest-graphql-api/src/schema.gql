@@ -50,6 +50,7 @@ type Mutation {
   logout: SuccessResponse!
   sendFriendRequest(friendTag: FriendTag!): FriendRequest!
   deleteFriendRequest(friendId: Int!): SuccessResponse!
+  ignoreFriendRequest(friendId: Int!): SuccessResponse!
   addFriend(friendId: Int!): Friend!
   deleteFriend(friendId: Int!): SuccessResponse!
 }
@@ -74,4 +75,5 @@ input FriendTag {
 type Subscription {
   friendRequestReceived(userId: Int!): FriendRequest!
   friendRequestDeleted(userId: Int!): Int!
+  friendRequestConfirmed(userId: Int!): Friend!
 }

@@ -58,7 +58,14 @@ export class FriendRequestsService {
   async findAll(userId: number): Promise<FriendRequest[]> {
     const rawFriendRequests = await this.prisma.friendRequest.findMany({
       where: {
-        OR: [{ senderId: userId }, { recipientId: userId }],
+        AND: [
+          {
+            OR: [{ senderId: userId }, { recipientId: userId }],
+          },
+          {
+            OR: [{ senderId: userId }, { ignored: false }],
+          },
+        ],
       },
       orderBy: { createdAt: 'desc' },
       include: {
@@ -97,24 +104,34 @@ export class FriendRequestsService {
     });
   }
 
-  async delete(userId: number, friendId: number) {
-    const friendRequest = await this.prisma.friendRequest.findFirst({
+  async delete(senderId: number, recipientId: number) {
+    const friendRequest = await this.prisma.friendRequest.findUnique({
       where: {
-        OR: [
-          { senderId: userId, recipientId: friendId },
-          { senderId: friendId, recipientId: userId },
-        ],
+        senderId_recipientId: { senderId, recipientId },
       },
     });
 
-    if (!friendRequest) throw new NotFoundException("Vous n'avez pas envoyé de demande d'ami à cet utilisateur !");
-    const { senderId, recipientId } = friendRequest;
+    if (!friendRequest) throw new NotFoundException("Aucune demande d'ami n'a été envoyée !");
+    const { ignored } = friendRequest;
     await this.prisma.friendRequest.delete({
       where: {
         senderId_recipientId: { senderId, recipientId },
       },
     });
 
-    if (userId === senderId) this.pubSub.publish('friendRequestDeleted', { friendRequestDeleted: { senderId, recipientId } });
+    if (!ignored) this.pubSub.publish('friendRequestDeleted', { friendRequestDeleted: { senderId, recipientId } });
+  }
+
+  async ignore(userId: number, friendId: number): Promise<number> {
+    const friendRequest = await this.findOne({ senderId: friendId, recipientId: userId });
+    if (!friendRequest) throw new NotFoundException("Cet utilisateur ne vous a pas envoyé de demande d'ami !");
+    const updatedFriendRequest = await this.prisma.friendRequest.update({
+      where: {
+        senderId_recipientId: { senderId: friendId, recipientId: userId },
+      },
+      data: { ignored: true },
+    });
+
+    return updatedFriendRequest.senderId;
   }
 }

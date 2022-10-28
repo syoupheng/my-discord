@@ -25,6 +25,13 @@ export class FriendRequestsResolver {
     return { success: true };
   }
 
+  @Mutation((returns) => SuccessResponse)
+  @UseGuards(JwtAuthGuard)
+  async ignoreFriendRequest(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
+    await this.friendRequestsService.ignore(ctx.req.user.id, friendId);
+    return { success: true };
+  }
+
   @Subscription((returns) => FriendRequest, {
     filter: (payload, variables) => payload.friendRequestReceived.recipientId === variables.userId,
     resolve: ({ friendRequestReceived }) => {
