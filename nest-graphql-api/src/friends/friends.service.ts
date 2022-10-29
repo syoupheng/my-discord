@@ -1,4 +1,6 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PubSub } from 'graphql-subscriptions';
+import { PUB_SUB } from '../pubsub/pubsub.module';
 import { FriendRequestsService } from '../friend-requests/friend-requests.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserStatus } from '../users/enums/user-status.enum';
@@ -6,7 +8,7 @@ import { Friend } from './entities/friends.entity';
 
 @Injectable()
 export class FriendsService {
-  constructor(private friendRequestsService: FriendRequestsService, private prisma: PrismaService) {}
+  constructor(private friendRequestsService: FriendRequestsService, private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   async findById(friendId: number, authUserId: number): Promise<Friend> {
     const friend = await this.prisma.friendsWith.findFirst({
@@ -96,7 +98,7 @@ export class FriendsService {
 
   async delete(friendId: number, authUserId: number) {
     await this.findById(friendId, authUserId);
-    return this.prisma.friendsWith.deleteMany({
+    await this.prisma.friendsWith.deleteMany({
       where: {
         OR: [
           { isFriendsWithId: friendId, hasFriendsId: authUserId },
@@ -104,5 +106,6 @@ export class FriendsService {
         ],
       },
     });
+    this.pubSub.publish('friendDeleted', { friendDeleted: { friendToRemoveId: authUserId, userId: friendId } });
   }
 }

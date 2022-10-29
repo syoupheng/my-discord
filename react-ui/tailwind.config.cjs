@@ -24,6 +24,8 @@ module.exports = {
         positive: "#45c46d",
         muted: "#a2a5a9",
         "input-border": "hsl(0 0% 0% / 0.3)",
+        "btn-danger": "#d83b3e",
+        "btn-danger-hov": "#9f2d2f",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],

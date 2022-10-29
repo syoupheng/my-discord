@@ -76,4 +76,5 @@ type Subscription {
   friendRequestReceived(userId: Int!): FriendRequest!
   friendRequestDeleted(userId: Int!): Int!
   friendRequestConfirmed(userId: Int!): Friend!
+  friendDeleted(userId: Int!): Int!
 }
