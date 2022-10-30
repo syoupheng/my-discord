@@ -47,7 +47,7 @@ const DeleteFriendDialog = ({ friend, isOpen, setIsOpen }: Props) => {
               <div className="px-4 pt-4">
                 <Dialog.Title className="text-white text-xl font-bold mb-3">Retirer '{friend.username}'</Dialog.Title>
                 <p className="mb-8 text-btw-base-sm text-secondary-light">
-                  Tu es sûr(e) de vouloir retirer définitivement <span className="font-bold">{friend.username}</span> de ta liste d'amis ?
+                  Tu es sûr(e) de vouloir retirer définitivement <span className="font-black">{friend.username}</span> de ta liste d'amis ?
                 </p>
               </div>
               <div className="p-4 flex justify-end bg-secondary">

@@ -45,6 +45,7 @@ type Query {
 }
 
 type Mutation {
+  editProfile(editProfileInput: EditProfileInput!): AuthUser!
   login(loginUserInput: LoginUserInput!): AuthUser!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: SuccessResponse!
@@ -53,6 +54,14 @@ type Mutation {
   ignoreFriendRequest(friendId: Int!): SuccessResponse!
   addFriend(friendId: Int!): Friend!
   deleteFriend(friendId: Int!): SuccessResponse!
+}
+
+input EditProfileInput {
+  username: String
+  email: String
+  password: String
+  phoneNumber: String
+  status: UserStatus
 }
 
 input LoginUserInput {
@@ -73,6 +82,7 @@ input FriendTag {
 }
 
 type Subscription {
+  friendProfileChanged(userId: Int!): Friend!
   friendRequestReceived(userId: Int!): FriendRequest!
   friendRequestDeleted(userId: Int!): Int!
   friendRequestConfirmed(userId: Int!): Friend!
