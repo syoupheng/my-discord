@@ -1,18 +1,26 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+// import LoginPage from "./pages/LoginPage";
+// import RegisterPage from "./pages/RegisterPage";
 import { ApolloProvider } from "@apollo/client";
 import AuthGuard from "./components/guards/AuthGuard";
 import NoAuthGuard from "./components/guards/NoAuthGuard";
-import MainLayout from "./components/layouts/MainLayout";
-import MeSidebar from "./components/layouts/MeSidebar";
-import FriendsPage from "./pages/FriendsPage";
+// import MainLayout from "./components/layouts/MainLayout";
+// import MeSidebar from "./components/layouts/MeSidebar";
+// import FriendsPage from "./pages/FriendsPage";
 import FriendsTabProvider from "./providers/FriendsTabProvider";
 import { client } from "./apollo.config";
+import LoadingScreen from "./components/shared/LoadingScreen";
+
+// Route based code splitting
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const MainLayout = lazy(() => import("./components/layouts/MainLayout"));
+const MeSidebar = lazy(() => import("./components/layouts/MeSidebar"));
+const FriendsPage = lazy(() => import("./pages/FriendsPage"));
 
 export const DEFAULT_ROUTE = "/channels/@me";
 
@@ -45,7 +53,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <FriendsTabProvider>
-        <RouterProvider router={router} />
+        <Suspense fallback={<LoadingScreen />}>
+          <RouterProvider router={router} />
+        </Suspense>
       </FriendsTabProvider>
     </ApolloProvider>
   </React.StrictMode>

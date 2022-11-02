@@ -27,7 +27,7 @@ const FriendsContent = ({ selectedTab, selectedFriends, friendRequests }: Props)
       ? friendRequests.filter((item) => item.username.includes(search))
       : selectedFriends.filter((item) => item.username.includes(search));
 
-  const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 150 });
+  const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 130 });
 
   return (
     <>

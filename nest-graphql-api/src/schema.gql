@@ -82,9 +82,9 @@ input FriendTag {
 }
 
 type Subscription {
-  friendProfileChanged(userId: Int!): Friend!
   friendRequestReceived(userId: Int!): FriendRequest!
   friendRequestDeleted(userId: Int!): Int!
   friendRequestConfirmed(userId: Int!): Friend!
   friendDeleted(userId: Int!): Int!
+  friendProfileChanged(userId: Int!): Friend!
 }

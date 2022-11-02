@@ -48,4 +48,14 @@ export class FriendsResolver {
   friendDeleted(@Args('userId', { type: () => Int }) userId: number) {
     return this.pubSub.asyncIterator('friendDeleted');
   }
+
+  @Subscription((returns) => Friend, {
+    filter: async (friendsService: FriendsService, payload, variables) => {
+      const friends = await friendsService.findAll(payload.friendProfileChanged.id);
+      return friends.some((friend) => friend.id === variables.userId);
+    },
+  })
+  friendProfileChanged(@Args('userId', { type: () => Int }) userId: number) {
+    return this.pubSub.asyncIterator('friendProfileChanged');
+  }
 }
