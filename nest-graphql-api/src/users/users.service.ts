@@ -8,10 +8,11 @@ import { UserStatus } from './enums/user-status.enum';
 import * as argon from 'argon2';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
+import { FriendsService } from '../friends/friends.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub, private friendsService: FriendsService) {}
 
   async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
     try {
@@ -69,7 +70,8 @@ export class UsersService {
       });
       const editedProfile = { ...userData, status: UserStatus[prismaStatus] };
       const { id, username, status } = editedProfile;
-      this.pubSub.publish('friendProfileChanged', { friendProfileChanged: { id, username, status } });
+      const friends = await this.friendsService.findAll(userId);
+      this.pubSub.publish('friendProfileChanged', { friendProfileChanged: { id, username, status, friends } });
       return editedProfile;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {

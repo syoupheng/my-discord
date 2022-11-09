@@ -50,9 +50,8 @@ export class FriendsResolver {
   }
 
   @Subscription((returns) => Friend, {
-    filter: async (friendsService: FriendsService, payload, variables) => {
-      const friends = await friendsService.findAll(payload.friendProfileChanged.id);
-      return friends.some((friend) => friend.id === variables.userId);
+    async filter(payload, variables) {
+      return payload.friendProfileChanged.friends.some((friend: Friend) => friend.id === variables.userId);
     },
   })
   friendProfileChanged(@Args('userId', { type: () => Int }) userId: number) {

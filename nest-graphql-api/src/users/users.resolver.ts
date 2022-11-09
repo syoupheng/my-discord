@@ -10,7 +10,7 @@ import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private usersService: UsersService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(private usersService: UsersService) {}
 
   @Mutation((returns) => AuthUser)
   @UseGuards(JwtAuthGuard)

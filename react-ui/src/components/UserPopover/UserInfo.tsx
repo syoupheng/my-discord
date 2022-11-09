@@ -1,6 +1,6 @@
 import { RiSettings5Fill } from "react-icons/ri";
-import Tooltip from "./shared/Tooltip";
-import useTooltip from "../hooks/ui/useTooltip";
+import Tooltip from "../shared/Tooltip";
+import useTooltip from "../../hooks/ui/useTooltip";
 import UserProfilePopover from "./UserProfilePopover";
 
 const UserInfo = () => {

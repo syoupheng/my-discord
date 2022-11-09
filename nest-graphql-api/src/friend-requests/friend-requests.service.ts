@@ -5,19 +5,19 @@ import { PrismaService } from '../prisma/prisma.service';
 import { FriendTag } from './dto/friend-tag.input';
 import { FriendRequest } from './entities/friend-request.entity';
 import { Prisma } from '@prisma/client';
-import { UsersService } from '../users/users.service';
 import { FriendRequestStatus } from './enums/friend-request-status.enum';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class FriendRequestsService {
-  constructor(private usersService: UsersService, private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   async create(friendTag: FriendTag, sender: User): Promise<FriendRequest> {
     const { id: recipientId, username: recipientName } = friendTag;
     const { id: senderId, username: senderName } = sender;
-    const recipient = await this.usersService.findOneById(recipientId);
+    const recipient = await this.prisma.user.findUnique({ where: { id: recipientId } });
+    if (!recipient) throw new NotFoundException("Cet utilisateur n'existe pas !");
     if (recipient.username !== recipientName || senderId === recipientId) throw new NotFoundException('Tag incorrect !');
     if (await this.findOne({ senderId: recipientId, recipientId: senderId }))
       throw new BadRequestException("Cet utilisateur t'a déjà envoyé une demande !");

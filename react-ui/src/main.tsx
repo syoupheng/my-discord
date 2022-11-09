@@ -40,6 +40,7 @@ const router = createBrowserRouter(
           <Route index element={<Navigate to={DEFAULT_ROUTE} />} />
           <Route path="@me" element={<MeSidebar />}>
             <Route index element={<FriendsPage />} />
+            <Route path=":roomId" element={"room page"} />
           </Route>
         </Route>
       </Route>

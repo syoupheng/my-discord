@@ -5,7 +5,6 @@ import { UsersModule } from '../users/users.module';
 import { FriendsModule } from '../friends/friends.module';
 
 @Module({
-  imports: [UsersModule],
   providers: [FriendRequestsResolver, FriendRequestsService],
   exports: [FriendRequestsService],
 })

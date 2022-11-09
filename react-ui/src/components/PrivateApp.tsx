@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import useRefetchUserOnFocus from "../hooks/auth/useRefetchUserOnFocus";
 import useFriendReqDeletedSub from "../hooks/friend-requests/useFriendReqDeletedSub";
 import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequestSub";
+import useFriendChangeSub from "../hooks/friends/useFriendChangeSub";
 import useFriendConfirmedSub from "../hooks/friends/useFriendConfirmedSub";
 import useFriendDeletedSub from "../hooks/friends/useFriendDeletedSub";
 
@@ -15,6 +16,7 @@ const PrivateApp = ({ children }: Props) => {
   useFriendConfirmedSub();
   useFriendDeletedSub();
   useRefetchUserOnFocus();
+  useFriendChangeSub();
 
   return <>{children}</>;
 };

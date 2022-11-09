@@ -26,10 +26,12 @@ module.exports = {
         "input-border": "hsl(0 0% 0% / 0.3)",
         "btn-danger": "#d83b3e",
         "btn-danger-hov": "#9f2d2f",
+        "channels-default": "#96989c",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],
         "btw-base-sm": ["15px", "22px"],
+        xxs: ["11px", "17px"],
       },
       keyframes: {
         drop: {
@@ -100,15 +102,25 @@ module.exports = {
           "0%": { transform: "rotate(45deg)" },
           "100%": { transform: "rotate(0deg)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "slide-in": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       animation: {
         drop: "drop 0.4s ease-out 1",
         "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate",
-        "tooltip-up": "tooltip-up 0.2s ease-in-out",
-        "tooltip-down": "tooltip-down 0.2s ease-in-out",
-        "tooltip-right": "tooltip-right 0.2s ease-in-out",
-        "tooltip-left": "tooltip-left 0.2s ease-in-out",
+        "tooltip-up": "tooltip-up 0.15s ease-in-out",
+        "tooltip-down": "tooltip-down 0.15s ease-in-out",
+        "tooltip-right": "tooltip-right 0.15s ease-in-out",
+        "tooltip-left": "tooltip-left 0.15s ease-in-out",
         "spin-45": "spin-45 0.1s linear",
+        "fade-in": "fade-in 0.1s ease-out",
+        "slide-in": "slide-in 0.5s ease-in-out",
       },
     },
   },

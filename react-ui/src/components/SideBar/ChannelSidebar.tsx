@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import { Outlet } from "react-router-dom";
-import UserInfo from "../UserInfo";
+import UserInfo from "../UserPopover/UserInfo";
 import Sidebar from "./Sidebar";
 
 interface Props {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 const ChannelSidebar = ({ children }: Props) => {
@@ -17,6 +17,6 @@ const ChannelSidebar = ({ children }: Props) => {
       <Outlet />
     </>
   );
-}
- 
+};
+
 export default ChannelSidebar;
