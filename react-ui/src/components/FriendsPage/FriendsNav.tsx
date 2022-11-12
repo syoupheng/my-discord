@@ -20,7 +20,7 @@ const FriendsNav = () => {
           <FriendsNavlink tab="ONLINE" />
           <FriendsNavlink tab="ALL" />
           <FriendsNavlink tab="PENDING">
-            <FriendRequestsCount />
+            <FriendRequestsCount className="ml-2" />
           </FriendsNavlink>
           <FriendsNavlink tab="BLOCKED" />
           <FriendsNavlink tab="ADD_FRIEND" />
@@ -32,14 +32,7 @@ const FriendsNav = () => {
         ref={containerRef}
         className="shrink-0 mx-2 cursor-pointer hover:text-secondary-light"
       >
-        {isShown && (
-          <Tooltip
-            direction="left"
-            tooltipTxt="Nouveau groupe privé"
-            position={position}
-            size="sm"
-          />
-        )}
+        {isShown && <Tooltip direction="left" tooltipTxt="Nouveau groupe privé" position={position} size="sm" />}
         <NewPrivateGroupIcon />
       </div>
     </section>

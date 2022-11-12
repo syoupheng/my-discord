@@ -11,10 +11,17 @@ import { RegisterUserInput } from './dto/register-user.input';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { FriendsService } from '../friends/friends.service';
+import { PrivateConversation } from '../private-conversations/entities/private-conversation.entity';
+import { PrivateConversationsService } from '../private-conversations/private-conversations.service';
 
 @Resolver((of) => AuthUser)
 export class AuthResolver {
-  constructor(private authService: AuthService, private friendRequestsService: FriendRequestsService, private friendsService: FriendsService) {}
+  constructor(
+    private authService: AuthService,
+    private friendRequestsService: FriendRequestsService,
+    private friendsService: FriendsService,
+    private privateConversationsService: PrivateConversationsService,
+  ) {}
 
   @Mutation((returns) => AuthUser)
   @UseGuards(GqlAuthGuard)
@@ -53,5 +60,11 @@ export class AuthResolver {
   getFriends(@Parent() authUser: AuthUser) {
     const { id: userId } = authUser;
     return this.friendsService.findAll(userId);
+  }
+
+  @ResolveField('privateConversations', (returns) => [PrivateConversation])
+  getPrivateConversations(@Parent() authUser: AuthUser) {
+    const { id: userId } = authUser;
+    return this.privateConversationsService.findAll(userId);
   }
 }

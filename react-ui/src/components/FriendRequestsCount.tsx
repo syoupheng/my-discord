@@ -1,9 +1,11 @@
 import useAuthUser from "../hooks/auth/useAuthUser";
-import useFriendRequests from "../hooks/friend-requests/useFriendRequests";
-import { FriendRequest, User } from "../types/user";
+import { FriendRequest } from "../types/user";
 
-const FriendRequestsCount = () => {
-  // const friendRequests = useFriendRequests();
+interface Props {
+  className?: string;
+}
+
+const FriendRequestsCount = ({ className = "" }: Props) => {
   const { data } = useAuthUser();
   if (!data) return null;
   const { friendRequests } = data.me;
@@ -11,7 +13,9 @@ const FriendRequestsCount = () => {
 
   if (requestsReceived.length <= 0) return null;
   return (
-    <div className="bg-red rounded-full h-4 w-4 text-white flex items-center justify-center ml-2 font-semibold text-xs basis-auto grow-0 shrink-0">
+    <div
+      className={`${className} bg-red rounded-full h-4 w-4 text-white flex items-center justify-center font-semibold text-xs basis-auto grow-0 shrink-0`}
+    >
       {requestsReceived.length}
     </div>
   );

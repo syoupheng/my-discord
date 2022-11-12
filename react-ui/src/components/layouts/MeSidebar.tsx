@@ -2,6 +2,7 @@ import useTooltip from "../../hooks/ui/useTooltip";
 import { MessageRoom } from "../../types/message-room";
 import ChannelSidebarItem from "../ChannelSidebar/ChannelSidebarItem";
 import MessageRoomItem from "../ChannelSidebar/MessageRoomItem";
+import FriendRequestsCount from "../FriendRequestsCount";
 import FriendsIcon from "../FriendsPage/FriendIcon";
 import AddIcon from "../Icons/AddIcon";
 import Tooltip from "../shared/Tooltip";
@@ -53,10 +54,11 @@ const MeSidebar = () => {
     <ChannelSidebar>
       <ul className="px-2 pt-3 mb-8">
         <ChannelSidebarItem>
-          <FriendsIcon className="mr-3 shrink-0 grow-0 flex items-center justify-center h-8 w-8" />
+          <FriendsIcon className="mr-3 ml-2 shrink-0 grow-0 flex items-center justify-center h-8 w-8" />
           <div className="whitespace-nowrap text-ellipsis overflow-hidden flex-auto flex justify-start items-center">
             <div className="flex-initial font-medium">Amis</div>
           </div>
+          <FriendRequestsCount className="mr-2" />
         </ChannelSidebarItem>
         <h2 className="flex pt-4 pr-2 pb-1 pl-4 h-10 text-ellipsis overflow-hidden uppercase font-medium text-channels-default text-xs group mt-3">
           <span className="flex-1 group-hover:text-secondary-light cursor-default">Messages privés</span>

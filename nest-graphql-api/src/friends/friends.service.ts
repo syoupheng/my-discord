@@ -92,7 +92,27 @@ export class FriendsService {
       data: { isFriendsWithId: friendId, hasFriendsId: authUserId },
     });
 
-    await this.prisma.$transaction([deleteFriendRequest, addNewFriend]);
+    const conversation = await this.prisma.privateConversation.findFirst({
+      where: {
+        OR: [
+          { friend_1_id: friendId, friend_2_id: authUserId },
+          { friend_1_id: authUserId, friend_2_id: friendId },
+        ],
+      },
+    });
+
+    const createPrivateConversation = this.prisma.privateConversation.create({
+      data: { friend_1_id: friendId, friend_2_id: authUserId },
+    });
+
+    const handlePrivateConversation = conversation
+      ? this.prisma.privateConversation.update({
+          where: { friend_1_id_friend_2_id: { friend_1_id: conversation.friend_1_id, friend_2_id: conversation.friend_2_id } },
+          data: { display1: true, display2: true },
+        })
+      : createPrivateConversation;
+
+    await this.prisma.$transaction([deleteFriendRequest, addNewFriend, handlePrivateConversation]);
     return this.findById(friendId, authUserId);
   }
 

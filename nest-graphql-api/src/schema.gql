@@ -26,6 +26,16 @@ enum FriendRequestStatus {
   SENT
 }
 
+type ConversationMember {
+  id: Int!
+  username: String!
+}
+
+type PrivateConversation {
+  id: Int!
+  member: ConversationMember!
+}
+
 type AuthUser {
   id: Int!
   username: String!
@@ -34,6 +44,7 @@ type AuthUser {
   phoneNumber: String
   friendRequests: [FriendRequest!]!
   friends: [Friend!]!
+  privateConversations: [PrivateConversation!]!
 }
 
 type SuccessResponse {
@@ -45,6 +56,8 @@ type Query {
 }
 
 type Mutation {
+  hideConversation(conversationId: Int!): PrivateConversation!
+  showConversation(friendId: Int!): PrivateConversation!
   editProfile(editProfileInput: EditProfileInput!): AuthUser!
   addFriend(friendId: Int!): Friend!
   deleteFriend(friendId: Int!): SuccessResponse!

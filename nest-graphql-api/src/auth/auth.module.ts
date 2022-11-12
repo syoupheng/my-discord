@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { FriendRequestsModule } from '../friend-requests/friend-requests.module';
 import { FriendsModule } from '../friends/friends.module';
+import { PrivateConversationsModule } from '../private-conversations/private-conversations.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FriendsModule } from '../friends/friends.module';
     FriendRequestsModule,
     FriendsModule,
     PassportModule,
+    PrivateConversationsModule,
     JwtModule.register({
       signOptions: { expiresIn: process.env.JWT_EXP_TIME ?? '1d' },
       secret: process.env.JWT_SECRET ?? 'secret',
