@@ -34,7 +34,13 @@ type ConversationMember {
 type PrivateConversation {
   id: Int!
   member: ConversationMember!
+  createdAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type AuthUser {
   id: Int!
@@ -45,10 +51,18 @@ type AuthUser {
   friendRequests: [FriendRequest!]!
   friends: [Friend!]!
   privateConversations: [PrivateConversation!]!
+  privateGroups: [PrivateGroup!]!
 }
 
 type SuccessResponse {
   success: Boolean!
+}
+
+type PrivateGroup {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  members: [ConversationMember!]!
 }
 
 type Query {
@@ -58,15 +72,29 @@ type Query {
 type Mutation {
   hideConversation(conversationId: Int!): PrivateConversation!
   showConversation(friendId: Int!): PrivateConversation!
-  editProfile(editProfileInput: EditProfileInput!): AuthUser!
+  createGroup(membersIds: [Int!]!): PrivateGroup!
+  editGroupName(editNameInput: EditNameInput!): PrivateGroup!
+  addGroupMembers(groupId: Int!, membersIds: [Int!]!): PrivateGroup!
+  leaveGroup(groupId: Int!): PrivateGroup!
   addFriend(friendId: Int!): Friend!
   deleteFriend(friendId: Int!): SuccessResponse!
   sendFriendRequest(friendTag: FriendTag!): FriendRequest!
   deleteFriendRequest(friendId: Int!): SuccessResponse!
   ignoreFriendRequest(friendId: Int!): SuccessResponse!
+  editProfile(editProfileInput: EditProfileInput!): AuthUser!
   login(loginUserInput: LoginUserInput!): AuthUser!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: SuccessResponse!
+}
+
+input EditNameInput {
+  groupId: Int!
+  name: String!
+}
+
+input FriendTag {
+  id: Int!
+  username: String!
 }
 
 input EditProfileInput {
@@ -75,11 +103,6 @@ input EditProfileInput {
   password: String
   phoneNumber: String
   status: UserStatus
-}
-
-input FriendTag {
-  id: Int!
-  username: String!
 }
 
 input LoginUserInput {

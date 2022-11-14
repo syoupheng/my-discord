@@ -18,7 +18,11 @@ export class PrivateConversationsService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return rawConversations.map(({ id, friend_1_id, friend_2_id }) => ({ id, memberId: userId === friend_1_id ? friend_2_id : friend_1_id }));
+    return rawConversations.map(({ id, friend_1_id, friend_2_id, createdAt }) => ({
+      id,
+      createdAt,
+      memberId: userId === friend_1_id ? friend_2_id : friend_1_id,
+    }));
   }
 
   async findConversationMember(memberId: number): Promise<ConversationMember> {
@@ -60,24 +64,24 @@ export class PrivateConversationsService {
     });
 
     if (!conversation) throw new NotFoundException("Il n'y a pas de conversation entre vous deux !");
-    const { friend_1_id, friend_2_id, display1, display2, id } = conversation;
+    const { friend_1_id, friend_2_id, display1, display2, id, createdAt } = conversation;
     let payload = {};
     if (userId === friend_1_id && !display1) {
       payload = { display1: true };
     } else if (userId === friend_2_id && !display2) {
       payload = { display2: true };
-    } else return { id, memberId: friendId };
+    } else return { id, createdAt, memberId: friendId };
 
     await this.prisma.privateConversation.update({
       where: { id },
       data: payload,
     });
 
-    return { id: conversation.id, memberId: friendId };
+    return { id: conversation.id, createdAt, memberId: friendId };
   }
 
-  async hide(conversationId: number, userId: number) {
-    const { friend_1_id, friend_2_id, display1, display2 } = await this.findById(conversationId);
+  async hide(conversationId: number, userId: number): Promise<PrivateConversation> {
+    const { friend_1_id, friend_2_id, display1, display2, createdAt } = await this.findById(conversationId);
 
     let payload = {};
     if (userId === friend_1_id && display1) {
@@ -91,6 +95,6 @@ export class PrivateConversationsService {
       data: payload,
     });
 
-    return { id: conversationId, memberId: userId === friend_1_id ? friend_2_id : friend_1_id };
+    return { id: conversationId, createdAt, memberId: userId === friend_1_id ? friend_2_id : friend_1_id };
   }
 }

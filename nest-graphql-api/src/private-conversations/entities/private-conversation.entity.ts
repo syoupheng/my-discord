@@ -10,4 +10,7 @@ export class PrivateConversation {
   member?: ConversationMember;
 
   memberId?: number;
+
+  @Field()
+  createdAt: Date;
 }

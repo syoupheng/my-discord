@@ -3,4 +3,5 @@ import { ConversationMember } from '../private-conversations/entities/conversati
 
 export interface IDataLoaders {
   conversationMembersLoader: DataLoader<number, ConversationMember>;
+  groupMembersLoader: DataLoader<number, ConversationMember[]>;
 }

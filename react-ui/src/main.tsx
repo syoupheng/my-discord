@@ -14,6 +14,7 @@ import NoAuthGuard from "./components/guards/NoAuthGuard";
 import FriendsTabProvider from "./providers/FriendsTabProvider";
 import { client } from "./apollo.config";
 import LoadingScreen from "./components/shared/LoadingScreen";
+import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
 
 // Route based code splitting
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -40,7 +41,10 @@ const router = createBrowserRouter(
           <Route index element={<Navigate to={DEFAULT_ROUTE} />} />
           <Route path="@me" element={<MeSidebar />}>
             <Route index element={<FriendsPage />} />
-            <Route path=":roomId" element={"room page"} />
+            <Route element={<PrivateGroupGuard />}>
+              <Route path="groups/:roomId" element={"room page"} />
+            </Route>
+            <Route path="conversations/:roomId" element={"room page"} />
           </Route>
         </Route>
       </Route>

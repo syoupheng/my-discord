@@ -6,15 +6,17 @@ interface Props {
   children: ReactNode;
   roomId?: number;
   closeBtn?: boolean;
+  isGroup?: boolean;
 }
 
-const ChannelSidebarItem = ({ children, roomId, closeBtn = false }: Props) => {
+const ChannelSidebarItem = ({ children, roomId, closeBtn = false, isGroup = false }: Props) => {
   const params = useParams();
   const isActive = params?.roomId === roomId?.toString();
+  const url = roomId ? (isGroup ? `/groups/${roomId}` : `/conversations/${roomId}`) : "";
   return (
     <li className="flex items-center w-full rounded group hover:bg-mod-hov my-[2px] max-w-[224px]">
       <NavLink
-        to={`/channels/@me${roomId ? "/" + roomId : ""}`}
+        to={`/channels/@me${url}`}
         className={`rounded flex-auto min-w-0 whitespace-nowrap overflow-hidden flex items-center h-[42px] ${
           isActive ? "text-white bg-grey-selected" : "text-channels-default"
         } group-hover:text-secondary-light group-hover:bg-transparent`}

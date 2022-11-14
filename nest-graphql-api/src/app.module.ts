@@ -14,6 +14,7 @@ import { PubsubModule } from './pubsub/pubsub.module';
 import { PrivateConversationsModule } from './private-conversations/private-conversations.module';
 import { DataloaderModule } from './dataloader/dataloader.module';
 import { DataloaderService } from './dataloader/dataloader.service';
+import { PrivateGroupsModule } from './private-groups/private-groups.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { DataloaderService } from './dataloader/dataloader.service';
     PubsubModule,
     PrivateConversationsModule,
     DataloaderModule,
+    PrivateGroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

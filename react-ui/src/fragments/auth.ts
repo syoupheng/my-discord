@@ -17,5 +17,22 @@ export const AUTH_USER_FIELDS = gql`
       username
       requestStatus
     }
+    privateConversations {
+      id
+      createdAt
+      member {
+        id
+        username
+      }
+    }
+    privateGroups {
+      id
+      createdAt
+      name
+      members {
+        id
+        username
+      }
+    }
   }
 `;

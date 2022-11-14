@@ -13,6 +13,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { FriendsService } from '../friends/friends.service';
 import { PrivateConversation } from '../private-conversations/entities/private-conversation.entity';
 import { PrivateConversationsService } from '../private-conversations/private-conversations.service';
+import { PrivateGroup } from '../private-groups/entities/private-group.entity';
+import { PrivateGroupsService } from '../private-groups/private-groups.service';
 
 @Resolver((of) => AuthUser)
 export class AuthResolver {
@@ -21,6 +23,7 @@ export class AuthResolver {
     private friendRequestsService: FriendRequestsService,
     private friendsService: FriendsService,
     private privateConversationsService: PrivateConversationsService,
+    private privateGroupsService: PrivateGroupsService,
   ) {}
 
   @Mutation((returns) => AuthUser)
@@ -66,5 +69,11 @@ export class AuthResolver {
   getPrivateConversations(@Parent() authUser: AuthUser) {
     const { id: userId } = authUser;
     return this.privateConversationsService.findAll(userId);
+  }
+
+  @ResolveField('privateGroups', (returns) => [PrivateGroup])
+  getPrivateGroups(@Parent() authUser: AuthUser) {
+    const { id: userId } = authUser;
+    return this.privateGroupsService.findAll(userId);
   }
 }

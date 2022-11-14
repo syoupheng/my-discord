@@ -1,54 +1,25 @@
+import { offset, useFloating } from "@floating-ui/react-dom";
+import { Popover } from "@headlessui/react";
 import useTooltip from "../../hooks/ui/useTooltip";
-import { MessageRoom } from "../../types/message-room";
 import ChannelSidebarItem from "../ChannelSidebar/ChannelSidebarItem";
-import MessageRoomItem from "../ChannelSidebar/MessageRoomItem";
+import MessageRoomList from "../ChannelSidebar/MessageRoomList";
 import FriendRequestsCount from "../FriendRequestsCount";
 import FriendsIcon from "../FriendsPage/FriendIcon";
 import AddIcon from "../Icons/AddIcon";
+import AddNewGroupPopup from "../shared/AddNewGroupPopup";
+import Portal from "../shared/Portal";
 import Tooltip from "../shared/Tooltip";
 import ChannelSidebar from "../SideBar/ChannelSidebar";
 
-const messageRooms: MessageRoom[] = [
-  {
-    id: 73390,
-    name: "GPE-2024 les meilleurs lalalala",
-    members: [
-      {
-        id: 5338,
-        username: "toto",
-        status: "INVISIBLE",
-      },
-      {
-        id: 8340,
-        username: "titi",
-        status: "ONLINE",
-      },
-      {
-        id: 83904,
-        username: "lala",
-        status: "DO_NOT_DISTURB",
-      },
-    ],
-  },
-  {
-    id: 2283720802,
-    members: [
-      {
-        id: 5338,
-        username: "Andrei Susai",
-        status: "INVISIBLE",
-      },
-      {
-        id: 8340,
-        username: "titi",
-        status: "ONLINE",
-      },
-    ],
-  },
-];
-
 const MeSidebar = () => {
   const { handleHover, setIsShown, containerRef, isShown, position } = useTooltip();
+  const {
+    x: popoverX,
+    y: popoverY,
+    reference: popoverRef,
+    floating: panelRef,
+    strategy: popoverStrat,
+  } = useFloating({ placement: "bottom-start", middleware: [offset(5)] });
 
   return (
     <ChannelSidebar>
@@ -60,7 +31,7 @@ const MeSidebar = () => {
           </div>
           <FriendRequestsCount className="mr-2" />
         </ChannelSidebarItem>
-        <h2 className="flex pt-4 pr-2 pb-1 pl-4 h-10 text-ellipsis overflow-hidden uppercase font-medium text-channels-default text-xs group mt-3">
+        <Popover className="flex pt-4 pr-2 pb-1 pl-4 h-10 text-ellipsis overflow-hidden uppercase font-medium text-channels-default text-xs group mt-3">
           <span className="flex-1 group-hover:text-secondary-light cursor-default">Messages privés</span>
           <div
             onMouseOver={handleHover}
@@ -68,13 +39,26 @@ const MeSidebar = () => {
             ref={containerRef}
             className="h-4 w-4 mr-[2px] grow-0 shrink cursor-pointer text-h-secondary hover:text-secondary-light"
           >
-            <AddIcon size={16} />
+            <Popover.Button ref={popoverRef} className="focus:outline-none">
+              <AddIcon size={16} />
+            </Popover.Button>
             {isShown && <Tooltip position={position} tooltipTxt={"Créer un MP"} size="sm" />}
           </div>
-        </h2>
-        {messageRooms.map((room) => (
-          <MessageRoomItem key={room.id} room={room} />
-        ))}
+          <Portal>
+            <Popover.Panel
+              ref={panelRef}
+              style={{
+                position: popoverStrat,
+                top: popoverY ?? 0,
+                left: popoverX ?? 0,
+              }}
+              className="z-40 bg-primary border border-gray-800 w-[440px] h-[400px] rounded-md drop-shadow-lg animate-fade-in"
+            >
+              <AddNewGroupPopup />
+            </Popover.Panel>
+          </Portal>
+        </Popover>
+        <MessageRoomList />
       </ul>
     </ChannelSidebar>
   );

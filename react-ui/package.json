@@ -14,6 +14,7 @@
     "@formkit/auto-animate": "^1.0.0-beta.3",
     "@headlessui/react": "^1.7.3",
     "@hookform/resolvers": "^2.9.8",
+    "dayjs": "^1.11.6",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.11.2",
     "react": "^18.2.0",
