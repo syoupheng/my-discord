@@ -18,14 +18,14 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
   const [confirmRequest] = useConfirmFriend();
 
   return (
-    <FriendItemContainer>
+    <FriendItemContainer onClick={() => console.log("clicked")}>
       <FriendItemTag friendRequest={friendRequest} />
       <div className="ml-2 flex">
         {friendRequest.requestStatus === "RECEIVED" ? (
           <>
             <FriendActionBtn
               action={() => confirmRequest({ variables: { friendId: friendRequest.id } })}
-              icon={<ValidateIcon />}
+              icon={<ValidateIcon size={20} />}
               description="Accepter"
               hoverColor="green"
             />

@@ -1,12 +1,13 @@
 import { offset, useFloating } from "@floating-ui/react-dom";
 import { Popover } from "@headlessui/react";
+import { useLocation } from "react-router-dom";
 import useTooltip from "../../hooks/ui/useTooltip";
 import ChannelSidebarItem from "../ChannelSidebar/ChannelSidebarItem";
 import MessageRoomList from "../ChannelSidebar/MessageRoomList";
 import FriendRequestsCount from "../FriendRequestsCount";
 import FriendsIcon from "../FriendsPage/FriendIcon";
 import AddIcon from "../Icons/AddIcon";
-import AddNewGroupPopup from "../shared/AddNewGroupPopup";
+import AddNewGroupPopup from "../privateGroups/AddNewGroupPopup";
 import Portal from "../shared/Portal";
 import Tooltip from "../shared/Tooltip";
 import ChannelSidebar from "../SideBar/ChannelSidebar";
@@ -21,10 +22,12 @@ const MeSidebar = () => {
     strategy: popoverStrat,
   } = useFloating({ placement: "bottom-start", middleware: [offset(5)] });
 
+  const location = useLocation();
+
   return (
     <ChannelSidebar>
-      <ul className="px-2 pt-3 mb-8">
-        <ChannelSidebarItem>
+      <ul className="px-2 pt-3 mb-24">
+        <ChannelSidebarItem isActive={["/channels/@me", "/channels/@me/"].includes(location.pathname)}>
           <FriendsIcon className="mr-3 ml-2 shrink-0 grow-0 flex items-center justify-center h-8 w-8" />
           <div className="whitespace-nowrap text-ellipsis overflow-hidden flex-auto flex justify-start items-center">
             <div className="flex-initial font-medium">Amis</div>
@@ -52,9 +55,9 @@ const MeSidebar = () => {
                 top: popoverY ?? 0,
                 left: popoverX ?? 0,
               }}
-              className="z-40 bg-primary border border-gray-800 w-[440px] h-[400px] rounded-md drop-shadow-lg animate-fade-in"
+              className="z-40 bg-primary border border-gray-800 w-[440px] rounded-md drop-shadow-lg animate-fade-in"
             >
-              <AddNewGroupPopup />
+              {({ close }) => <AddNewGroupPopup closePopover={close} />}
             </Popover.Panel>
           </Portal>
         </Popover>

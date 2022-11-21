@@ -1,23 +1,24 @@
-import { gql, useApolloClient } from "@apollo/client";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
+import { gql, useQuery } from "@apollo/client";
 import { Friend } from "../../types/user";
 
-const useFriends = (): Friend[] => {
-  const client = useApolloClient();
-  const { friends } = client.readFragment({
-    id: AUTH_USER_CACHE_ID,
-    fragment: gql`
-      fragment friends on AuthUser {
-        friends {
-          id
-          username
-          status
-        }
+export const GET_AUTH_USER_FRIENDS = gql`
+  query GetFriends {
+    me {
+      friends {
+        id
+        username
+        status
       }
-    `,
-  });
+    }
+  }
+`;
 
-  return friends;
+interface AuthFriendsResponse {
+  me: { friends: Friend[] };
+}
+
+const useFriends = () => {
+  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_FRIENDS, { fetchPolicy: "cache-only" });
 };
 
 export default useFriends;

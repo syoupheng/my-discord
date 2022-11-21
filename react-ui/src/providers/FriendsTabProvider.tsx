@@ -12,11 +12,7 @@ interface Props {
 
 const FriendsTabProvider = ({ children }: Props) => {
   const [selectedTab, setSelectedTab] = useState<FriendsTabValues>("ONLINE");
-  return (
-    <FriendsTabContext.Provider value={[selectedTab, setSelectedTab]}>
-      {children}
-    </FriendsTabContext.Provider>
-  );
+  return <FriendsTabContext.Provider value={[selectedTab, setSelectedTab]}>{children}</FriendsTabContext.Provider>;
 };
 
 export default FriendsTabProvider;

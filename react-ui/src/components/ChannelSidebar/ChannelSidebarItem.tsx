@@ -1,18 +1,15 @@
 import { ReactNode } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import CloseIcon from "../Icons/CloseIcon";
 
 interface Props {
+  url?: string;
   children: ReactNode;
-  roomId?: number;
-  closeBtn?: boolean;
-  isGroup?: boolean;
+  onClose?: () => any;
+  isActive: boolean;
 }
 
-const ChannelSidebarItem = ({ children, roomId, closeBtn = false, isGroup = false }: Props) => {
-  const params = useParams();
-  const isActive = params?.roomId === roomId?.toString();
-  const url = roomId ? (isGroup ? `/groups/${roomId}` : `/conversations/${roomId}`) : "";
+const ChannelSidebarItem = ({ url = "", children, onClose, isActive }: Props) => {
   return (
     <li className="flex items-center w-full rounded group hover:bg-mod-hov my-[2px] max-w-[224px]">
       <NavLink
@@ -23,8 +20,8 @@ const ChannelSidebarItem = ({ children, roomId, closeBtn = false, isGroup = fals
       >
         {children}
       </NavLink>
-      {closeBtn && (
-        <div className="hidden group-hover:block hover:text-gray-50 text-h-secondary opacity-70 m-[2px] pr-2 cursor-pointer">
+      {onClose && (
+        <div onClick={onClose} className="hidden group-hover:block hover:text-gray-50 text-h-secondary opacity-70 m-[2px] pr-2 cursor-pointer">
           <CloseIcon size={16} />
         </div>
       )}

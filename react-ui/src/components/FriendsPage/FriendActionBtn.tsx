@@ -21,16 +21,23 @@ const FriendActionBtn = ({ icon, description = "", hoverColor = "normal", action
   const { handleHover, setIsShown, containerRef, isShown, position } = useTooltip();
 
   return (
-    <div
-      onClick={action}
-      onMouseOver={handleHover}
-      onMouseLeave={() => setIsShown(false)}
-      ref={containerRef}
-      className={`cursor-pointer h-9 w-9 rounded-full text-h-secondary bg-secondary flex items-center justify-center relative mp-btn group-hover:bg-tertiary ml-2 first:ml-0 ${hoverColorMap[hoverColor]}`}
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        action();
+      }}
+      className="ml-2 first:ml-0 cursor-pointer"
     >
-      {icon}
-      {isShown && <Tooltip position={position} tooltipTxt={description} size="sm" />}
-    </div>
+      <div
+        onMouseOver={handleHover}
+        onMouseLeave={() => setIsShown(false)}
+        ref={containerRef}
+        className={`h-9 w-9 rounded-full text-h-secondary bg-secondary flex items-center justify-center relative mp-btn group-hover:bg-tertiary ${hoverColorMap[hoverColor]}`}
+      >
+        {icon}
+        {isShown && <Tooltip position={position} tooltipTxt={description} size="sm" />}
+      </div>
+    </button>
   );
 };
 

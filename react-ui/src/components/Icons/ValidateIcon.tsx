@@ -1,13 +1,10 @@
-const ValidateIcon = () => {
+interface Props {
+  size?: number;
+}
+
+const ValidateIcon = ({ size = 24 }: Props) => {
   return (
-    <svg
-      className="h-5 w-5"
-      aria-hidden="true"
-      role="img"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
+    <svg aria-hidden="true" role="img" width={size} height={size} viewBox="0 0 24 24">
       <path
         fill="currentColor"
         fillRule="evenodd"

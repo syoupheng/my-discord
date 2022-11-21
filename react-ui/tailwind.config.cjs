@@ -27,6 +27,8 @@ module.exports = {
         "btn-danger": "#d83b3e",
         "btn-danger-hov": "#9f2d2f",
         "channels-default": "#96989c",
+        "primary-dark-400": "#72767e",
+        "primary-dark-500": "rgba(79, 84, 92, 0.3)",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],

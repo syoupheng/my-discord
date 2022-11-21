@@ -7,7 +7,7 @@ const PrivateGroupGuard = () => {
   const { data } = useAuthUser();
   if (!data) return null;
   const { privateGroups } = data.me;
-  return privateGroups.some((group) => group.id === parseInt(params.roomId!)) ? <Outlet /> : <Navigate to={DEFAULT_ROUTE} />;
+  return privateGroups.some((group) => group.id === parseInt(params.groupId!)) ? <Outlet /> : <Navigate to={DEFAULT_ROUTE} />;
 };
 
 export default PrivateGroupGuard;

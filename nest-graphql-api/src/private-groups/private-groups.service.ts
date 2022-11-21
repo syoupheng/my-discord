@@ -59,8 +59,8 @@ export class PrivateGroupsService {
 
   async create(membersIds: number[], authUser: AuthUser): Promise<PrivateGroup> {
     const uniqueIds = [...new Set([...membersIds, authUser.id])];
-    if (uniqueIds.length > 10 || uniqueIds.length < 3)
-      throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 3 au minimum !');
+    if (uniqueIds.length > 10 || uniqueIds.length === 0)
+      throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 1 au minimum !');
     const friends = await this.friendsService.findAll(authUser.id);
     const groupMembers = uniqueIds.map((memberId) => {
       if (memberId === authUser.id) return { id: authUser.id, username: authUser.username };
@@ -91,11 +91,10 @@ export class PrivateGroupsService {
   }
 
   async addMember(groupId: number, membersIds: number[], userId: number): Promise<PrivateGroup> {
-    const currentMembersIds = await this.canEdit(groupId, userId);
+    const [currentMembersIds, friends] = await Promise.all([this.canEdit(groupId, userId), this.friendsService.findAll(userId)]);
     const uniqueIds = [...new Set(membersIds)];
     if (currentMembersIds.length + uniqueIds.length > 10)
       throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 3 au minimum !');
-    const friends = await this.friendsService.findAll(userId);
 
     const newGroupMembers = uniqueIds.map((memberId) => {
       if (currentMembersIds.includes(memberId)) throw new BadRequestException('Un ou plusieurs des utilisateurs font déjà partie de ce groupe');
@@ -120,6 +119,9 @@ export class PrivateGroupsService {
         where: { privateGroupId_memberId: { privateGroupId: groupId, memberId: userId } },
         include: { privateGroup: true },
       });
+
+      const numMembers = await this.prisma.membersInPrivateGroups.count({ where: { privateGroupId: groupId } });
+      if (numMembers === 0) await this.prisma.privateGroup.delete({ where: { id: groupId } });
       return membersInPrivateGroups.privateGroup;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')

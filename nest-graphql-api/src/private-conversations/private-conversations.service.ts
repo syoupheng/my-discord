@@ -27,7 +27,6 @@ export class PrivateConversationsService {
 
   async findConversationMember(memberId: number): Promise<ConversationMember> {
     const member = await this.prisma.user.findUnique({ where: { id: memberId } });
-    console.log('fetching conversation member...');
     if (!member) throw new NotFoundException("Cet utilisateur n'existe pas");
     const { id, username } = member;
     return { id, username };
