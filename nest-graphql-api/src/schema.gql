@@ -1,0 +1,131 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Friend {
+  id: Int!
+  username: String!
+  status: UserStatus!
+}
+
+enum UserStatus {
+  ONLINE
+  INACTIVE
+  DO_NOT_DISTURB
+  INVISIBLE
+}
+
+type FriendRequest {
+  id: Int!
+  username: String!
+  requestStatus: FriendRequestStatus!
+}
+
+enum FriendRequestStatus {
+  RECEIVED
+  SENT
+}
+
+type ConversationMember {
+  id: Int!
+  username: String!
+}
+
+type PrivateConversation {
+  id: Int!
+  member: ConversationMember!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type AuthUser {
+  id: Int!
+  username: String!
+  email: String!
+  status: UserStatus!
+  phoneNumber: String
+  friendRequests: [FriendRequest!]!
+  friends: [Friend!]!
+  privateConversations: [PrivateConversation!]!
+  privateGroups: [PrivateGroup!]!
+}
+
+type SuccessResponse {
+  success: Boolean!
+}
+
+type FriendRequestConfirmedPayload {
+  newFriend: Friend!
+  newConversation: PrivateConversation!
+}
+
+type PrivateGroup {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  members: [ConversationMember!]!
+}
+
+type Query {
+  me: AuthUser!
+}
+
+type Mutation {
+  hideConversation(conversationId: Int!): PrivateConversation!
+  showConversation(friendId: Int!): PrivateConversation!
+  createGroup(membersIds: [Int!]!): PrivateGroup!
+  editGroupName(editNameInput: EditNameInput!): PrivateGroup!
+  addGroupMembers(groupId: Int!, membersIds: [Int!]!): PrivateGroup!
+  leaveGroup(groupId: Int!): PrivateGroup!
+  addFriend(friendId: Int!): Friend!
+  deleteFriend(friendId: Int!): SuccessResponse!
+  sendFriendRequest(friendTag: FriendTag!): FriendRequest!
+  deleteFriendRequest(friendId: Int!): SuccessResponse!
+  ignoreFriendRequest(friendId: Int!): SuccessResponse!
+  editProfile(editProfileInput: EditProfileInput!): AuthUser!
+  login(loginUserInput: LoginUserInput!): AuthUser!
+  register(registerUserInput: RegisterUserInput!): AuthUser!
+  logout: SuccessResponse!
+}
+
+input EditNameInput {
+  groupId: Int!
+  name: String!
+}
+
+input FriendTag {
+  id: Int!
+  username: String!
+}
+
+input EditProfileInput {
+  username: String
+  email: String
+  password: String
+  phoneNumber: String
+  status: UserStatus
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input RegisterUserInput {
+  username: String!
+  email: String!
+  password: String!
+  phoneNumber: String
+}
+
+type Subscription {
+  friendRequestConfirmed(userId: Int!): FriendRequestConfirmedPayload!
+  friendDeleted(userId: Int!): Int!
+  friendProfileChanged(userId: Int!): Friend!
+  friendRequestReceived(userId: Int!): FriendRequest!
+  friendRequestDeleted(userId: Int!): Int!
+}

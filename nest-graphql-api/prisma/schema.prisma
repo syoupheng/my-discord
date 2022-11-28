@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                         Int                      @id @default(autoincrement())
+  username                   String                   @unique
+  email                      String                   @unique
+  status                     UserStatus               @default(INVISIBLE)
+  password                   String
+  phoneNumber                String?
+  createdAt                  DateTime                 @default(now())
+  friendRequestsSent         FriendRequest[]          @relation("friendRequestsSent")
+  friendRequestsReceived     FriendRequest[]          @relation("friendRequestsReceived")
+  isFriendsWith              FriendsWith[]            @relation("hasFriends")
+  hasFriends                 FriendsWith[]            @relation("isFriendsWith")
+  privateGroups              MembersInPrivateGroups[]
+  hasConversationWithFriend1 PrivateConversation[]    @relation("hasConversationWithFriend1")
+  hasConversationWithFriend2 PrivateConversation[]    @relation("hasConversationWithFriend2")
+  conversationMessages       ConversationMessage[]
+  groupMessages              GroupMessage[]
+
+  @@map("users")
+}
+
+model FriendRequest {
+  sender      User     @relation(name: "friendRequestsSent", fields: [senderId], references: [id])
+  senderId    Int
+  recipient   User     @relation(name: "friendRequestsReceived", fields: [recipientId], references: [id])
+  recipientId Int
+  ignored     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@id([senderId, recipientId])
+  @@map("friend_requests")
+}
+
+model FriendsWith {
+  isFriendsWith   User         @relation(name: "isFriendsWith", fields: [isFriendsWithId], references: [id])
+  isFriendsWithId Int
+  hasFriends      User         @relation(name: "hasFriends", fields: [hasFriendsId], references: [id])
+  hasFriendsId    Int
+  status          FriendStatus @default(FRIENDS)
+  createdAt       DateTime     @default(now())
+
+  @@id([isFriendsWithId, hasFriendsId])
+  @@map("friends_with")
+}
+
+model PrivateGroup {
+  id        Int                      @id @default(autoincrement())
+  name      String
+  createdAt DateTime                 @default(now())
+  members   MembersInPrivateGroups[]
+  messages  GroupMessage[]
+
+  @@map("private_group")
+}
+
+model MembersInPrivateGroups {
+  privateGroup   PrivateGroup @relation(fields: [privateGroupId], references: [id])
+  privateGroupId Int
+  member         User         @relation(fields: [memberId], references: [id])
+  memberId       Int
+  joinedIn       DateTime     @default(now())
+
+  @@id([privateGroupId, memberId])
+  @@map("members_in_private_groups")
+}
+
+model GroupMessage {
+  id             Int            @id @default(autoincrement())
+  createdAt      DateTime       @default(now())
+  editedAt       DateTime?
+  content        String
+  author         User           @relation(fields: [authorId], references: [id])
+  authorId       Int
+  privateGroup   PrivateGroup   @relation(fields: [privateGroupId], references: [id])
+  privateGroupId Int
+  respondsToId   Int?
+  respondsTo     GroupMessage?  @relation("responseToGroupMessage", fields: [respondsToId], references: [id])
+  responses      GroupMessage[] @relation("responseToGroupMessage")
+
+  @@map("group_message")
+}
+
+model PrivateConversation {
+  id          Int                   @unique @default(autoincrement())
+  createdAt   DateTime              @default(now())
+  friend1     User                  @relation(name: "hasConversationWithFriend1", fields: [friend_1_id], references: [id])
+  friend_1_id Int
+  friend2     User                  @relation(name: "hasConversationWithFriend2", fields: [friend_2_id], references: [id])
+  friend_2_id Int
+  display1    Boolean               @default(true)
+  display2    Boolean               @default(true)
+  messages    ConversationMessage[]
+
+  @@id([friend_1_id, friend_2_id])
+  @@map("private_conversation")
+}
+
+model ConversationMessage {
+  id                    Int                   @id @default(autoincrement())
+  createdAt             DateTime              @default(now())
+  editedAt              DateTime?
+  content               String
+  author                User                  @relation(fields: [authorId], references: [id])
+  authorId              Int
+  privateConversation   PrivateConversation   @relation(fields: [privateConversationId], references: [id])
+  privateConversationId Int
+  respondsToId          Int?
+  respondsTo            ConversationMessage?  @relation("responseToPrivateMessage", fields: [respondsToId], references: [id])
+  responses             ConversationMessage[] @relation("responseToPrivateMessage")
+
+  @@map("conversation_message")
+}
+
+enum UserStatus {
+  ONLINE
+  INACTIVE
+  DO_NOT_DISTURB
+  INVISIBLE
+}
+
+enum FriendStatus {
+  FRIENDS
+  BLOCKED
+}
