@@ -1,14 +1,25 @@
 import { gql } from "@apollo/client";
 import { useEffect } from "react";
+import { PrivateConversation } from "../../types/private-conversation";
 import { Friend } from "../../types/user";
 import useAuthUser from "../auth/useAuthUser";
 
 const CONFIRM_FRIEND_REQUEST_SUBSCRIPTION = gql`
   subscription OnFriendRequestConfirmed($userId: Int!) {
     friendRequestConfirmed(userId: $userId) {
-      id
-      username
-      status
+      newFriend {
+        id
+        username
+        status
+      }
+      newConversation {
+        id
+        createdAt
+        member {
+          id
+          username
+        }
+      }
     }
   }
 `;
@@ -19,15 +30,22 @@ const useFriendConfirmedSub = () => {
   useEffect(() => {
     let unsubscribe: () => void;
     if (data) {
-      unsubscribe = subscribeToMore<{ friendRequestConfirmed: Friend }>({
+      unsubscribe = subscribeToMore<{ friendRequestConfirmed: { newFriend: Friend; newConversation: PrivateConversation } }>({
         document: CONFIRM_FRIEND_REQUEST_SUBSCRIPTION,
         variables: { userId: data.me.id },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
-          const newFriend = subscriptionData.data.friendRequestConfirmed;
+          console.log("sub payload : ", subscriptionData.data);
+          const { newFriend, newConversation } = subscriptionData.data.friendRequestConfirmed;
           const newFriendRequests = prev.me.friendRequests.filter((request) => request.id !== newFriend.id);
-          if (prev.me.friends.some((request) => request.id === newFriend.id)) return { me: { ...prev.me, friendRequests: newFriendRequests } };
-          const newData = { ...prev.me, friends: [newFriend, ...prev.me.friends], friendRequests: newFriendRequests };
+          const newData = {
+            ...prev.me,
+            friends: prev.me.friends.some((friend) => friend.id === newFriend.id) ? prev.me.friends : [newFriend, ...prev.me.friends],
+            friendRequests: newFriendRequests,
+            privateConversations: prev.me.privateConversations.some((conv) => conv.id === newConversation.id)
+              ? prev.me.privateConversations
+              : [newConversation, ...prev.me.privateConversations],
+          };
 
           return { me: newData };
         },

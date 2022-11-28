@@ -1,7 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
 import { ConversationMember } from "../../types/private-conversation";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const SHOW_CONVERSATION = gql`
   mutation showConversation($friendId: Int!) {
@@ -31,7 +32,7 @@ interface TParams {
 
 const useShowConversation = ({ friendId, redirect = false }: TParams) => {
   const navigate = useNavigate();
-  return useMutation<MutationResponse>(SHOW_CONVERSATION, {
+  return useAuthMutation<MutationResponse>(SHOW_CONVERSATION, {
     variables: { friendId },
     onCompleted: ({ showConversation: conversation }) => {
       if (redirect) navigate(`/channels/@me/conversations/${conversation.id}`);

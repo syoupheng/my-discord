@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const EDIT_PROFILE = gql`
   mutation editProfile($input: EditProfileInput!) {
@@ -13,7 +14,7 @@ const EDIT_PROFILE = gql`
 `;
 
 const useEditProfile = () => {
-  return useMutation(EDIT_PROFILE);
+  return useAuthMutation(EDIT_PROFILE);
 };
 
 export default useEditProfile;

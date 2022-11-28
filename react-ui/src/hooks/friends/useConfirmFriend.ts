@@ -1,6 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
 import { Friend } from "../../types/user";
+import useAuthMutation from "../auth/useAuthMutation";
+import { GET_AUTH_USER_CONVERSATIONS } from "../private-conversation/usePrivateConversations";
 
 const CONFIRM_FRIEND = gql`
   mutation addNewFriend($friendId: Int!) {
@@ -17,7 +19,8 @@ interface MutationResponse {
 }
 
 const useConfirmFriend = () => {
-  return useMutation<MutationResponse>(CONFIRM_FRIEND, {
+  return useAuthMutation<MutationResponse>(CONFIRM_FRIEND, {
+    refetchQueries: [{ query: GET_AUTH_USER_CONVERSATIONS }],
     update(cache, { data }) {
       cache.modify({
         id: AUTH_USER_CACHE_ID,

@@ -2,7 +2,7 @@ import { useState, MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import useShowConversation from "../../hooks/private-conversation/useShowConversation";
 import { PrivateConversation } from "../../types/private-conversation";
-import { Friend, User } from "../../types/user";
+import { Friend } from "../../types/user";
 import CancelIcon from "../Icons/CancelIcon";
 import MessageIcon from "../Icons/MessageIcon";
 import DeleteFriendDialog from "./DeleteFriendDialog";

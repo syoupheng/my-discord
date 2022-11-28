@@ -32,24 +32,18 @@ const useAddFriendForm = () => {
 
     const [username, id] = splitTag;
     if (parseInt(id).toString() !== id) {
-      setError(
-        "Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes."
-      );
+      setError("Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes.");
       return;
     }
     const payload = { id: parseInt(id), username };
     try {
       friendTagSchema.parse(payload);
     } catch (err) {
-      setError(
-        "Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes."
-      );
+      setError("Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes.");
       return;
     }
     try {
-      await sendFriendRequest({
-        variables: { input: payload },
-      });
+      await sendFriendRequest({ variables: { input: payload } });
       setFriendTag("");
       setSuccess(friendTag);
     } catch (err: any) {

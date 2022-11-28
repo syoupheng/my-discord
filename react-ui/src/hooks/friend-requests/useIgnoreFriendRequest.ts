@@ -1,5 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const IGNORE_FRIEND_REQUEST = gql`
   mutation ignoreFriendRequest($friendId: Int!) {
@@ -10,7 +11,7 @@ const IGNORE_FRIEND_REQUEST = gql`
 `;
 
 const useIgnoreFriendRequest = (friendId: number) => {
-  return useMutation(IGNORE_FRIEND_REQUEST, {
+  return useAuthMutation(IGNORE_FRIEND_REQUEST, {
     variables: { friendId },
     update(cache) {
       cache.modify({

@@ -20,6 +20,7 @@ const SidebarItem = ({ children, active = false, tooltipTxt, handleClick }: Prop
 
   return (
     <div
+      data-testid={tooltipTxt}
       ref={containerRef}
       onMouseOver={handleHover}
       onMouseLeave={() => setIsShown(false)}
@@ -29,9 +30,7 @@ const SidebarItem = ({ children, active = false, tooltipTxt, handleClick }: Prop
       } relative shrink-0 flex items-center justify-center h-12 w-12 my-2 mx-auto text-white cursor-pointer transition-all ease-linear duration-100 group`}
     >
       {children}
-      {isShown && (
-        <Tooltip tooltipTxt={tooltipTxt} position={position} direction={TOOLTIP_DIRECTION} />
-      )}
+      {isShown && <Tooltip tooltipTxt={tooltipTxt} position={position} direction={TOOLTIP_DIRECTION} />}
     </div>
   );
 };

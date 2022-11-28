@@ -6,6 +6,7 @@ import { SuccessResponse } from '../auth/dto/success-response';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Friend } from './entities/friends.entity';
 import { FriendsService } from './friends.service';
+import { FriendRequestConfirmedPayload } from './dto/friend-request-confirmed-payload.dto';
 
 @Resolver(() => Friend)
 export class FriendsResolver {
@@ -14,9 +15,7 @@ export class FriendsResolver {
   @Mutation((returns) => Friend)
   @UseGuards(JwtAuthGuard)
   async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
-    const { id, username, status } = ctx.req.user as Friend;
-    const newFriend = await this.friendsService.add(friendId, ctx.req.user.id);
-    this.pubSub.publish('friendRequestConfirmed', { friendRequestConfirmed: { id, username, status, senderId: newFriend.id } });
+    const newFriend = await this.friendsService.add(friendId, ctx.req.user);
     return newFriend;
   }
 
@@ -27,7 +26,7 @@ export class FriendsResolver {
     return { success: true };
   }
 
-  @Subscription((returns) => Friend, {
+  @Subscription((returns) => FriendRequestConfirmedPayload, {
     filter: (payload, variables) => payload.friendRequestConfirmed.senderId === variables.userId,
     resolve: ({ friendRequestConfirmed }) => {
       const { senderId, ...newFriend } = friendRequestConfirmed;

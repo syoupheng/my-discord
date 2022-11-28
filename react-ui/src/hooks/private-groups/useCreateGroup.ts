@@ -1,7 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
 import { PrivateGroup } from "../../types/private-group";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const CREATE_GROUP = gql`
   mutation createGroup($membersIds: [Int!]!) {
@@ -24,7 +25,7 @@ interface MutationResponse {
 const useCreateGroup = () => {
   const navigate = useNavigate();
 
-  return useMutation<MutationResponse>(CREATE_GROUP, {
+  return useAuthMutation<MutationResponse>(CREATE_GROUP, {
     onCompleted: (data) => {
       navigate(`/channels/@me/groups/${data.createGroup.id}`);
     },

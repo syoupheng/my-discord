@@ -16,6 +16,7 @@ import { client } from "./apollo.config";
 import LoadingScreen from "./components/shared/LoadingScreen";
 import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
 import PrivateConversationPage from "./pages/PrivateConversationPage";
+import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
 
 // Route based code splitting
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -45,7 +46,9 @@ const router = createBrowserRouter(
             <Route element={<PrivateGroupGuard />}>
               <Route path="groups/:groupId" element={"room page"} />
             </Route>
-            <Route path="conversations/:conversationId" element={<PrivateConversationPage />} />
+            <Route element={<PrivateConversationGuard />}>
+              <Route path="conversations/:conversationId" element={<PrivateConversationPage />} />
+            </Route>
           </Route>
         </Route>
       </Route>

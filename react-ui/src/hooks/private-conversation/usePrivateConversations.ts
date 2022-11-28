@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { PrivateConversation } from "../../types/private-conversation";
+import useLogoutOnError from "../auth/useLogoutOnError";
 
 export const GET_AUTH_USER_CONVERSATIONS = gql`
   query GetFriends {
@@ -21,7 +22,8 @@ interface AuthFriendsResponse {
 }
 
 const usePrivateConversations = () => {
-  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only" });
+  const onError = useLogoutOnError();
+  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only", onError });
 };
 
 export default usePrivateConversations;

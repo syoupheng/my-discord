@@ -1,15 +1,6 @@
 const NewPrivateGroupIcon = () => {
   return (
-    <svg
-      x="0"
-      y="0"
-      className="icon-2xnN2Y"
-      aria-hidden="true"
-      role="img"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-    >
+    <svg x="0" y="0" aria-hidden="true" role="img" width="24" height="24" viewBox="0 0 24 24">
       <path
         fill="currentColor"
         fillRule="evenodd"

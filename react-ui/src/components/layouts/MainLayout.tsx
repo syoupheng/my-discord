@@ -7,7 +7,6 @@ import useLogout from "../../hooks/auth/useLogout";
 import Spinner from "../shared/Spinner";
 
 const MainLayout = () => {
-
   const [logout, { loading }] = useLogout();
 
   return (
@@ -25,6 +24,6 @@ const MainLayout = () => {
       <Outlet />
     </div>
   );
-}
- 
+};
+
 export default MainLayout;

@@ -5,6 +5,7 @@ import { FriendRequestsService } from '../friend-requests/friend-requests.servic
 import { PrismaService } from '../prisma/prisma.service';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { Friend } from './entities/friends.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class FriendsService {
@@ -75,7 +76,8 @@ export class FriendsService {
     return friends;
   }
 
-  async add(friendId: number, authUserId: number) {
+  async add(friendId: number, authUser: User) {
+    const { id: authUserId, username, status } = authUser;
     const uniqueInput = {
       senderId: friendId,
       recipientId: authUserId,
@@ -113,7 +115,25 @@ export class FriendsService {
       : createPrivateConversation;
 
     await this.prisma.$transaction([deleteFriendRequest, addNewFriend, handlePrivateConversation]);
-    return this.findById(friendId, authUserId);
+    const newFriend = await this.findById(friendId, authUserId);
+    const newConversation =
+      conversation ??
+      (await this.prisma.privateConversation.findFirst({
+        where: {
+          OR: [
+            { friend_1_id: friendId, friend_2_id: authUserId },
+            { friend_1_id: authUserId, friend_2_id: friendId },
+          ],
+        },
+      }));
+    this.pubSub.publish('friendRequestConfirmed', {
+      friendRequestConfirmed: {
+        senderId: newFriend.id,
+        newFriend: { id: authUserId, username, status },
+        newConversation: { ...newConversation, memberId: authUserId },
+      },
+    });
+    return newFriend;
   }
 
   async delete(friendId: number, authUserId: number) {

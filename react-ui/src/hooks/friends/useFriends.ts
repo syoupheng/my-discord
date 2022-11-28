@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { Friend } from "../../types/user";
+import useLogoutOnError from "../auth/useLogoutOnError";
 
 export const GET_AUTH_USER_FRIENDS = gql`
   query GetFriends {
@@ -18,7 +19,11 @@ interface AuthFriendsResponse {
 }
 
 const useFriends = () => {
-  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_FRIENDS, { fetchPolicy: "cache-only" });
+  const onError = useLogoutOnError();
+  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_FRIENDS, {
+    fetchPolicy: "cache-only",
+    onError,
+  });
 };
 
 export default useFriends;

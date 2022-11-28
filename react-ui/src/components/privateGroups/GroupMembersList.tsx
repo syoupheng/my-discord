@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import { Friend } from "../../types/user";
+import NoResultsIcon from "../Icons/NoResultsIcon";
 import ValidateIcon from "../Icons/ValidateIcon";
 import UserAvatar from "../shared/UserAvatar";
 
@@ -13,6 +14,16 @@ interface Props {
 
 const GroupMembersList = forwardRef<HTMLDivElement, Props>(
   ({ filterFriends, handleClick, hoveredIndex = 0, handleHover, isSelected }, friendListRef) => {
+    if (filterFriends.length === 0)
+      return (
+        <div className="flex-auto text-primary-dark-400 px-12 text-center mb-5 max-h-48 text-btw-base-sm flex flex-col flex-nowrap justify-center">
+          <div className="mb-5 mx-auto">
+            <NoResultsIcon />
+          </div>
+          <div>Aucun ami trouvé n'étant pas déjà dans ce groupe privé.</div>
+        </div>
+      );
+
     return (
       <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0">
         {filterFriends.map(({ status, username, id }, idx) => (

@@ -10,9 +10,7 @@ const LOGOUT_USER = gql`
 `;
 
 const useLogout = () => {
-
   const navigate = useNavigate();
-
   const client = useApolloClient();
 
   return useMutation<{ logout: { success: boolean } }>(LOGOUT_USER, {
@@ -21,6 +19,6 @@ const useLogout = () => {
       navigate("/login");
     },
   });
-}
+};
 
 export default useLogout;

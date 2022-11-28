@@ -1,5 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const DELETE_FRIEND = gql`
   mutation deleteFriend($friendId: Int!) {
@@ -10,7 +11,7 @@ const DELETE_FRIEND = gql`
 `;
 
 const useDeleteFriend = (friendId: number) => {
-  return useMutation(DELETE_FRIEND, {
+  return useAuthMutation(DELETE_FRIEND, {
     variables: { friendId },
     update(cache) {
       cache.modify({

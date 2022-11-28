@@ -1,7 +1,8 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
 import { DEFAULT_ROUTE } from "../../main";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const LEAVE_GROUP = gql`
   mutation leaveGroup($groupId: Int!) {
@@ -20,7 +21,7 @@ interface MutationResponse {
 const useLeaveGroup = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  return useMutation<MutationResponse>(LEAVE_GROUP, {
+  return useAuthMutation<MutationResponse>(LEAVE_GROUP, {
     onCompleted: ({ leaveGroup: data }) => {
       if (pathname.includes(`/channels/@me/groups/${data.id}`)) navigate(DEFAULT_ROUTE);
     },

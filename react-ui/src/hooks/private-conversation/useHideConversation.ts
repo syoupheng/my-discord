@@ -1,5 +1,6 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { AUTH_USER_CACHE_ID } from "../../apollo.config";
+import useAuthMutation from "../auth/useAuthMutation";
 
 const HIDE_CONVERSATION = gql`
   mutation hideConversation($conversationId: Int!) {
@@ -16,7 +17,7 @@ interface MutationResponse {
 }
 
 const useHideConversation = (conversationId: number) => {
-  return useMutation<MutationResponse>(HIDE_CONVERSATION, {
+  return useAuthMutation<MutationResponse>(HIDE_CONVERSATION, {
     variables: { conversationId },
     update(cache) {
       cache.modify({

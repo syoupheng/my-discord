@@ -58,6 +58,11 @@ type SuccessResponse {
   success: Boolean!
 }
 
+type FriendRequestConfirmedPayload {
+  newFriend: Friend!
+  newConversation: PrivateConversation!
+}
+
 type PrivateGroup {
   id: Int!
   name: String!
@@ -118,7 +123,7 @@ input RegisterUserInput {
 }
 
 type Subscription {
-  friendRequestConfirmed(userId: Int!): Friend!
+  friendRequestConfirmed(userId: Int!): FriendRequestConfirmedPayload!
   friendDeleted(userId: Int!): Int!
   friendProfileChanged(userId: Int!): Friend!
   friendRequestReceived(userId: Int!): FriendRequest!
