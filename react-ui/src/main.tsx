@@ -17,6 +17,7 @@ import LoadingScreen from "./components/shared/LoadingScreen";
 import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
 import PrivateConversationPage from "./pages/PrivateConversationPage";
 import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
+import PrivateGroupPage from "./pages/PrivateGroupPage";
 
 // Route based code splitting
 const LoginPage = lazy(() => import("./pages/LoginPage"));
@@ -44,7 +45,7 @@ const router = createBrowserRouter(
           <Route path="@me" element={<MeSidebar />}>
             <Route index element={<FriendsPage />} />
             <Route element={<PrivateGroupGuard />}>
-              <Route path="groups/:groupId" element={"room page"} />
+              <Route path="groups/:groupId" element={<PrivateGroupPage />} />
             </Route>
             <Route element={<PrivateConversationGuard />}>
               <Route path="conversations/:conversationId" element={<PrivateConversationPage />} />

@@ -52,7 +52,7 @@ const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null
         <div className={`${leftMembersAllowed >= 0 ? "text-h-secondary" : "text-red"} mt-1 text-xs`}>
           {leftMembersAllowed > 0
             ? `Tu peux encore ajouter ${leftMembersAllowed} ${leftMembersAllowed > 1 ? "autres amis." : "autre ami."}`
-            : `Ce groupe est limité à ${MAX_MEMBERS} membres.`}
+            : `Ce groupe est limité à ${MAX_MEMBERS + currentMembersIds.length} membres.`}
         </div>
         <div className="flex-auto mt-5 flex flex-nowrap justify-start items-stretch">
           <div className="flex-1 flex rounded bg-tertiary">

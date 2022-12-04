@@ -3,7 +3,7 @@ import { PrivateConversation } from "../../types/private-conversation";
 import useLogoutOnError from "../auth/useLogoutOnError";
 
 export const GET_AUTH_USER_CONVERSATIONS = gql`
-  query GetFriends {
+  query GetConversations {
     me {
       privateConversations {
         id
@@ -17,13 +17,13 @@ export const GET_AUTH_USER_CONVERSATIONS = gql`
   }
 `;
 
-interface AuthFriendsResponse {
+interface AuthConversationsResponse {
   me: { privateConversations: PrivateConversation[] };
 }
 
 const usePrivateConversations = () => {
   const onError = useLogoutOnError();
-  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only", onError });
+  return useQuery<AuthConversationsResponse>(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only", onError });
 };
 
 export default usePrivateConversations;
