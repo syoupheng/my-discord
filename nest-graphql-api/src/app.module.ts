@@ -15,6 +15,7 @@ import { PrivateConversationsModule } from './private-conversations/private-conv
 import { DataloaderModule } from './dataloader/dataloader.module';
 import { DataloaderService } from './dataloader/dataloader.service';
 import { PrivateGroupsModule } from './private-groups/private-groups.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PrivateGroupsModule } from './private-groups/private-groups.module';
     PrivateConversationsModule,
     DataloaderModule,
     PrivateGroupsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

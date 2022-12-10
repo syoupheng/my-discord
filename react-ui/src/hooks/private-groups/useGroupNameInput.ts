@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { editGroupNameInputSchema, PrivateGroup } from "../../types/private-group";
 import useEditGroupName from "./useEditGroupName";
 
@@ -7,6 +7,11 @@ const useGroupNameInput = ({ id, name }: PrivateGroup) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [confirmName] = useEditGroupName();
+
+  useEffect(() => {
+    setNameInput(name);
+  }, [name]);
+
   const onConfirm = async () => {
     try {
       const payload = editGroupNameInputSchema.parse({ groupId: id, name: nameInput });

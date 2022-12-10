@@ -2,34 +2,19 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { PrismaService } from '../prisma/prisma.service';
 import { PrivateConversation } from './entities/private-conversation.entity';
 import { ConversationMember } from './entities/conversation-member.entity';
+import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
 
 @Injectable()
 export class PrivateConversationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private privateConversationsRepository: PrivateConversationsRepository) {}
 
   async findAll(userId: number): Promise<PrivateConversation[]> {
-    const rawConversations = await this.prisma.privateConversation.findMany({
-      where: {
-        OR: [
-          { friend_1_id: userId, display1: true },
-          { friend_2_id: userId, display2: true },
-        ],
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
+    const rawConversations = await this.privateConversationsRepository.findAllByUserId(userId);
     return rawConversations.map(({ id, friend_1_id, friend_2_id, createdAt }) => ({
       id,
       createdAt,
       memberId: userId === friend_1_id ? friend_2_id : friend_1_id,
     }));
-  }
-
-  async findConversationMember(memberId: number): Promise<ConversationMember> {
-    const member = await this.prisma.user.findUnique({ where: { id: memberId } });
-    if (!member) throw new NotFoundException("Cet utilisateur n'existe pas");
-    const { id, username } = member;
-    return { id, username };
   }
 
   async findConversationMembersByIds(ids: number[]): Promise<ConversationMember[]> {
@@ -47,20 +32,13 @@ export class PrivateConversationsService {
   }
 
   async findById(conversationId: number) {
-    const conversation = await this.prisma.privateConversation.findUnique({ where: { id: conversationId } });
+    const conversation = await this.privateConversationsRepository.findById(conversationId);
     if (!conversation) throw new NotFoundException("Cette conversation n'existe pas !");
     return conversation;
   }
 
   async show(friendId: number, userId: number): Promise<PrivateConversation> {
-    const conversation = await this.prisma.privateConversation.findFirst({
-      where: {
-        OR: [
-          { friend_1_id: friendId, friend_2_id: userId },
-          { friend_1_id: userId, friend_2_id: friendId },
-        ],
-      },
-    });
+    const conversation = await this.privateConversationsRepository.findByFriendIds(friendId, userId);
 
     if (!conversation) throw new NotFoundException("Il n'y a pas de conversation entre vous deux !");
     const { friend_1_id, friend_2_id, display1, display2, id, createdAt } = conversation;
@@ -71,10 +49,7 @@ export class PrivateConversationsService {
       payload = { display2: true };
     } else return { id, createdAt, memberId: friendId };
 
-    await this.prisma.privateConversation.update({
-      where: { id },
-      data: payload,
-    });
+    await this.privateConversationsRepository.updateById(id, payload);
 
     return { id: conversation.id, createdAt, memberId: friendId };
   }
@@ -89,10 +64,7 @@ export class PrivateConversationsService {
       payload = { display2: false };
     } else throw new ForbiddenException('Vous ne pouvez pas effectuer cette action !');
 
-    await this.prisma.privateConversation.update({
-      where: { id: conversationId },
-      data: payload,
-    });
+    await this.privateConversationsRepository.updateById(conversationId, payload);
 
     return { id: conversationId, createdAt, memberId: userId === friend_1_id ? friend_2_id : friend_1_id };
   }

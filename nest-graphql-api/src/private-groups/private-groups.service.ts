@@ -6,21 +6,14 @@ import { PrivateGroup } from './entities/private-group.entity';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { EditNameInput } from './dto/edit-name.input';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
 
 @Injectable()
 export class PrivateGroupsService {
-  constructor(private prisma: PrismaService, private friendsService: FriendsService) {}
+  constructor(private prisma: PrismaService, private friendsService: FriendsService, private privateGroupsRepository: PrivateGroupsRepository) {}
 
   async findAll(userId: number): Promise<PrivateGroup[]> {
-    const items = await this.prisma.membersInPrivateGroups.findMany({
-      where: { memberId: userId },
-      include: {
-        privateGroup: {
-          select: { id: true, name: true, createdAt: true },
-        },
-      },
-    });
-
+    const items = await this.privateGroupsRepository.findManyByMemberId(userId);
     return items.map(({ privateGroup }) => {
       const { id, name, createdAt } = privateGroup;
       return { id, name, createdAt };
@@ -28,17 +21,7 @@ export class PrivateGroupsService {
   }
 
   async findGroupMembersByIds(ids: number[]) {
-    const groups = await this.prisma.privateGroup.findMany({
-      where: { id: { in: ids } },
-      include: {
-        members: {
-          include: {
-            member: true,
-          },
-        },
-      },
-    });
-
+    const groups = await this.privateGroupsRepository.findMembersByGroupIds(ids);
     const membersMap = new Map<number, ConversationMember[]>(
       groups.map((group) => [
         group.id,
@@ -48,7 +31,6 @@ export class PrivateGroupsService {
         }),
       ]),
     );
-
     return membersMap;
   }
 
@@ -70,24 +52,13 @@ export class PrivateGroupsService {
     });
 
     const groupName = groupMembers.map(({ username }) => username).join(', ');
-    return this.prisma.privateGroup.create({
-      data: {
-        name: groupName,
-        members: {
-          createMany: { data: groupMembers.map((member) => ({ memberId: member.id })) },
-        },
-      },
-      select: { id: true, name: true, createdAt: true },
-    });
+    return this.privateGroupsRepository.create({ name: groupName, members: groupMembers });
   }
 
   async editName(editNameInput: EditNameInput, userId: number) {
     const { groupId, name } = editNameInput;
     await this.canEdit(groupId, userId);
-    return this.prisma.privateGroup.update({
-      where: { id: groupId },
-      data: { name },
-    });
+    return this.privateGroupsRepository.update(groupId, { name });
   }
 
   async addMember(groupId: number, membersIds: number[], userId: number): Promise<PrivateGroup> {
@@ -103,25 +74,18 @@ export class PrivateGroupsService {
       return { memberId };
     });
 
-    return this.prisma.privateGroup.update({
-      where: { id: groupId },
-      data: {
-        members: {
-          createMany: { data: newGroupMembers },
-        },
+    return this.privateGroupsRepository.update(groupId, {
+      members: {
+        createMany: { data: newGroupMembers },
       },
     });
   }
 
   async leave(groupId: number, userId: number): Promise<PrivateGroup> {
     try {
-      const membersInPrivateGroups = await this.prisma.membersInPrivateGroups.delete({
-        where: { privateGroupId_memberId: { privateGroupId: groupId, memberId: userId } },
-        include: { privateGroup: true },
-      });
-
-      const numMembers = await this.prisma.membersInPrivateGroups.count({ where: { privateGroupId: groupId } });
-      if (numMembers === 0) await this.prisma.privateGroup.delete({ where: { id: groupId } });
+      const membersInPrivateGroups = await this.privateGroupsRepository.deleteMember(groupId, userId);
+      const numMembers = await this.privateGroupsRepository.countMembersByGroupId(groupId);
+      if (numMembers === 0) await this.privateGroupsRepository.delete(groupId);
       return membersInPrivateGroups.privateGroup;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
@@ -131,12 +95,7 @@ export class PrivateGroupsService {
   }
 
   async canEdit(groupId: number, userId: number) {
-    const group = await this.prisma.privateGroup.findUnique({
-      where: { id: groupId },
-      include: {
-        members: { select: { memberId: true } },
-      },
-    });
+    const group = await this.privateGroupsRepository.findById(groupId);
     if (!group) throw new NotFoundException("Ce groupe n'existe pas !");
     const membersIds = group.members.map((member) => member.memberId);
     if (!membersIds.includes(userId)) throw new ForbiddenException('Vous ne faites pas partie de ce groupe !');

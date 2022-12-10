@@ -70,6 +70,22 @@ type PrivateGroup {
   members: [ConversationMember!]!
 }
 
+type MessageAuthor {
+  id: Int!
+  username: String!
+}
+
+type Message {
+  id: Int!
+  type: Int!
+  createdAt: DateTime!
+  editedAt: DateTime
+  content: String!
+  author: MessageAuthor!
+  groupId: Int
+  conversationId: Int
+}
+
 type Query {
   me: AuthUser!
 }
@@ -90,6 +106,7 @@ type Mutation {
   login(loginUserInput: LoginUserInput!): AuthUser!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: SuccessResponse!
+  sendMessage: Message!
 }
 
 input EditNameInput {

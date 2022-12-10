@@ -5,7 +5,11 @@ import GroupNavBtn from "./GroupNavBtn";
 const DisplayMembersBtn = () => {
   const [isMembersOpen, setIsMembersOpen] = useIsMembersOpen();
   return (
-    <GroupNavBtn active={isMembersOpen} title="Afficher la liste des membres" onClick={() => setIsMembersOpen!(!isMembersOpen)}>
+    <GroupNavBtn
+      active={isMembersOpen}
+      title={`${isMembersOpen ? "Masquer" : "Afficher"} la liste des membres`}
+      onClick={() => setIsMembersOpen!(!isMembersOpen)}
+    >
       <MdPeopleAlt size={24} />
     </GroupNavBtn>
   );
