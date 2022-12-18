@@ -36,12 +36,14 @@ export class FriendRequestRepository {
           select: {
             id: true,
             username: true,
+            createdAt: true,
           },
         },
         recipient: {
           select: {
             id: true,
             username: true,
+            createdAt: true,
           },
         },
       },

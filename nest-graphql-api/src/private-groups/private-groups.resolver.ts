@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { ChannelMember } from '../users/entities/channel-member.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { IDataLoaders } from '../dataloader/dataloader.interface';
-import { ConversationMember } from '../private-conversations/entities/conversation-member.entity';
 import { EditNameInput } from './dto/edit-name.input';
 import { PrivateGroup } from './entities/private-group.entity';
 import { PrivateGroupsService } from './private-groups.service';
@@ -39,7 +39,7 @@ export class PrivateGroupsResolver {
     return this.privateGroupsService.leave(groupId, ctx.req.user.id);
   }
 
-  @ResolveField('members', (returns) => [ConversationMember])
+  @ResolveField('members', (returns) => [ChannelMember])
   getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders) {
     const { id } = privateGroup;
     return loaders.groupMembersLoader.load(id);

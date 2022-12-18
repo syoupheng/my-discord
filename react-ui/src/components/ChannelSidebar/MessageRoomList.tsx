@@ -13,7 +13,7 @@ const MessageRoomList = () => {
   return (
     <>
       {items.map((item) =>
-        "member" in item ? (
+        item.__typename === "PrivateConversation" ? (
           <PrivateConversationItem key={`conversation:${item.id}`} conversation={item} friends={friends} />
         ) : (
           <PrivateGroupItem key={`group:${item.id}`} group={item} />

@@ -35,6 +35,7 @@ export class FriendsRepository {
             id: true,
             username: true,
             status: true,
+            createdAt: true,
           },
         },
         hasFriends: {
@@ -42,6 +43,7 @@ export class FriendsRepository {
             id: true,
             username: true,
             status: true,
+            createdAt: true,
           },
         },
       },
@@ -60,6 +62,7 @@ export class FriendsRepository {
             id: true,
             username: true,
             status: true,
+            createdAt: true,
           },
         },
         isFriendsWith: {
@@ -67,6 +70,7 @@ export class FriendsRepository {
             id: true,
             username: true,
             status: true,
+            createdAt: true,
           },
         },
       },

@@ -8,7 +8,7 @@ import UserStatusIcon from "../shared/UserStatusIcon";
 
 const PrivateConversationNav = () => {
   const { data } = useAuthUser();
-  const { conversationId } = useParams();
+  const { channelId: conversationId } = useParams();
   if (!data) return null;
   const { friends, privateConversations } = data.me;
   const conversation = conversationId ? privateConversations.find((conv) => conv.id === parseInt(conversationId)) : undefined;

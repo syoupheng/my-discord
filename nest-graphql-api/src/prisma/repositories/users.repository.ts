@@ -10,6 +10,15 @@ export class UsersRepository {
     return this.prisma.user.findUnique({ where: { id: userId } });
   }
 
+  findManyByIds(ids: number[]) {
+    return this.prisma.user.findMany({
+      where: {
+        id: { in: ids },
+      },
+      select: { id: true, username: true, createdAt: true },
+    });
+  }
+
   findByEmail(email: string) {
     return this.prisma.user.findUnique({ where: { email } });
   }

@@ -1,12 +1,11 @@
 import { Resolver, Args, Mutation, Context } from '@nestjs/graphql';
-import { User } from './entities/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { UsersService } from './users.service';
 import { EditProfileInput } from './dto/edit-profile.input';
 
-@Resolver(() => User)
+@Resolver(() => AuthUser)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 

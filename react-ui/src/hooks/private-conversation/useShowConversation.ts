@@ -35,7 +35,7 @@ const useShowConversation = ({ friendId, redirect = false }: TParams) => {
   return useAuthMutation<MutationResponse>(SHOW_CONVERSATION, {
     variables: { friendId },
     onCompleted: ({ showConversation: conversation }) => {
-      if (redirect) navigate(`/channels/@me/conversations/${conversation.id}`);
+      if (redirect) navigate(`/channels/@me/${conversation.id}`);
     },
     update(cache, { data }) {
       cache.modify({

@@ -23,15 +23,15 @@ export class FriendsService {
     const friend = await this.friendsRepository.findUsersFriendById({ userId: authUserId, friendId });
     if (!friend) throw new NotFoundException("Vous n'êtes pas amis avec cet utilisateur !");
     const { isFriendsWith, hasFriends } = friend;
-    const { id, username, status } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
-    return { id, username, status: UserStatus[status] };
+    const { id, username, status, createdAt } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
+    return { id, username, createdAt, status: UserStatus[status] };
   }
 
   async findAll(authUserId: number): Promise<Friend[]> {
     const rawFriends = await this.friendsRepository.findAllFriends(authUserId);
     const friends = rawFriends.map(({ hasFriends, isFriendsWith }) => {
-      const { id, username, status } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
-      return { id, username, status: UserStatus[status] };
+      const { id, username, status, createdAt } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
+      return { id, username, createdAt, status: UserStatus[status] };
     });
     return friends;
   }
@@ -53,7 +53,11 @@ export class FriendsService {
     const createPrivateConversation = this.privateConversationsRepository.create(authUserId, friendId);
 
     const handlePrivateConversation = conversation
-      ? this.privateConversationsRepository.updateByFriendIds(conversation.friend_1_id, conversation.friend_2_id, { display1: true, display2: true })
+      ? this.privateConversationsRepository.updateManyMembersInChannels({
+          membersIds: [friendId, authUserId],
+          channelId: conversation.id,
+          payload: { hidden: false },
+        })
       : createPrivateConversation;
 
     await this.prisma.$transaction([deleteFriendRequest, addNewFriend, handlePrivateConversation]);

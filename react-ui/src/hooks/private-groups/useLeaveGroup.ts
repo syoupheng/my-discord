@@ -23,7 +23,7 @@ const useLeaveGroup = () => {
   const navigate = useNavigate();
   return useAuthMutation<MutationResponse>(LEAVE_GROUP, {
     onCompleted: ({ leaveGroup: data }) => {
-      if (pathname.includes(`/channels/@me/groups/${data.id}`)) navigate(DEFAULT_ROUTE);
+      if (pathname.includes(`/channels/@me/${data.id}`)) navigate(DEFAULT_ROUTE);
     },
     update(cache, { data }) {
       cache.modify({

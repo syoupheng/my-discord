@@ -31,7 +31,7 @@ const useConfirmGroup = ({ groupId, maxMembers, selectedMembersIds, currentMembe
     (selectedMembersIds.length === 0 && currentMembersIds.length === 1)
   ) {
     const conversation = privateConversations.find((conv) => conv.member.id === selectedMembersIds[0]);
-    action = () => (conversation ? navigate(`/channels/@me/conversations/${conversation.id}`) : showConversation());
+    action = () => (conversation ? navigate(`/channels/@me/${conversation.id}`) : showConversation());
   } else {
     action = () => createGroup({ variables: { membersIds: [...selectedMembersIds, ...currentMembersIds] } });
   }

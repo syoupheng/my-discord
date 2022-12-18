@@ -18,13 +18,13 @@ const PrivateConversationItem = ({ conversation, friends }: Props) => {
   const [hideConversation] = useHideConversation(id);
   const location = useLocation();
   const navigate = useNavigate();
-  const isActive = location.pathname === `/channels/@me/conversations/${id}`;
+  const isActive = location.pathname === `/channels/@me/${id}`;
   const handleClose = () => {
     if (isActive) navigate(DEFAULT_ROUTE);
     hideConversation();
   };
   return (
-    <ChannelSidebarItem url={`/conversations/${id}`} onClose={handleClose} isActive={isActive}>
+    <ChannelSidebarItem url={`/${id}`} onClose={handleClose} isActive={isActive}>
       <div className="flex items-center px-2">
         <UserAvatar status={friendStatus} className="mr-3 w-8 h-8 shrink-0" />
         <MessageItemLabel label={member.username} />

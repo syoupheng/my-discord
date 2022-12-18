@@ -1,13 +1,15 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { MessageAuthor } from './message-author.entity';
+import { ChannelMember } from '../../users/entities/channel-member.entity';
+import { MessageType } from '../enums/message-type.enum';
+import { BaseMessage } from '../interfaces/base-message.interface';
+import { ReferencedMessage } from './referenced-message.entity';
 
-@ObjectType()
-export class Message {
-  @Field((type) => Int)
+@ObjectType({ implements: () => [BaseMessage] })
+export class Message implements BaseMessage {
   id: number;
 
-  @Field((type) => Int)
-  type: number;
+  @Field((type) => MessageType)
+  type: MessageType;
 
   @Field()
   createdAt: Date;
@@ -15,15 +17,19 @@ export class Message {
   @Field({ nullable: true })
   editedAt?: Date;
 
-  @Field()
   content: string;
 
-  @Field((type) => MessageAuthor)
-  author: MessageAuthor;
+  author?: ChannelMember;
 
-  @Field((type) => Int, { nullable: true })
-  groupId?: number;
+  authorId: number;
 
-  @Field((type) => Int, { nullable: true })
-  conversationId?: number;
+  @Field((type) => Int)
+  channelId?: number;
+
+  @Field((type) => ReferencedMessage, { nullable: true })
+  referencedMessage?: ReferencedMessage;
+
+  referencedMessageId?: number;
+
+  mentions?: ChannelMember[];
 }

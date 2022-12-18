@@ -6,4 +6,5 @@ export interface PrivateConversation {
   id: number;
   createdAt: string;
   member: ConversationMember;
+  __typename: "PrivateConversation";
 }

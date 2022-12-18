@@ -1,11 +1,28 @@
-import { Field, ObjectType, OmitType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Friend } from '../../friends/entities/friends.entity';
 import { FriendRequest } from '../../friend-requests/entities/friend-request.entity';
-import { User } from '../../users/entities/user.entity';
 import { PrivateConversation } from '../../private-conversations/entities/private-conversation.entity';
+import { BaseUser } from '../../users/interfaces/base-user.interface';
+import { UserStatus } from '../../users/enums/user-status.enum';
+import { PrivateGroup } from '../../private-groups/entities/private-group.entity';
 
-@ObjectType()
-export class AuthUser extends OmitType(User, ['password']) {
+@ObjectType({ implements: () => [BaseUser] })
+export class AuthUser implements BaseUser {
+  id: number;
+
+  username: string;
+
+  createdAt: Date;
+
+  @Field()
+  email: string;
+
+  @Field((type) => UserStatus)
+  status: UserStatus;
+
+  @Field({ nullable: true })
+  phoneNumber?: string;
+
   @Field((type) => [FriendRequest])
   friendRequests?: FriendRequest[];
 
@@ -14,4 +31,7 @@ export class AuthUser extends OmitType(User, ['password']) {
 
   @Field((type) => [PrivateConversation])
   privateConversations?: PrivateConversation[];
+
+  @Field((type) => [PrivateGroup])
+  privateGroups?: PrivateGroup[];
 }

@@ -2,38 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Friend {
+type Friend implements BaseUser {
   id: Int!
   username: String!
+  createdAt: DateTime!
   status: UserStatus!
 }
 
-enum UserStatus {
-  ONLINE
-  INACTIVE
-  DO_NOT_DISTURB
-  INVISIBLE
-}
-
-type FriendRequest {
+interface BaseUser {
   id: Int!
   username: String!
-  requestStatus: FriendRequestStatus!
-}
-
-enum FriendRequestStatus {
-  RECEIVED
-  SENT
-}
-
-type ConversationMember {
-  id: Int!
-  username: String!
-}
-
-type PrivateConversation {
-  id: Int!
-  member: ConversationMember!
   createdAt: DateTime!
 }
 
@@ -42,9 +20,48 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type AuthUser {
+enum UserStatus {
+  ONLINE
+  INACTIVE
+  DO_NOT_DISTURB
+  INVISIBLE
+}
+
+type FriendRequest implements BaseUser {
   id: Int!
   username: String!
+  createdAt: DateTime!
+  requestStatus: FriendRequestStatus!
+}
+
+enum FriendRequestStatus {
+  RECEIVED
+  SENT
+}
+
+type ChannelMember implements BaseUser {
+  id: Int!
+  username: String!
+  createdAt: DateTime!
+}
+
+type PrivateConversation {
+  id: Int!
+  member: ChannelMember!
+  createdAt: DateTime!
+}
+
+type PrivateGroup {
+  id: Int!
+  name: String!
+  createdAt: DateTime!
+  members: [ChannelMember!]!
+}
+
+type AuthUser implements BaseUser {
+  id: Int!
+  username: String!
+  createdAt: DateTime!
   email: String!
   status: UserStatus!
   phoneNumber: String
@@ -63,27 +80,37 @@ type FriendRequestConfirmedPayload {
   newConversation: PrivateConversation!
 }
 
-type PrivateGroup {
+type ReferencedMessage implements BaseMessage {
   id: Int!
-  name: String!
-  createdAt: DateTime!
-  members: [ConversationMember!]!
+  content: String!
+  author: ChannelMember!
+  mentions: [ChannelMember!]!
 }
 
-type MessageAuthor {
+interface BaseMessage {
   id: Int!
-  username: String!
+  content: String!
+  author: ChannelMember!
+  mentions: [ChannelMember!]!
 }
 
-type Message {
+type Message implements BaseMessage {
   id: Int!
-  type: Int!
+  content: String!
+  author: ChannelMember!
+  mentions: [ChannelMember!]!
+  type: MessageType!
   createdAt: DateTime!
   editedAt: DateTime
-  content: String!
-  author: MessageAuthor!
-  groupId: Int
-  conversationId: Int
+  channelId: Int!
+  referencedMessage: ReferencedMessage
+}
+
+enum MessageType {
+  NORMAL
+  NAME_CHANGE_NOTIFICATION
+  ARRIVAL_NOTIFICATION
+  LEAVE_NOTIFICATION
 }
 
 type Query {
@@ -102,11 +129,11 @@ type Mutation {
   sendFriendRequest(friendTag: FriendTag!): FriendRequest!
   deleteFriendRequest(friendId: Int!): SuccessResponse!
   ignoreFriendRequest(friendId: Int!): SuccessResponse!
+  sendMessage(sendMessageInput: SendMessageInput!): Message!
   editProfile(editProfileInput: EditProfileInput!): AuthUser!
   login(loginUserInput: LoginUserInput!): AuthUser!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   logout: SuccessResponse!
-  sendMessage: Message!
 }
 
 input EditNameInput {
@@ -117,6 +144,12 @@ input EditNameInput {
 input FriendTag {
   id: Int!
   username: String!
+}
+
+input SendMessageInput {
+  content: String!
+  channelId: Int!
+  respondsToId: Int
 }
 
 input EditProfileInput {

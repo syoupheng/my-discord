@@ -27,7 +27,7 @@ const useCreateGroup = () => {
 
   return useAuthMutation<MutationResponse>(CREATE_GROUP, {
     onCompleted: (data) => {
-      navigate(`/channels/@me/groups/${data.createGroup.id}`);
+      navigate(`/channels/@me/${data.createGroup.id}`);
     },
     update(cache, { data }) {
       cache.modify({

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { ConversationMember } from 'src/private-conversations/entities/conversation-member.entity';
+import { ChannelMember } from 'src/users/entities/channel-member.entity';
 import { PrismaService } from '../prisma.service';
 
 interface IGroupCreateInput {
   name: string;
-  members: ConversationMember[];
+  members: ChannelMember[];
 }
 
 @Injectable()
@@ -13,8 +13,8 @@ export class PrivateGroupsRepository {
   constructor(private prisma: PrismaService) {}
 
   findById(groupId: number) {
-    return this.prisma.privateGroup.findUnique({
-      where: { id: groupId },
+    return this.prisma.channel.findFirst({
+      where: { id: groupId, type: 'PRIVATE_GROUP' },
       include: {
         members: { select: { memberId: true } },
       },
@@ -22,10 +22,15 @@ export class PrivateGroupsRepository {
   }
 
   findManyByMemberId(memberId: number) {
-    return this.prisma.membersInPrivateGroups.findMany({
-      where: { memberId },
+    return this.prisma.membersInChannels.findMany({
+      where: {
+        memberId,
+        channel: {
+          type: 'PRIVATE_GROUP',
+        },
+      },
       include: {
-        privateGroup: {
+        channel: {
           select: { id: true, name: true, createdAt: true },
         },
       },
@@ -33,8 +38,8 @@ export class PrivateGroupsRepository {
   }
 
   findMembersByGroupIds(groupIds: number[]) {
-    return this.prisma.privateGroup.findMany({
-      where: { id: { in: groupIds } },
+    return this.prisma.channel.findMany({
+      where: { id: { in: groupIds }, type: 'PRIVATE_GROUP' },
       include: {
         members: {
           include: {
@@ -46,8 +51,9 @@ export class PrivateGroupsRepository {
   }
 
   create({ name, members }: IGroupCreateInput) {
-    return this.prisma.privateGroup.create({
+    return this.prisma.channel.create({
       data: {
+        type: 'PRIVATE_GROUP',
         name,
         members: {
           createMany: { data: members.map((member) => ({ memberId: member.id })) },
@@ -57,25 +63,25 @@ export class PrivateGroupsRepository {
     });
   }
 
-  update(groupId: number, payload: Prisma.PrivateGroupUpdateInput) {
-    return this.prisma.privateGroup.update({
+  update(groupId: number, payload: Prisma.ChannelUpdateInput) {
+    return this.prisma.channel.update({
       where: { id: groupId },
       data: payload,
     });
   }
 
-  delete(groupId) {
-    return this.prisma.privateGroup.delete({ where: { id: groupId } });
+  delete(groupId: number) {
+    return this.prisma.channel.deleteMany({ where: { id: groupId, type: 'PRIVATE_GROUP' } });
   }
 
   deleteMember(groupId: number, memberId: number) {
-    return this.prisma.membersInPrivateGroups.delete({
-      where: { privateGroupId_memberId: { privateGroupId: groupId, memberId } },
-      include: { privateGroup: true },
+    return this.prisma.membersInChannels.delete({
+      where: { channelId_memberId: { channelId: groupId, memberId } },
+      include: { channel: true },
     });
   }
 
   countMembersByGroupId(groupId: number) {
-    return this.prisma.membersInPrivateGroups.count({ where: { privateGroupId: groupId } });
+    return this.prisma.channel.count({ where: { id: groupId, type: 'PRIVATE_GROUP' } });
   }
 }

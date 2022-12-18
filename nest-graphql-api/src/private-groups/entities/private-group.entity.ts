@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { ConversationMember } from '../../private-conversations/entities/conversation-member.entity';
+import { ChannelMember } from '../../users/entities/channel-member.entity';
 
 @ObjectType()
 export class PrivateGroup {
@@ -12,6 +12,6 @@ export class PrivateGroup {
   @Field()
   createdAt: Date;
 
-  @Field((type) => [ConversationMember])
-  members?: ConversationMember[];
+  @Field((type) => [ChannelMember])
+  members?: ChannelMember[];
 }

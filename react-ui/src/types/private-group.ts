@@ -6,6 +6,7 @@ export interface PrivateGroup {
   createdAt: string;
   name: string;
   members: ConversationMember[];
+  __typename: "PrivateGroup";
 }
 
 export const editGroupNameInputSchema = z.object({

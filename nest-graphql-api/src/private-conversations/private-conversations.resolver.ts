@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Parent, ResolveField, Resolver, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { IDataLoaders } from 'src/dataloader/dataloader.interface';
+import { ChannelMember } from '../users/entities/channel-member.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ConversationMember } from './entities/conversation-member.entity';
 import { PrivateConversation } from './entities/private-conversation.entity';
 import { PrivateConversationsService } from './private-conversations.service';
 
@@ -22,7 +22,7 @@ export class PrivateConversationsResolver {
     return this.privateConversationsService.show(friendId, ctx.req.user.id);
   }
 
-  @ResolveField('member', (returns) => ConversationMember)
+  @ResolveField('member', (returns) => ChannelMember)
   getMember(@Parent() conversation: PrivateConversation, @Context('loaders') loaders: IDataLoaders) {
     const { memberId } = conversation;
     return loaders.conversationMembersLoader.load(memberId);

@@ -44,6 +44,7 @@ export class FriendRequestsService {
       return {
         id: recipientId,
         username: recipientName,
+        createdAt: recipient.createdAt,
         requestStatus: FriendRequestStatus.SENT,
       };
     } catch (err) {
@@ -57,10 +58,11 @@ export class FriendRequestsService {
   async findAll(userId: number): Promise<FriendRequest[]> {
     const rawFriendRequests = await this.friendRequestRepository.findAllByUserId(userId);
     const friendRequests = rawFriendRequests.map((request) => {
-      const { id, username } = request.sender.id === userId ? request.recipient : request.sender;
+      const { id, username, createdAt } = request.sender.id === userId ? request.recipient : request.sender;
       return {
         id,
         username,
+        createdAt,
         requestStatus: request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
       };
     });

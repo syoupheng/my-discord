@@ -9,12 +9,13 @@ import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
 import { FriendsService } from '../friends/friends.service';
 import { UsersRepository } from '../prisma/repositories/users.repository';
+import { AuthUser } from 'src/auth/entities/auth-user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository, @Inject(PUB_SUB) private pubSub: PubSub, private friendsService: FriendsService) {}
 
-  async create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
+  async create(userCreateInput: Prisma.UserCreateInput): Promise<AuthUser> {
     try {
       const newUser = await this.usersRepository.create(userCreateInput);
       const { password, status, ...result } = newUser;
@@ -27,14 +28,6 @@ export class UsersService {
       }
       throw err;
     }
-  }
-
-  async findAll(): Promise<User[]> {
-    const users = await this.usersRepository.findAll();
-    return users.map(({ password, status, ...rest }) => ({
-      status: UserStatus[status],
-      ...rest,
-    }));
   }
 
   async findOneById(id: number) {

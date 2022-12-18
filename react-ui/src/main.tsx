@@ -25,6 +25,7 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const MainLayout = lazy(() => import("./components/layouts/MainLayout"));
 const MeSidebar = lazy(() => import("./components/layouts/MeSidebar"));
 const FriendsPage = lazy(() => import("./pages/FriendsPage"));
+const PrivateChannelPage = lazy(() => import("./pages/PrivateChannelPage"));
 
 export const DEFAULT_ROUTE = "/channels/@me";
 
@@ -44,12 +45,13 @@ const router = createBrowserRouter(
           <Route index element={<Navigate to={DEFAULT_ROUTE} />} />
           <Route path="@me" element={<MeSidebar />}>
             <Route index element={<FriendsPage />} />
-            <Route element={<PrivateGroupGuard />}>
+            <Route path=":channelId" element={<PrivateChannelPage />} />
+            {/* <Route element={<PrivateGroupGuard />}>
               <Route path="groups/:groupId" element={<PrivateGroupPage />} />
             </Route>
             <Route element={<PrivateConversationGuard />}>
               <Route path="conversations/:conversationId" element={<PrivateConversationPage />} />
-            </Route>
+            </Route> */}
           </Route>
         </Route>
       </Route>

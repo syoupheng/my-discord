@@ -22,7 +22,7 @@ const FriendListItem = ({ friend, conversations }: Props) => {
   const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     const conversation = conversations.find(({ member }) => member.id === friend.id);
     if (conversation) {
-      navigate(`/channels/@me/conversations/${conversation.id}`);
+      navigate(`/channels/@me/${conversation.id}`);
     } else showConversation();
   };
 
