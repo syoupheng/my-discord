@@ -22,6 +22,8 @@
     "react-hook-form": "^7.35.0",
     "react-icons": "^4.4.0",
     "react-router-dom": "^6.4.1",
+    "slate": "^0.87.0",
+    "slate-react": "^0.88.0",
     "zod": "^3.19.1"
   },
   "devDependencies": {

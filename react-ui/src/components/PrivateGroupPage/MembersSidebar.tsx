@@ -16,7 +16,7 @@ const MembersSidebar = ({ members }: Props) => {
           Membres-{members.length}
         </h2>
         {members.map((member) => (
-          <GroupMemberItem member={member} />
+          <GroupMemberItem key={member.id} member={member} />
         ))}
       </div>
     </div>

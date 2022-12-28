@@ -8,10 +8,17 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { ChannelRepository } from '../prisma/repositories/channel.repository';
 import { ReferencedMessage } from './entities/referenced-message.entity';
 import { ChannelMember } from 'src/users/entities/channel-member.entity';
+import { IPagination } from './interfaces/pagination.interface';
 
 @Injectable()
 export class MessagesService {
   constructor(private messageRepository: MessageRepository, private usersRepository: UsersRepository, private channelRepository: ChannelRepository) {}
+
+  async findAll(userId: number, channelId: number, pagination: IPagination) {
+    const membersInChannels = await this.channelRepository.findMembersByChannelId(channelId);
+    if (!membersInChannels.some(({ memberId }) => memberId === userId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
+    return this.messageRepository.findManyByChannelId(channelId, pagination);
+  }
 
   async send(payload: SendMessageInput, authorId: number): Promise<Message> {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(payload.channelId);
@@ -54,7 +61,7 @@ export class MessagesService {
   getMentionsIdsFromContent(content: string): number[] {
     const regex = /<@[1-9]\d*>/g;
     const matches = content.match(regex);
-    return matches.map((match) => parseInt(match.slice(2, -1)));
+    return matches ? matches.map((match) => parseInt(match.slice(2, -1))) : [];
   }
 
   findMentionsByMessageIds(ids: number[]) {

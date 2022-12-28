@@ -1,3 +1,4 @@
+import ChatContent from "../components/ChatSection/ChatContent";
 import MembersSidebar from "../components/PrivateGroupPage/MembersSidebar";
 import PrivateGroupNav from "../components/PrivateGroupPage/PrivateGroupNav";
 import useFindGroup from "../hooks/private-groups/useFindGroup";
@@ -11,7 +12,7 @@ const PrivateGroupPage = () => {
       <div className="min-h-0 min-w-0 flex relative flex-col overflow-hidden flex-auto">
         <PrivateGroupNav group={group} />
         <div className="min-w-0 min-h-0 flex-auto flex items-stretch relative">
-          <main className="relative flex flex-col min-w-0 min-h-0 flex-auto"></main>
+          <ChatContent />
           <MembersSidebar members={group.members} />
         </div>
       </div>

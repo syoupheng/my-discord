@@ -114,6 +114,7 @@ enum MessageType {
 }
 
 type Query {
+  messages(channelId: Int!, cursor: String, limit: Int = 20): [Message!]!
   me: AuthUser!
 }
 

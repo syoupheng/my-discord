@@ -152,7 +152,7 @@ model MembersInChannels {
 
 model Message {
   id           Int                  @id @default(autoincrement())
-  createdAt    DateTime             @default(now())
+  createdAt    DateTime             @unique @default(now())
   editedAt     DateTime?            @updatedAt
   content      String
   author       User                 @relation(fields: [authorId], references: [id])

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { MessageType } from 'src/messages/enums/message-type.enum';
+import { IPagination } from 'src/messages/interfaces/pagination.interface';
 import { PrismaService } from '../prisma.service';
 
 interface IMessageCreateInput {
@@ -29,6 +30,21 @@ export class MessageRepository {
         },
       },
     });
+  }
+
+  findManyByChannelId(channelId: number, pagination: IPagination) {
+    const params: Prisma.MessageFindManyArgs = {
+      take: pagination.take,
+      where: { channelId },
+      orderBy: { createdAt: 'desc' },
+    };
+
+    if ('cursor' in pagination && pagination.cursor) {
+      params.cursor = { createdAt: pagination.cursor };
+      params.skip = 1;
+    }
+
+    return this.prisma.message.findMany(params);
   }
 
   create(payload: IMessageCreateInput) {

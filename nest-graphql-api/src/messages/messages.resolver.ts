@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { IDataLoaders } from 'src/dataloader/dataloader.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SendMessageInput } from './dto/send-message.input';
@@ -10,6 +10,17 @@ import { MessagesService } from './messages.service';
 @Resolver((of) => Message)
 export class MessagesResolver {
   constructor(private readonly messagesService: MessagesService) {}
+
+  @Query((returns) => [Message], { name: 'messages' })
+  @UseGuards(JwtAuthGuard)
+  getMessages(
+    @Context() ctx,
+    @Args('channelId', { type: () => Int }) channelId: number,
+    @Args('cursor', { nullable: true }) cursor?: string,
+    @Args('limit', { nullable: true, defaultValue: 20, type: () => Int }) limit?: number,
+  ) {
+    return this.messagesService.findAll(ctx.req.user.id, channelId, { cursor, take: limit });
+  }
 
   @Mutation((type) => Message)
   @UseGuards(JwtAuthGuard)

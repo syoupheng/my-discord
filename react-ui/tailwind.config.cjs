@@ -29,6 +29,9 @@ module.exports = {
         "channels-default": "#96989c",
         "primary-dark-400": "#72767e",
         "primary-dark-500": "rgba(79, 84, 92, 0.3)",
+        "primary-dark-560": "#3f434a",
+        "brand-260": "#cbcffb",
+        "mention-bg": "hsl(235 86% 65% / 0.3)",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],
@@ -123,6 +126,12 @@ module.exports = {
         "spin-45": "spin-45 0.1s linear",
         "fade-in": "fade-in 0.1s ease-out",
         "slide-in": "slide-in 0.5s ease-in-out",
+      },
+      backgroundImage: {
+        emojiFaces: "url(/emoji-faces.png)",
+      },
+      fontFamily: {
+        code: ["Consolas", "Lucide Console", "Monaco", "Courier", "monospace"],
       },
     },
   },

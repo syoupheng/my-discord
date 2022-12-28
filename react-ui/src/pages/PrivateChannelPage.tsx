@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
+import { createEditor } from "slate";
+import { Slate, withReact } from "slate-react";
 import usePrivateConversations from "../hooks/private-conversation/usePrivateConversations";
 import usePrivateGroups from "../hooks/private-groups/usePrivateGroups";
 import { DEFAULT_ROUTE } from "../main";
@@ -13,8 +16,7 @@ const PrivateChannelPage = () => {
   const group = dataGroups.me.privateGroups.find(({ id }) => parseInt(channelId!) === id);
   const conversation = dataConversations.me.privateConversations.find(({ id }) => parseInt(channelId!) === id);
 
-  if (group) return <PrivateGroupPage />;
-  if (conversation) return <PrivateConversationPage />;
+  if (group || conversation) return group ? <PrivateGroupPage /> : <PrivateConversationPage />;
   return <Navigate to={DEFAULT_ROUTE} />;
 };
 
