@@ -22,10 +22,11 @@ interface Props {
 
 const FriendsContent = ({ selectedTab, selectedFriends, friendRequests }: Props) => {
   const [search, setSearch] = useState("");
+  const lowercaseSearch = search.toLowerCase();
   const filteredFriendItems =
     selectedTab === "PENDING"
-      ? friendRequests.filter((item) => item.username.includes(search))
-      : selectedFriends.filter((item) => item.username.includes(search));
+      ? friendRequests.filter((item) => item.username.toLowerCase().includes(lowercaseSearch))
+      : selectedFriends.filter((item) => item.username.toLowerCase().includes(lowercaseSearch));
 
   const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 130 });
 

@@ -14,10 +14,10 @@ import NoAuthGuard from "./components/guards/NoAuthGuard";
 import FriendsTabProvider from "./providers/FriendsTabProvider";
 import { client } from "./apollo.config";
 import LoadingScreen from "./components/shared/LoadingScreen";
-import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
-import PrivateConversationPage from "./pages/PrivateConversationPage";
-import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
-import PrivateGroupPage from "./pages/PrivateGroupPage";
+// import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
+// import PrivateConversationPage from "./pages/PrivateConversationPage";
+// import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
+// import PrivateGroupPage from "./pages/PrivateGroupPage";
 
 // Route based code splitting
 const LoginPage = lazy(() => import("./pages/LoginPage"));

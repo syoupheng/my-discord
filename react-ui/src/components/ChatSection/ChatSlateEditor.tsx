@@ -1,17 +1,18 @@
 import { useCallback } from "react";
 import { BaseRange, NodeEntry } from "slate";
 import { Editable, RenderLeafProps } from "slate-react";
+import useFindGroup from "../../hooks/private-groups/useFindGroup";
 import MentionElement from "./MentionElement";
 import SlateLeaf from "./SlateLeaf";
 
 interface Props {
   decorate: ((entry: NodeEntry<any>) => BaseRange[]) | undefined;
   slateValue: any[];
-  showMentionsAutocomplete: boolean;
   handleKeyDown: (event: any) => void;
 }
 
-const ChatSlateEditor = ({ decorate, slateValue, showMentionsAutocomplete, handleKeyDown }: Props) => {
+const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown }: Props) => {
+  const group = useFindGroup();
   const renderLeaf = useCallback((props: RenderLeafProps) => <SlateLeaf {...props} />, []);
   const renderElement = useCallback((props: any) => {
     switch (props.element.type) {
@@ -29,7 +30,7 @@ const ChatSlateEditor = ({ decorate, slateValue, showMentionsAutocomplete, handl
     >
       {slateValue.length === 1 && slateValue[0].children.length === 1 && slateValue[0].children[0].text === "" && (
         <div className="py-[11px] pr-[10px] absolute left-0 right-[10px] whitespace-nowrap text-ellipsis overflow-hidden text-primary-dark-400 select-none pointer-events-none">
-          Envoyer un message
+          Envoyer un message{group?.name ? ` dans ${group?.name}` : ""}
         </div>
       )}
       <Editable

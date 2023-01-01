@@ -6,6 +6,7 @@ export type UserStatus = "ONLINE" | "INACTIVE" | "DO_NOT_DISTURB" | "INVISIBLE";
 
 export interface User extends Omit<RegisterInput, "password"> {
   id: number;
+  createdAt: string;
   status: UserStatus;
   friends: Friend[];
   friendRequests: FriendRequest[];

@@ -5,6 +5,7 @@ import Portal from "../shared/Portal";
 import useAuthUser from "../../hooks/auth/useAuthUser";
 import UserStatusSelection from "./UserStatusSelection";
 import BigUserAvatar from "../shared/BigUserAvatar";
+import { formatUserSubscribeDate } from "../../utils/dates";
 
 const UserProfilePopover = () => {
   const { data: authUser } = useAuthUser();
@@ -18,6 +19,8 @@ const UserProfilePopover = () => {
   } = useFloating({ placement: "top-start", middleware: [offset(16)] });
 
   if (!authUser) return null;
+  const { createdAt } = authUser.me;
+  const formattedDate = formatUserSubscribeDate(createdAt);
 
   return (
     <Popover className="grow max-w-[120px]">
@@ -55,7 +58,7 @@ const UserProfilePopover = () => {
                   <div className="border-t border-grey-border pt-2">
                     <div className="my-1">
                       <div className="text-white uppercase font-bold text-xs mb-2">Membre Discord depuis</div>
-                      <div className="text-secondary-light text-btw-sm-xs">févr. 02, 2021</div>
+                      <div className="text-secondary-light text-btw-sm-xs">{formattedDate}</div>
                     </div>
                     <UserStatusSelection onClose={close} authUser={authUser.me} />
                   </div>

@@ -23,9 +23,11 @@ export class MessagesService {
   async send(payload: SendMessageInput, authorId: number): Promise<Message> {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(payload.channelId);
     if (!membersInChannels.some(({ memberId }) => memberId === authorId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
-    const mentionsIds = this.getMentionsIdsFromContent(payload.content).filter((mentionId) =>
-      membersInChannels.map((member) => member.memberId).includes(mentionId),
-    );
+    const mentionsIds = [
+      ...new Set(
+        this.getMentionsIdsFromContent(payload.content).filter((mentionId) => membersInChannels.map((member) => member.memberId).includes(mentionId)),
+      ),
+    ];
     try {
       const newMessage = await this.messageRepository.create({
         ...payload,

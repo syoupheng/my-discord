@@ -12,32 +12,35 @@ const useSlateDecorator = (
 ) => {
   const { showMentionsAutocomplete, mentionSearch } = mentionAutocompleteState;
 
-  const handleUserMentions = (nodeText: string, cursorPosition: number) => {
-    if (!nodeText) {
-      if (showMentionsAutocomplete && cursorPosition === 0) {
-        dispatchMentionAutocomplete({ type: "CLOSE" });
-      }
-      return [];
-    }
-    if (nodeText[0] === "@" && !nodeText.slice(0, cursorPosition).includes(" ") && cursorPosition >= 1) {
-      dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(1, cursorPosition) });
-    } else {
-      let shouldShowAutocomplete = false;
-      for (let i = cursorPosition - 1; i >= 0; i--) {
-        if (nodeText[i] === "@") {
-          if (nodeText[i - 1] === " ") {
-            dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(i + 1, cursorPosition) });
-            shouldShowAutocomplete = true;
-          }
-          break;
+  const handleUserMentions = useCallback(
+    (nodeText: string, cursorPosition: number) => {
+      if (!nodeText) {
+        if (showMentionsAutocomplete && cursorPosition === 0) {
+          dispatchMentionAutocomplete({ type: "CLOSE" });
         }
-        if (nodeText[i] === " ") break;
+        return [];
       }
-      if (!shouldShowAutocomplete && showMentionsAutocomplete) {
-        dispatchMentionAutocomplete({ type: "CLOSE" });
+      if (nodeText[0] === "@" && !nodeText.slice(0, cursorPosition).includes(" ") && cursorPosition >= 1) {
+        dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(1, cursorPosition) });
+      } else {
+        let shouldShowAutocomplete = false;
+        for (let i = cursorPosition - 1; i >= 0; i--) {
+          if (nodeText[i] === "@") {
+            if (nodeText[i - 1] === " ") {
+              dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(i + 1, cursorPosition) });
+              shouldShowAutocomplete = true;
+            }
+            break;
+          }
+          if (nodeText[i] === " ") break;
+        }
+        if (!shouldShowAutocomplete && showMentionsAutocomplete) {
+          dispatchMentionAutocomplete({ type: "CLOSE" });
+        }
       }
-    }
-  };
+    },
+    [showMentionsAutocomplete, mentionSearch]
+  );
 
   const slateDecorator = useCallback(
     ([node, path]: NodeEntry<{ text: string }>) => {
@@ -59,7 +62,7 @@ const useSlateDecorator = (
           }))
         : [];
     },
-    [value, editor.selection?.anchor.offset, mentionSearch]
+    [handleUserMentions]
   );
 
   return slateDecorator;

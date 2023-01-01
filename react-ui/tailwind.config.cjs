@@ -32,6 +32,11 @@ module.exports = {
         "primary-dark-560": "#3f434a",
         "brand-260": "#cbcffb",
         "mention-bg": "hsl(235 86% 65% / 0.3)",
+        "message-hov": "rgba(4, 4, 5, 0.07)",
+        "background-modifier-accent": "rgba(79, 84, 92, 0.48)",
+        "yellow-mentioned": "rgba(250, 166, 26, 0.1)",
+        "yellow-mentioned-hov": "rgba(250, 166, 26, 0.07)",
+        "status-yellow-500": "hsl(38 96% 54%)",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],

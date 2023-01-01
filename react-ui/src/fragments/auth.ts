@@ -4,6 +4,7 @@ export const AUTH_USER_FIELDS = gql`
   fragment AuthUserFields on AuthUser {
     id
     username
+    createdAt
     email
     status
     phoneNumber

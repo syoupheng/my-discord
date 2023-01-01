@@ -25,7 +25,7 @@ const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null
   const friends = data.me.friends.filter(({ id }) => !currentMembersIds.includes(id));
 
   const [search, setSearch] = useState("");
-  const filterFriends = friends.filter((friend) => [friend.username, friend.id].join("#").includes(search));
+  const filterFriends = friends.filter((friend) => [friend.username.toLowerCase(), friend.id].join("#").includes(search.toLowerCase()));
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
