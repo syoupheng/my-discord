@@ -2,6 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { IDataLoaders } from 'src/dataloader/dataloader.interface';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MessagesResponse } from './dto/messages.response';
 import { SendMessageInput } from './dto/send-message.input';
 import { Message } from './entities/message.entity';
 import { ReferencedMessage } from './entities/referenced-message.entity';
@@ -11,14 +12,14 @@ import { MessagesService } from './messages.service';
 export class MessagesResolver {
   constructor(private readonly messagesService: MessagesService) {}
 
-  @Query((returns) => [Message], { name: 'messages' })
+  @Query((returns) => MessagesResponse)
   @UseGuards(JwtAuthGuard)
   getMessages(
     @Context() ctx,
     @Args('channelId', { type: () => Int }) channelId: number,
     @Args('cursor', { nullable: true }) cursor?: string,
-    @Args('limit', { nullable: true, defaultValue: 20, type: () => Int }) limit?: number,
-  ) {
+    @Args('limit', { nullable: true, defaultValue: 15, type: () => Int }) limit?: number,
+  ): Promise<MessagesResponse> {
     return this.messagesService.findAll(ctx.req.user.id, channelId, { cursor, take: limit });
   }
 

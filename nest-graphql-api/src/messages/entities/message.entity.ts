@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { MessageType as PrismaMessageType } from '@prisma/client';
 import { ChannelMember } from '../../users/entities/channel-member.entity';
 import { MessageType } from '../enums/message-type.enum';
 import { BaseMessage } from '../interfaces/base-message.interface';
@@ -9,7 +10,7 @@ export class Message implements BaseMessage {
   id: number;
 
   @Field((type) => MessageType)
-  type: MessageType;
+  type: PrismaMessageType;
 
   @Field()
   createdAt: Date;

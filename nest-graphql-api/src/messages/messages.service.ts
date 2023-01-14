@@ -17,7 +17,9 @@ export class MessagesService {
   async findAll(userId: number, channelId: number, pagination: IPagination) {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(channelId);
     if (!membersInChannels.some(({ memberId }) => memberId === userId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
-    return this.messageRepository.findManyByChannelId(channelId, pagination);
+    const messages = await this.messageRepository.findManyByChannelId(channelId, { ...pagination, take: pagination.take + 1 });
+    if (messages.length === pagination.take + 1) return { cursor: messages.at(-2).createdAt, messages: messages.slice(0, -1) };
+    return { cursor: null, messages };
   }
 
   async send(payload: SendMessageInput, authorId: number): Promise<Message> {

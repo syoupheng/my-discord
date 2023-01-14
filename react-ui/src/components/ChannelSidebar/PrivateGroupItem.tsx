@@ -19,7 +19,9 @@ const PrivateGroupItem = ({ group }: Props) => {
   return (
     <ChannelSidebarItem url={`/${id}`} onClose={() => setIsOpen(true)} isActive={isActive}>
       <div className="flex items-center px-2">
-        <GroupIcon className="mr-3 w-8 h-8 shrink-0" />
+        <div className=" shrink-0 mr-3">
+          <GroupIcon size="sm" />
+        </div>
         <MessageItemLabel label={name} nbMembers={members.length} />
         <LeaveGroupDialog modalOpen={isOpen} onModalOpen={setIsOpen} group={group} />
       </div>

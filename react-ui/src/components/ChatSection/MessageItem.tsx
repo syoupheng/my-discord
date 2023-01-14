@@ -1,4 +1,7 @@
-import { Message } from "../../gql/graphql";
+import { forwardRef } from "react";
+import { CHANNEL_MEMBER_FIELDS } from "../../fragments/messages";
+import { useFragment } from "../../gql";
+import { Message, MessageInfoFragment } from "../../gql/graphql";
 import useIsMentioned from "../../hooks/chat-messages/useIsMentioned";
 import MessageItemProvider from "../../providers/MessageItemProvider";
 import { formatMessageDate } from "../../utils/dates";
@@ -7,12 +10,14 @@ import ConsecutiveMessageTimestamp from "./ConsecutiveMessageTimestamp";
 import MessageContent from "./MessageContent";
 
 interface Props {
-  msg: Message;
+  msg: MessageInfoFragment;
   isConsecutive?: boolean;
 }
 
-const MessageItem = ({ msg, isConsecutive = false }: Props) => {
-  const { author, createdAt, id, mentions } = msg;
+const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = false }, ref) => {
+  const { createdAt, id } = msg;
+  const mentions = useFragment(CHANNEL_MEMBER_FIELDS, msg.mentions);
+  const author = useFragment(CHANNEL_MEMBER_FIELDS, msg.author);
   const isMentioned = useIsMentioned(mentions);
 
   const formattedDate = formatMessageDate(createdAt);
@@ -20,6 +25,7 @@ const MessageItem = ({ msg, isConsecutive = false }: Props) => {
     <MessageItemProvider messageId={id}>
       <li className="outline-none relative">
         <div
+          ref={ref}
           className={`${
             isMentioned
               ? "bg-yellow-mentioned before:bg-status-yellow-500 before:content-[''] before:absolute before:block before:top-0 before:left-0 before:bottom-0 before:pointer-events-none before:w-[2px] hover:bg-yellow-mentioned-hov"
@@ -54,6 +60,6 @@ const MessageItem = ({ msg, isConsecutive = false }: Props) => {
       </li>
     </MessageItemProvider>
   );
-};
+});
 
 export default MessageItem;

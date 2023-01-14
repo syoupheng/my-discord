@@ -120,6 +120,10 @@ module.exports = {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateY(0)" },
         },
+        "my-pulse": {
+          "0%, 100%": { opacity: 0.2 },
+          "50%": { opacity: 0.45 },
+        },
       },
       animation: {
         drop: "drop 0.4s ease-out 1",
@@ -131,6 +135,7 @@ module.exports = {
         "spin-45": "spin-45 0.1s linear",
         "fade-in": "fade-in 0.1s ease-out",
         "slide-in": "slide-in 0.5s ease-in-out",
+        "my-pulse": "my-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
       backgroundImage: {
         emojiFaces: "url(/emoji-faces.png)",

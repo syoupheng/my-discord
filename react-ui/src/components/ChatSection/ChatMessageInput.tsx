@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
@@ -36,22 +36,22 @@ const ChatMessageInput = () => {
   });
   const slateDecorator = useSlateDecorator(editor, value, mentionAutocompleteState, dispatchMentionAutocomplete);
 
-  const [sendMessage] = useSendMessage(editor);
-  const handleKeyDown = (evt: KeyboardEvent) => {
+  const [sendMessage] = useSendMessage(parseInt(channelId!), editor);
+  const handleKeyDown = async (event: KeyboardEvent) => {
     if (showMentionsAutocomplete) {
-      mentionsAutocompleteControls(evt);
+      mentionsAutocompleteControls(event);
     } else {
-      switch (evt.key) {
+      switch (event.key) {
         case "Enter":
-          if (evt.shiftKey) break;
-          evt.preventDefault();
+          if (event.shiftKey) break;
+          event.preventDefault();
           const content = serialize(value);
           if (content.length > 0)
             sendMessage({
               variables: {
                 input: {
-                  channelId: parseInt(channelId!),
                   content,
+                  channelId: parseInt(channelId!),
                 },
               },
             });

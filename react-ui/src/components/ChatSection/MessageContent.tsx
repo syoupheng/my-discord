@@ -1,8 +1,8 @@
-import { Message } from "../../gql/graphql";
+import { MessageInfoFragment } from "../../gql/graphql";
 import LinkRenderer from "./LinkRenderer";
 
 interface Props {
-  message: Message;
+  message: MessageInfoFragment;
 }
 
 const MessageContent = ({ message }: Props) => {

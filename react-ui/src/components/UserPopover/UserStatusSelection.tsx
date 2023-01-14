@@ -92,6 +92,7 @@ const UserStatusSelection = ({ authUser, onClose }: Props) => {
               <ul className="w-72">
                 {[...userStatusMap].map(([userStatus, { label, description }]) => (
                   <li
+                    key={userStatus}
                     onClick={() => {
                       selectUserStatus(userStatus);
                       onClose();

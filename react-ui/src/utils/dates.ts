@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import locale from "dayjs/locale/fr";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { Message } from "../gql/graphql";
+import { MessageInfoFragment } from "../gql/graphql";
 
 dayjs.extend(localizedFormat);
 dayjs.locale(locale);
@@ -31,11 +31,13 @@ export const formatUserSubscribeDate = (isoDate: string) => dayjs(isoDate).forma
 
 export const getMinutesDiff = (date1: string, date2: string) => dayjs(date1).diff(date2, "minute");
 
-export const isMessageConsecutive = (currentMessage: Message, previousMessage: Message): boolean => {
+export const isMessageConsecutive = (currentMessage: MessageInfoFragment, previousMessage: MessageInfoFragment): boolean => {
   if (!previousMessage) return false;
   const { author, createdAt } = currentMessage;
   const { author: previousAuthor, createdAt: previousPubDate } = previousMessage;
-  return previousAuthor === author && getMinutesDiff(previousPubDate, createdAt) < 3;
+  return previousAuthor === author && getMinutesDiff(createdAt, previousPubDate) < 2;
 };
 
 export const formatTimestamp = (isoDate: string) => dayjs(isoDate).format("HH:mm");
+
+export const getMillisecondsDiff = (date1: string, date2: string) => dayjs(date1).diff(date2);

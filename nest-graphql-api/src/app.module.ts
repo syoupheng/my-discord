@@ -16,6 +16,7 @@ import { DataloaderModule } from './dataloader/dataloader.module';
 import { DataloaderService } from './dataloader/dataloader.service';
 import { PrivateGroupsModule } from './private-groups/private-groups.module';
 import { MessagesModule } from './messages/messages.module';
+import { GraphQLError } from 'graphql';
 
 @Module({
   imports: [
@@ -25,16 +26,22 @@ import { MessagesModule } from './messages/messages.module';
       driver: ApolloDriver,
       useFactory: (dataloaderService: DataloaderService) => ({
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        sortSchema: true,
         context: () => ({
           loaders: dataloaderService.getLoaders(),
         }),
         cors: {
-          origin: process.env.CLIENT_URL ?? '*',
+          origin: process.env.CLIENT_URL,
           credentials: true,
         },
         subscriptions: {
           'graphql-ws': true,
           'subscriptions-transport-ws': true,
+        },
+        introspection: process.env.NODE_ENV === 'development',
+        formatError: (error) => {
+          if (error.extensions.code === 'INTERNAL_SERVER_ERROR') return new GraphQLError('Internal Server Error');
+          return error;
         },
       }),
     }),
