@@ -1,14 +1,16 @@
 import { createContext, ReactNode } from "react";
+import { Message, ReferencedMessage } from "../gql/graphql";
 
-export const MessageItemContext = createContext<number | null>(null);
+type MessageContextValue = Message | ReferencedMessage;
+export const MessageItemContext = createContext<MessageContextValue | null>(null);
 
 interface Props {
   children: ReactNode;
-  messageId: number;
+  message: MessageContextValue;
 }
 
-const MessageItemProvider = ({ children, messageId }: Props) => {
-  return <MessageItemContext.Provider value={messageId}>{children}</MessageItemContext.Provider>;
+const MessageItemProvider = ({ children, message }: Props) => {
+  return <MessageItemContext.Provider value={message}>{children}</MessageItemContext.Provider>;
 };
 
 export default MessageItemProvider;

@@ -5,6 +5,8 @@ import { useFragment } from "../../gql";
 import useChatInfiniteScroll from "../../hooks/chat-messages/useChatInfiniteScroll";
 import useChatMessages, { MESSAGES_LIMIT } from "../../hooks/chat-messages/useChatMessages";
 import useScrollChatBottom from "../../hooks/chat-messages/useScrollChatBottom";
+import MessageReplyProvider from "../../providers/SelectedMessageReplyProvider";
+import ReplyScrollProvider from "../../providers/ClickedReplyProvider";
 import ChatMessageInput from "./ChatMessageInput";
 import ChatMessagesList from "./ChatMessagesList";
 import GroupChatContentHeader from "./GroupChatContentHeader";
@@ -22,21 +24,25 @@ const ChatContent = () => {
   const bottomMessageListRef = useScrollChatBottom(data);
   const messages = useFragment(MESSAGE_INFO, data ? data.getMessages.messages : []);
   return (
-    <main className="relative flex flex-col min-w-0 min-h-0 flex-auto">
-      <div className="flex relative flex-auto min-h-0 min-w-0">
-        <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
-          {loading && messages.length === 0 && <LoadingMessagesSkeleton />}
-          {data && (
-            <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
-              {!data.getMessages.cursor ? <GroupChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
-              <ChatMessagesList messages={messages} />
-            </ol>
-          )}
-          <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>
-        </div>
-      </div>
-      <ChatMessageInput />
-    </main>
+    <MessageReplyProvider>
+      <ReplyScrollProvider>
+        <main className="relative flex flex-col min-w-0 min-h-0 flex-auto">
+          <div className="flex relative flex-auto min-h-0 min-w-0">
+            <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
+              {loading && messages.length === 0 && <LoadingMessagesSkeleton />}
+              {data && (
+                <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
+                  {!data.getMessages.cursor ? <GroupChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
+                  <ChatMessagesList messages={messages} />
+                </ol>
+              )}
+              <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>
+            </div>
+          </div>
+          <ChatMessageInput />
+        </main>
+      </ReplyScrollProvider>
+    </MessageReplyProvider>
   );
 };
 

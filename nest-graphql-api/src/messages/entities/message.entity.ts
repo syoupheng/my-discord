@@ -30,7 +30,7 @@ export class Message implements BaseMessage {
   @Field((type) => ReferencedMessage, { nullable: true })
   referencedMessage?: ReferencedMessage;
 
-  referencedMessageId?: number;
+  respondsToId?: number;
 
   mentions?: ChannelMember[];
 }

@@ -37,6 +37,8 @@ module.exports = {
         "yellow-mentioned": "rgba(250, 166, 26, 0.1)",
         "yellow-mentioned-hov": "rgba(250, 166, 26, 0.07)",
         "status-yellow-500": "hsl(38 96% 54%)",
+        "message-highlight": "rgba(146, 154, 247, 0.08)",
+        "message-highlight-hov": "rgba(146, 154, 247, 0.06)",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],

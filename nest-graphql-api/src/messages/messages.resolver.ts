@@ -31,7 +31,7 @@ export class MessagesResolver {
 
   @ResolveField('referencedMessage', (returns) => ReferencedMessage, { nullable: true })
   getReferencedMessage(@Parent() message: Message, @Context('loaders') loaders: IDataLoaders) {
-    if (!message?.referencedMessageId) return null;
-    return loaders.referencedMessagesLoader.load(message.referencedMessageId);
+    if (!message?.respondsToId) return null;
+    return loaders.referencedMessagesLoader.load(message.respondsToId);
   }
 }

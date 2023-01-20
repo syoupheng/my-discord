@@ -1,38 +1,53 @@
 import { forwardRef } from "react";
 import { CHANNEL_MEMBER_FIELDS } from "../../fragments/messages";
 import { useFragment } from "../../gql";
-import { Message, MessageInfoFragment } from "../../gql/graphql";
+import { ChannelMember, Message, MessageInfoFragment } from "../../gql/graphql";
 import useIsMentioned from "../../hooks/chat-messages/useIsMentioned";
 import MessageItemProvider from "../../providers/MessageItemProvider";
 import { formatMessageDate } from "../../utils/dates";
 import AvatarIconNoHole from "../Icons/AvatarIconNoHole";
+import ButtonContainer from "./ButtonContainer";
 import ConsecutiveMessageTimestamp from "./ConsecutiveMessageTimestamp";
 import MessageContent from "./MessageContent";
+import ReplySnippet from "./ReplySnippet";
 
 interface Props {
   msg: MessageInfoFragment;
   isConsecutive?: boolean;
+  isRepliedTo?: boolean;
 }
 
-const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = false }, ref) => {
-  const { createdAt, id } = msg;
+const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = false, isRepliedTo = false }, ref) => {
+  const { createdAt } = msg;
   const mentions = useFragment(CHANNEL_MEMBER_FIELDS, msg.mentions);
   const author = useFragment(CHANNEL_MEMBER_FIELDS, msg.author);
+  const refMessageAuthor = useFragment(CHANNEL_MEMBER_FIELDS, msg.referencedMessage?.author);
+  const refMessageMentions = useFragment(CHANNEL_MEMBER_FIELDS, msg.referencedMessage?.mentions);
   const isMentioned = useIsMentioned(mentions);
-
   const formattedDate = formatMessageDate(createdAt);
   return (
-    <MessageItemProvider messageId={id}>
-      <li className="outline-none relative">
+    <MessageItemProvider message={msg as Message}>
+      <li className="outline-none relative group">
         <div
           ref={ref}
           className={`${
-            isMentioned
+            isRepliedTo
+              ? " bg-message-highlight before:bg-blue before:content-[''] before:absolute before:block before:top-0 before:left-0 before:bottom-0 before:pointer-events-none before:w-[2px] hover:bg-message-highlight-hov"
+              : isMentioned
               ? "bg-yellow-mentioned before:bg-status-yellow-500 before:content-[''] before:absolute before:block before:top-0 before:left-0 before:bottom-0 before:pointer-events-none before:w-[2px] hover:bg-yellow-mentioned-hov"
               : "hover:bg-message-hov"
-          } ${!isConsecutive ? "mt-[1.0625rem] min-h-[2.75rem]" : ""} pl-[72px] py-[0.125rem] pr-12 relative select-text group`}
+          } ${!isConsecutive ? "mt-[1.0625rem] min-h-[2.75rem]" : ""} pl-[72px] py-[0.125rem] pr-12 relative select-text`}
           style={{ wordWrap: "break-word" }}
         >
+          {msg.referencedMessage && (
+            <ReplySnippet
+              referencedMessage={{
+                ...msg.referencedMessage,
+                author: refMessageAuthor as ChannelMember,
+                mentions: refMessageMentions as ChannelMember[],
+              }}
+            />
+          )}
           <div className="indent-0">
             {isConsecutive ? (
               <ConsecutiveMessageTimestamp timestamp={createdAt} />
@@ -54,8 +69,9 @@ const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = fa
                 </h3>
               </>
             )}
-            <MessageContent message={msg} />
+            <MessageContent messageContent={msg.content} />
           </div>
+          <ButtonContainer isConsecutive={isConsecutive} />
         </div>
       </li>
     </MessageItemProvider>

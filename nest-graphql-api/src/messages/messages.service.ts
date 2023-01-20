@@ -37,7 +37,7 @@ export class MessagesService {
         type: MessageType['NORMAL'],
         mentionsIds,
       });
-      return { ...newMessage, type: MessageType[newMessage.type], referencedMessageId: newMessage.respondsToId };
+      return { ...newMessage, type: MessageType[newMessage.type] };
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
         throw new BadRequestException('Il y a eu un problème lors de la création de ce message !');

@@ -2,6 +2,8 @@ import { RefObject, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
+import { SendMessageInput } from "../../gql/graphql";
+import useMessageReply from "../../hooks/chat-messages/useMessageReply";
 import useSendMessage from "../../hooks/chat-messages/useSendMessage";
 import useMentionAutocomplete from "../../hooks/mentions/useMentionsAutocomplete";
 import useSlateDecorator from "../../hooks/slate/useSlateDecorator";
@@ -10,6 +12,7 @@ import { serialize } from "../../utils/text";
 import ChatSlateEditor from "./ChatSlateEditor";
 import EmojiPickerBtn from "./EmojiPickerBtn";
 import MentionsAutocomplete from "./MentionsAutocomplete";
+import MessageResponseIndicator from "./MessageResponseIndicator";
 
 const withMentions = (editor: BaseEditor & ReactEditor) => {
   const { isInline, isVoid } = editor;
@@ -37,6 +40,7 @@ const ChatMessageInput = () => {
   const slateDecorator = useSlateDecorator(editor, value, mentionAutocompleteState, dispatchMentionAutocomplete);
 
   const [sendMessage] = useSendMessage(parseInt(channelId!), editor);
+  const { replyMessageId, setReplyMessageId } = useMessageReply()!;
   const handleKeyDown = async (event: KeyboardEvent) => {
     if (showMentionsAutocomplete) {
       mentionsAutocompleteControls(event);
@@ -46,15 +50,12 @@ const ChatMessageInput = () => {
           if (event.shiftKey) break;
           event.preventDefault();
           const content = serialize(value);
-          if (content.length > 0)
-            sendMessage({
-              variables: {
-                input: {
-                  content,
-                  channelId: parseInt(channelId!),
-                },
-              },
-            });
+          if (content.length > 0) {
+            const input: SendMessageInput = { content, channelId: parseInt(channelId!) };
+            if (replyMessageId) input.respondsToId = replyMessageId;
+            setReplyMessageId!(null);
+            sendMessage({ variables: { input } });
+          }
           break;
       }
     }
@@ -72,6 +73,7 @@ const ChatMessageInput = () => {
     <Slate editor={editor} value={value} onChange={onChange}>
       <form className="relative shrink-0 px-4 mt-[-8px]">
         <div ref={ref} className="mb-6 w-full indent-0 rounded-lg bg-primary relative">
+          <MessageResponseIndicator />
           <div className="overflow-x-hidden overflow-y-scroll bg-primary-dark-560 max-h-[50vh] rounded-lg" style={{ scrollbarWidth: "none" }}>
             <div className="pl-4 flex">
               <ChatSlateEditor handleKeyDown={handleKeyDown} decorate={slateDecorator} slateValue={value} />
