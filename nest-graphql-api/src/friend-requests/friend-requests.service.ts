@@ -1,5 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { FriendTag } from './dto/friend-tag.input';
 import { FriendRequest } from './entities/friend-request.entity';
@@ -9,10 +8,12 @@ import { PubSub } from 'graphql-subscriptions';
 import { FriendRequestRepository } from '../prisma/repositories/friend-requests.repository';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { FriendsRepository } from '../prisma/repositories/friends.repository';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class FriendRequestsService {
   constructor(
+    private prisma: PrismaService,
     private usersRepository: UsersRepository,
     private friendRequestRepository: FriendRequestRepository,
     private friendsRepository: FriendsRepository,
@@ -48,9 +49,10 @@ export class FriendRequestsService {
         requestStatus: FriendRequestStatus.SENT,
       };
     } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError && err.code === 'P2002') {
-        throw new ConflictException('Vous avez déjà envoyé une demande à cet utilisateur !');
-      }
+      // if (err instanceof PrismaClientKnownRequestError && err.code === 'P2002') {
+      //   throw new ConflictException('Vous avez déjà envoyé une demande à cet utilisateur !');
+      // }
+      this.prisma.throwDBError(err, { message: 'Vous avez déjà envoyé une demande à cet utilisateur !', errorType: 'conflict' });
       throw err;
     }
   }

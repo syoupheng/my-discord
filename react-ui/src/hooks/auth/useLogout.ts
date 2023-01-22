@@ -14,8 +14,8 @@ const useLogout = () => {
   const client = useApolloClient();
 
   return useMutation<{ logout: { success: boolean } }>(LOGOUT_USER, {
-    onCompleted: () => {
-      client.resetStore();
+    onCompleted: async () => {
+      await client.clearStore();
       navigate("/login");
     },
   });

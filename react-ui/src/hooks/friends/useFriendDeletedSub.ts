@@ -30,7 +30,6 @@ const useFriendDeletedSub = () => {
 
     return () => !!unsubscribe && unsubscribe();
   }, []);
-  return;
 };
 
 export default useFriendDeletedSub;

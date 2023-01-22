@@ -1,6 +1,6 @@
-import { useContext } from "react";
 import { DisplayGroupMembersContext } from "../../providers/DisplayGroupMembersProvider";
+import useSafeContext from "../useSafeContext";
 
-const useIsMembersOpen = () => useContext(DisplayGroupMembersContext);
+const useIsMembersOpen = () => useSafeContext(DisplayGroupMembersContext, "useIsMembersOpen must be used inside of DisplayGroupMembersProvider !");
 
 export default useIsMembersOpen;

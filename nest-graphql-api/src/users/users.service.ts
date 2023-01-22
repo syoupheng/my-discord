@@ -10,10 +10,16 @@ import { PubSub } from 'graphql-subscriptions';
 import { FriendsService } from '../friends/friends.service';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { AuthUser } from 'src/auth/entities/auth-user.entity';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository, @Inject(PUB_SUB) private pubSub: PubSub, private friendsService: FriendsService) {}
+  constructor(
+    private prisma: PrismaService,
+    private usersRepository: UsersRepository,
+    @Inject(PUB_SUB) private pubSub: PubSub,
+    private friendsService: FriendsService,
+  ) {}
 
   async create(userCreateInput: Prisma.UserCreateInput): Promise<AuthUser> {
     try {
@@ -21,11 +27,12 @@ export class UsersService {
       const { password, status, ...result } = newUser;
       return { ...result, status: UserStatus[status] };
     } catch (err) {
-      if (err instanceof PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          throw new ConflictException("Ce nom d'utilisateur ou email existe déjà !");
-        }
-      }
+      // if (err instanceof PrismaClientKnownRequestError) {
+      //   if (err.code === 'P2002') {
+      //     throw new ConflictException("Ce nom d'utilisateur ou email existe déjà !");
+      //   }
+      // }
+      this.prisma.throwDBError(err, { message: "Ce nom d'utilisateur ou email existe déjà !", errorType: 'conflict' });
       throw err;
     }
   }

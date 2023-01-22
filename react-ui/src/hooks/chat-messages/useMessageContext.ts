@@ -1,10 +1,6 @@
-import { useContext } from "react";
 import { MessageItemContext } from "../../providers/MessageItemProvider";
+import useSafeContext from "../useSafeContext";
 
-const useMessageContext = () => {
-  const context = useContext(MessageItemContext);
-  if (context === null) throw new Error("useMessageContext must be used inside of MessageItemProvider !");
-  return context;
-};
+const useMessageContext = () => useSafeContext(MessageItemContext, "useMessageContext must be used inside of MessageItemProvider !");
 
 export default useMessageContext;

@@ -1,6 +1,8 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { IDataLoaders } from 'src/dataloader/dataloader.interface';
+import { Inject, UseGuards } from '@nestjs/common';
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
+import { IDataLoaders } from '../dataloader/dataloader.interface';
+import { PUB_SUB } from '../pubsub/pubsub.module';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MessagesResponse } from './dto/messages.response';
 import { SendMessageInput } from './dto/send-message.input';
@@ -10,7 +12,7 @@ import { MessagesService } from './messages.service';
 
 @Resolver((of) => Message)
 export class MessagesResolver {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly messagesService: MessagesService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   @Query((returns) => MessagesResponse)
   @UseGuards(JwtAuthGuard)
@@ -33,5 +35,13 @@ export class MessagesResolver {
   getReferencedMessage(@Parent() message: Message, @Context('loaders') loaders: IDataLoaders) {
     if (!message?.respondsToId) return null;
     return loaders.referencedMessagesLoader.load(message.respondsToId);
+  }
+
+  @Subscription((returns) => Message, {
+    filter: ({ messageReceived }, variables) => messageReceived.membersIds.includes(variables.userId),
+    resolve: ({ messageReceived }) => messageReceived.payload,
+  })
+  messageReceived(@Args('userId', { type: () => Int }) userId: number) {
+    return this.pubSub.asyncIterator('messageReceived');
   }
 }

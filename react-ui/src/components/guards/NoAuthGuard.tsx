@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import useAuthUserCache from "../../hooks/auth/useAuthUserCache";
+import useAuthUser from "../../hooks/auth/useAuthUser";
 import PublicBackground from "../layouts/PublicBackground";
 
 const NoAuthGuard = () => {
-  const authUser = useAuthUserCache();
+  const { data: authUserData } = useAuthUser({ fetchPolicy: "cache-only" });
 
-  return authUser ? (
+  return authUserData ? (
     <Navigate to="/channels/@me" />
   ) : (
     <PublicBackground>

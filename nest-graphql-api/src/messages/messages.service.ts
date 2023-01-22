@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { MessageRepository } from '../prisma/repositories/message.repository';
 import { SendMessageInput } from './dto/send-message.input';
@@ -9,10 +9,17 @@ import { ChannelRepository } from '../prisma/repositories/channel.repository';
 import { ReferencedMessage } from './entities/referenced-message.entity';
 import { ChannelMember } from 'src/users/entities/channel-member.entity';
 import { IPagination } from './interfaces/pagination.interface';
+import { PUB_SUB } from '../pubsub/pubsub.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class MessagesService {
-  constructor(private messageRepository: MessageRepository, private usersRepository: UsersRepository, private channelRepository: ChannelRepository) {}
+  constructor(
+    private messageRepository: MessageRepository,
+    private usersRepository: UsersRepository,
+    private channelRepository: ChannelRepository,
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   async findAll(userId: number, channelId: number, pagination: IPagination) {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(channelId);
@@ -25,19 +32,20 @@ export class MessagesService {
   async send(payload: SendMessageInput, authorId: number): Promise<Message> {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(payload.channelId);
     if (!membersInChannels.some(({ memberId }) => memberId === authorId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
-    const mentionsIds = [
-      ...new Set(
-        this.getMentionsIdsFromContent(payload.content).filter((mentionId) => membersInChannels.map((member) => member.memberId).includes(mentionId)),
-      ),
-    ];
+    const membersInChannelsIds = membersInChannels.map((member) => member.memberId);
+    const mentionsIds = [...new Set(this.getMentionsIdsFromContent(payload.content).filter((mentionId) => membersInChannelsIds.includes(mentionId)))];
     try {
       const newMessage = await this.messageRepository.create({
         ...payload,
         authorId,
-        type: MessageType['NORMAL'],
+        type: MessageType.NORMAL,
         mentionsIds,
       });
-      return { ...newMessage, type: MessageType[newMessage.type] };
+      const result = { ...newMessage, type: MessageType[newMessage.type] };
+      this.pubSub.publish('messageReceived', {
+        messageReceived: { payload: result, membersIds: membersInChannelsIds.filter((id) => id !== authorId) },
+      });
+      return result;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
         throw new BadRequestException('Il y a eu un problème lors de la création de ce message !');

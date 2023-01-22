@@ -173,6 +173,7 @@ type Subscription {
   friendRequestConfirmed(userId: Int!): FriendRequestConfirmedPayload!
   friendRequestDeleted(userId: Int!): Int!
   friendRequestReceived(userId: Int!): FriendRequest!
+  messageReceived(userId: Int!): Message!
 }
 
 type SuccessResponse {

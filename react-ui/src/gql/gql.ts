@@ -21,6 +21,7 @@ const documents = {
     "\n  mutation logoutUser {\n    logout {\n      success\n    }\n  }\n": types.LogoutUserDocument,
     "\n  \n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n": types.RegisterUserDocument,
     "\n  query GetMessages($channelId: Int!, $cursor: String, $limit: Int) {\n    getMessages(channelId: $channelId, cursor: $cursor, limit: $limit) {\n      cursor\n      messages {\n        ...MessageInfo\n      }\n    }\n  }\n": types.GetMessagesDocument,
+    "\n  subscription OnMessageReceived($userId: Int!) {\n    messageReceived(userId: $userId) {\n      ...MessageInfo\n    }\n  }\n": types.OnMessageReceivedDocument,
     "\n  mutation sendMessage($input: SendMessageInput!) {\n    sendMessage(sendMessageInput: $input) {\n      ...MessageInfo\n    }\n  }\n": types.SendMessageDocument,
     "\n  mutation sendFriendRequest($input: FriendTag!) {\n    sendFriendRequest(friendTag: $input) {\n      id\n      username\n      requestStatus\n    }\n  }\n": types.SendFriendRequestDocument,
     "\n                fragment NewFriendRequest on FriendRequest {\n                  id\n                  username\n                  requestStatus\n                }\n              ": types.NewFriendRequestFragmentDoc,
@@ -81,6 +82,10 @@ export function graphql(source: "\n  \n  mutation RegisterUser($input: RegisterU
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query GetMessages($channelId: Int!, $cursor: String, $limit: Int) {\n    getMessages(channelId: $channelId, cursor: $cursor, limit: $limit) {\n      cursor\n      messages {\n        ...MessageInfo\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetMessages($channelId: Int!, $cursor: String, $limit: Int) {\n    getMessages(channelId: $channelId, cursor: $cursor, limit: $limit) {\n      cursor\n      messages {\n        ...MessageInfo\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription OnMessageReceived($userId: Int!) {\n    messageReceived(userId: $userId) {\n      ...MessageInfo\n    }\n  }\n"): (typeof documents)["\n  subscription OnMessageReceived($userId: Int!) {\n    messageReceived(userId: $userId) {\n      ...MessageInfo\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -27,7 +27,7 @@ const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = fa
   const formattedDate = formatMessageDate(createdAt);
   return (
     <MessageItemProvider message={msg as Message}>
-      <li className="outline-none relative group">
+      <li className="outline-none relative">
         <div
           ref={ref}
           className={`${
@@ -36,7 +36,7 @@ const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = fa
               : isMentioned
               ? "bg-yellow-mentioned before:bg-status-yellow-500 before:content-[''] before:absolute before:block before:top-0 before:left-0 before:bottom-0 before:pointer-events-none before:w-[2px] hover:bg-yellow-mentioned-hov"
               : "hover:bg-message-hov"
-          } ${!isConsecutive ? "mt-[1.0625rem] min-h-[2.75rem]" : ""} pl-[72px] py-[0.125rem] pr-12 relative select-text`}
+          } ${!isConsecutive ? "mt-[1.0625rem] min-h-[2.75rem]" : ""} pl-[72px] py-[0.125rem] pr-12 relative select-text group`}
           style={{ wordWrap: "break-word" }}
         >
           {msg.referencedMessage && (

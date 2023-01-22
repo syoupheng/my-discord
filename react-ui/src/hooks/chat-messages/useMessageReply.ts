@@ -1,10 +1,6 @@
-import { useContext } from "react";
 import { SelectedMessageReplyContext } from "../../providers/SelectedMessageReplyProvider";
+import useSafeContext from "../useSafeContext";
 
-const useSelectedMessageReply = () => {
-  const context = useContext(SelectedMessageReplyContext);
-  if (context === null) throw new Error("useMessageReply must be used inside of MessageReplyProvider !");
-  return context;
-};
+const useSelectedMessageReply = () => useSafeContext(SelectedMessageReplyContext, "useMessageReply must be used inside of MessageReplyProvider !");
 
 export default useSelectedMessageReply;

@@ -31,7 +31,7 @@ export const DEFAULT_ROUTE = "/channels/@me";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route path="/" element={<App />} errorElement={<p>Error !</p>}>
       {/* Public routes that should only be accessible to unauthenticated users */}
       <Route element={<NoAuthGuard />}>
         <Route path="login" element={<LoginPage />} />
