@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { MessageRepository } from '../prisma/repositories/message.repository';
 import { SendMessageInput } from './dto/send-message.input';
@@ -11,10 +11,13 @@ import { ChannelMember } from 'src/users/entities/channel-member.entity';
 import { IPagination } from './interfaces/pagination.interface';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
+import { PrismaService } from '../prisma/prisma.service';
+import { AuthUser } from '../auth/entities/auth-user.entity';
 
 @Injectable()
 export class MessagesService {
   constructor(
+    private prisma: PrismaService,
     private messageRepository: MessageRepository,
     private usersRepository: UsersRepository,
     private channelRepository: ChannelRepository,
@@ -25,7 +28,7 @@ export class MessagesService {
     const membersInChannels = await this.channelRepository.findMembersByChannelId(channelId);
     if (!membersInChannels.some(({ memberId }) => memberId === userId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
     const messages = await this.messageRepository.findManyByChannelId(channelId, { ...pagination, take: pagination.take + 1 });
-    if (messages.length === pagination.take + 1) return { cursor: messages.at(-2).createdAt, messages: messages.slice(0, -1) };
+    if (messages.length === pagination.take + 1) return { cursor: messages[1].createdAt, messages: messages.slice(1) };
     return { cursor: null, messages };
   }
 
@@ -86,5 +89,42 @@ export class MessagesService {
       const mentionsOnMessage = mentions.filter((mention) => mention.messageId === messageId);
       return mentionsOnMessage.map(({ mentionId, mention }) => ({ id: mentionId, username: mention.username, createdAt: mention.createdAt }));
     });
+  }
+
+  async delete(messageId: number, userId: number) {
+    const message = await this.messageRepository.findById(messageId);
+    if (!message) throw new NotFoundException('This message does not exist !');
+    const membersInChannels = await this.channelRepository.findMembersByChannelId(message.channelId);
+    if (!membersInChannels.some(({ memberId }) => memberId === userId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
+    const membersInChannelsIds = [...new Set(membersInChannels)].map(({ memberId }) => memberId);
+    await this.messageRepository.delete(messageId);
+    this.pubSub.publish('messageDeleted', {
+      messageDeleted: { message, membersIds: membersInChannelsIds.filter((id) => id !== userId) },
+    });
+    return { success: true };
+  }
+
+  async isAuthor(messageId: number, userId: number) {
+    const message = await this.messageRepository.findById(messageId);
+    if (!message) throw new NotFoundException("Ce message n'existe pas !");
+    return message.authorId === userId;
+  }
+
+  async isChannelMember(channelId: number, userId: number) {
+    const membersInChannels = await this.channelRepository.findMembersByChannelId(channelId);
+    if (!membersInChannels.some(({ memberId }) => memberId === userId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
+    return membersInChannels;
+  }
+
+  async notifyTyping(channelId: number, user: AuthUser) {
+    const { id: userId, username } = user;
+    const membersInChannels = await this.isChannelMember(channelId, userId);
+    this.pubSub.publish('userTyping', {
+      channelId,
+      userId,
+      username,
+      membersInChannels: membersInChannels.filter((member) => member.memberId !== userId),
+    });
+    return 'received';
   }
 }

@@ -116,6 +116,7 @@ type Mutation {
   createGroup(membersIds: [Int!]!): PrivateGroup!
   deleteFriend(friendId: Int!): SuccessResponse!
   deleteFriendRequest(friendId: Int!): SuccessResponse!
+  deleteMessage(messageId: Int!): SuccessResponse!
   editGroupName(editNameInput: EditNameInput!): PrivateGroup!
   editProfile(editProfileInput: EditProfileInput!): AuthUser!
   hideConversation(conversationId: Int!): PrivateConversation!
@@ -127,6 +128,7 @@ type Mutation {
   sendFriendRequest(friendTag: FriendTag!): FriendRequest!
   sendMessage(sendMessageInput: SendMessageInput!): Message!
   showConversation(friendId: Int!): PrivateConversation!
+  typingMessage(channelId: Int!): String!
 }
 
 type PrivateConversation {
@@ -173,11 +175,19 @@ type Subscription {
   friendRequestConfirmed(userId: Int!): FriendRequestConfirmedPayload!
   friendRequestDeleted(userId: Int!): Int!
   friendRequestReceived(userId: Int!): FriendRequest!
+  messageDeleted(userId: Int!): Message!
   messageReceived(userId: Int!): Message!
+  userTyping(channelId: Int!, userId: Int!): TypingNotification!
 }
 
 type SuccessResponse {
   success: Boolean!
+}
+
+type TypingNotification {
+  channelId: Int!
+  userId: Int!
+  username: String!
 }
 
 enum UserStatus {

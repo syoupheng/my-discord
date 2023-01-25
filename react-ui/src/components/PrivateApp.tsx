@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import useRefetchUserOnFocus from "../hooks/auth/useRefetchUserOnFocus";
+import useMessageDeletedSubscription from "../hooks/chat-messages/useMessageDeletedSubscription";
 import useMessageReceivedSubscription from "../hooks/chat-messages/useMessageReceivedSubscription";
 import useFriendReqDeletedSub from "../hooks/friend-requests/useFriendReqDeletedSub";
 import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequestSub";
@@ -19,6 +20,7 @@ const PrivateApp = ({ children }: Props) => {
   useRefetchUserOnFocus();
   useFriendChangeSub();
   useMessageReceivedSubscription();
+  useMessageDeletedSubscription();
 
   return <>{children}</>;
 };

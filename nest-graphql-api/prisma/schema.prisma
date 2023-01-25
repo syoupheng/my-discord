@@ -170,7 +170,7 @@ model Message {
 }
 
 model MentionsOnMessages {
-  message   Message @relation(fields: [messageId], references: [id])
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId Int
   mention   User    @relation(fields: [mentionId], references: [id])
   mentionId Int

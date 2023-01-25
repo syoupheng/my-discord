@@ -17,6 +17,10 @@ interface IMessageCreateInput {
 export class MessageRepository {
   constructor(private prisma: PrismaService) {}
 
+  findById(id: number) {
+    return this.prisma.message.findUnique({ where: { id } });
+  }
+
   findManyByIds(ids: number[]) {
     return this.prisma.message.findMany({ where: { id: { in: ids } } });
   }
@@ -34,9 +38,9 @@ export class MessageRepository {
 
   findManyByChannelId(channelId: number, pagination: IPagination) {
     const params: Prisma.MessageFindManyArgs = {
-      take: pagination.take,
+      take: -pagination.take,
       where: { channelId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
     };
 
     if ('cursor' in pagination && pagination.cursor) {
@@ -60,5 +64,9 @@ export class MessageRepository {
     if (payload.mentionsIds.length > 0) data.mentions = { createMany: { data: payload.mentionsIds.map((mentionId) => ({ mentionId })) } };
 
     return this.prisma.message.create({ data });
+  }
+
+  delete(messageId: number) {
+    return this.prisma.message.delete({ where: { id: messageId } });
   }
 }

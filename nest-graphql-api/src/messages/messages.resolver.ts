@@ -9,6 +9,9 @@ import { SendMessageInput } from './dto/send-message.input';
 import { Message } from './entities/message.entity';
 import { ReferencedMessage } from './entities/referenced-message.entity';
 import { MessagesService } from './messages.service';
+import { SuccessResponse } from '../auth/dto/success-response';
+import { TypingNotification } from './dto/typing-notification.response';
+import { MembersInChannels } from '@prisma/client';
 
 @Resolver((of) => Message)
 export class MessagesResolver {
@@ -31,6 +34,18 @@ export class MessagesResolver {
     return this.messagesService.send(input, ctx.req.user.id);
   }
 
+  @Mutation((type) => SuccessResponse)
+  @UseGuards(JwtAuthGuard)
+  deleteMessage(@Args('messageId', { type: () => Int }) messageId: number, @Context() ctx): Promise<SuccessResponse> {
+    return this.messagesService.delete(messageId, ctx.req.user.id);
+  }
+
+  @Mutation((type) => String)
+  @UseGuards(JwtAuthGuard)
+  typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @Context() ctx): Promise<string> {
+    return this.messagesService.notifyTyping(channelId, ctx.req.user);
+  }
+
   @ResolveField('referencedMessage', (returns) => ReferencedMessage, { nullable: true })
   getReferencedMessage(@Parent() message: Message, @Context('loaders') loaders: IDataLoaders) {
     if (!message?.respondsToId) return null;
@@ -43,5 +58,22 @@ export class MessagesResolver {
   })
   messageReceived(@Args('userId', { type: () => Int }) userId: number) {
     return this.pubSub.asyncIterator('messageReceived');
+  }
+
+  @Subscription((returns) => Message, {
+    filter: ({ messageDeleted }, variables) => messageDeleted.membersIds.includes(variables.userId),
+    resolve: ({ messageDeleted }) => messageDeleted.message,
+  })
+  messageDeleted(@Args('userId', { type: () => Int }) userId: number) {
+    return this.pubSub.asyncIterator('messageDeleted');
+  }
+
+  @Subscription((returns) => TypingNotification, {
+    filter: (payload, { userId, channelId }) =>
+      payload.membersInChannels.some((member: MembersInChannels) => member.memberId === userId) && channelId === payload.channelId,
+    resolve: ({ channelId, userId, username }) => ({ channelId, userId, username }),
+  })
+  userTyping(@Args('userId', { type: () => Int }) userId: number, @Args('channelId', { type: () => Int }) channelId: number) {
+    return this.pubSub.asyncIterator('userTyping');
   }
 }

@@ -16,7 +16,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  throwDBError(error: any, { message = 'Database error !', errorType }: { message?: string; errorType: DbErrorType }) {
+  throwDBError(error: unknown, { message = 'Database error !', errorType }: { message?: string; errorType: DbErrorType }) {
     const errorMapping = new Map<DbErrorType, { exception: HttpException; code: string }>([
       ['conflict', { exception: new ConflictException(message), code: 'P2002' }],
       ['not-found', { exception: new NotFoundException(message), code: 'P2025' }],

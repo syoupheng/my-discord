@@ -6,7 +6,7 @@ import useIsMentioned from "../../hooks/chat-messages/useIsMentioned";
 import MessageItemProvider from "../../providers/MessageItemProvider";
 import { formatMessageDate } from "../../utils/dates";
 import AvatarIconNoHole from "../Icons/AvatarIconNoHole";
-import ButtonContainer from "./ButtonContainer";
+import ButtonContainer from "./MessageButtons/ButtonContainer";
 import ConsecutiveMessageTimestamp from "./ConsecutiveMessageTimestamp";
 import MessageContent from "./MessageContent";
 import ReplySnippet from "./ReplySnippet";

@@ -1,6 +1,6 @@
-import useMessageContext from "../../hooks/chat-messages/useMessageContext";
-import useMessageReply from "../../hooks/chat-messages/useMessageReply";
-import MessageResponseIcon from "../Icons/MessageResponseIcon";
+import useMessageContext from "../../../hooks/chat-messages/useMessageContext";
+import useMessageReply from "../../../hooks/chat-messages/useMessageReply";
+import MessageResponseIcon from "../../Icons/MessageResponseIcon";
 import MessageButton from "./MessageButton";
 
 const MessageRespondButton = () => {

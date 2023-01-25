@@ -20,13 +20,14 @@ const useMessageReceivedSubscription = () => {
       const newMessage = useFragment(MESSAGE_INFO, subscriptionData.data?.messageReceived);
       if (!newMessage) return;
       const cacheId = { query: GET_CHAT_MESSAGES, variables: { channelId: newMessage.channelId } };
-      const exitsing = client.readQuery(cacheId);
+      const existing = client.readQuery(cacheId);
+      const existingMessages = existing ? useFragment(MESSAGE_INFO, existing.getMessages.messages) : [];
       client.writeQuery({
         ...cacheId,
         data: {
           getMessages: {
-            ...exitsing?.getMessages,
-            messages: [newMessage],
+            ...existing?.getMessages,
+            messages: [...existingMessages, newMessage],
           },
         },
       });

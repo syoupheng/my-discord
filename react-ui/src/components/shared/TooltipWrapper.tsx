@@ -8,14 +8,15 @@ interface Props {
   children: ReactNode;
   tooltipTxt: string;
   size?: Size;
+  className?: string;
 }
 
-const TooltipWrapper = ({ direction = "up", children, tooltipTxt, size = "md" }: Props) => {
+const TooltipWrapper = ({ direction = "up", children, tooltipTxt, size = "md", className = "" }: Props) => {
   const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({ direction });
 
   return (
     <>
-      <div onMouseOver={handleHover} onMouseLeave={() => setIsShown(false)} ref={containerRef}>
+      <div className={className} onMouseOver={handleHover} onMouseLeave={() => setIsShown(false)} ref={containerRef}>
         {children}
       </div>
       {isShown && <Tooltip direction={direction} tooltipTxt={tooltipTxt} position={position} size={size} />}

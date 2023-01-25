@@ -18,7 +18,18 @@ const ChatContent = () => {
   const { data, loading, fetchMore, networkStatus } = useChatMessages(parseInt(channelId));
   const { infiniteScrollDivRef, scrollContainerRef } = useChatInfiniteScroll(() => {
     if (!loading && networkStatus !== NetworkStatus.loading && data?.getMessages.cursor) {
-      fetchMore({ variables: { cursor: data?.getMessages.cursor, limit: MESSAGES_LIMIT } });
+      fetchMore({
+        variables: { cursor: data?.getMessages.cursor, limit: MESSAGES_LIMIT },
+        updateQuery: (previousResults, { fetchMoreResult }) => {
+          const { cursor: newCursor, messages: newMessages } = fetchMoreResult.getMessages;
+          return {
+            getMessages: {
+              cursor: newCursor,
+              messages: [...newMessages, ...previousResults.getMessages.messages],
+            },
+          };
+        },
+      });
     }
   });
   const bottomMessageListRef = useScrollChatBottom(data);

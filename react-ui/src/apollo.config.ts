@@ -30,12 +30,12 @@ export const client = new ApolloClient({
         fields: {
           getMessages: {
             keyArgs: ["channelId"],
-            merge: messagesMerger,
-            read(exisiting: { cursor: string; messages: Record<number, Reference> }, { readField }: { readField: ReadFieldFunction }) {
-              if (exisiting)
+            // merge: messagesMerger,
+            read(existing: { cursor: string; messages: Reference[] }, { readField }: { readField: ReadFieldFunction }) {
+              if (existing)
                 return {
-                  cursor: exisiting.cursor,
-                  messages: Object.values(exisiting.messages)
+                  cursor: existing.cursor,
+                  messages: existing.messages
                     .slice(0)
                     .sort((message1, message2) => getMillisecondsDiff(readField("createdAt", message1)!, readField("createdAt", message2)!)),
                 };
