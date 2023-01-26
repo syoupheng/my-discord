@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import useWindowFocus from "../ui/useWindowFocus";
 import { GET_AUTH_USER } from "./useAuthUser";
 
-const STALE_TIME = 10000;
+const STALE_TIME = 30000;
 
 const useRefetchUserOnFocus = () => {
   const isStale = useRef(false);

@@ -1,10 +1,12 @@
-import { RefObject, useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
 import { SendMessageInput } from "../../gql/graphql";
 import useMessageReply from "../../hooks/chat-messages/useMessageReply";
 import useSendMessage from "../../hooks/chat-messages/useSendMessage";
+import useSendTypingNotification from "../../hooks/chat-messages/useSendTypingNotification";
+import useTypingSubscription from "../../hooks/chat-messages/useTypingSubscription";
 import useMentionAutocomplete from "../../hooks/mentions/useMentionsAutocomplete";
 import useSlateDecorator from "../../hooks/slate/useSlateDecorator";
 import useClickOutside from "../../hooks/ui/useClickOutside";
@@ -61,13 +63,26 @@ const ChatMessageInput = () => {
     }
   };
 
+  const [sendTypingNotification] = useSendTypingNotification();
+
+  const isTyping = useRef(false);
+
   const onChange = (value: Descendant[]) => {
     // const cursorAnchor = editor.selection?.anchor;
     // const nodeText = Node.string(value[cursorAnchor?.path[0] ?? 0]);
     // console.log("texte : ", nodeText);
     // handleUserMentions(nodeText, cursorAnchor?.offset ?? 0);
     setValue(value);
+    if (!isTyping.current) {
+      sendTypingNotification();
+      isTyping.current = true;
+      setTimeout(() => {
+        isTyping.current = false;
+      }, 4000);
+    }
   };
+
+  useTypingSubscription(parseInt(channelId!));
 
   return (
     <Slate editor={editor} value={value} onChange={onChange}>

@@ -25,7 +25,8 @@ const documents = {
     "\n  subscription OnMessageDeleted($userId: Int!) {\n    messageDeleted(userId: $userId) {\n      id\n      channelId\n    }\n  }\n": types.OnMessageDeletedDocument,
     "\n  subscription OnMessageReceived($userId: Int!) {\n    messageReceived(userId: $userId) {\n      ...MessageInfo\n    }\n  }\n": types.OnMessageReceivedDocument,
     "\n  mutation sendMessage($input: SendMessageInput!) {\n    sendMessage(sendMessageInput: $input) {\n      ...MessageInfo\n    }\n  }\n": types.SendMessageDocument,
-    "\n  subscription OnUserTyping($channelId: Int!, $userId: Int!) {\n    userTyping(channelId: $channelId, userId: $userId) {\n      userId\n      username\n      channelId\n    }\n  }\n": types.OnUserTypingDocument,
+    "\n  mutation SendTypingNotification($channelId: Int!) {\n    typingMessage(channelId: $channelId)\n  }\n": types.SendTypingNotificationDocument,
+    "\n  subscription OnUserTyping($input: UserTypingInput!) {\n    userTyping(userTypingInput: $input) {\n      userId\n      username\n      channelId\n    }\n  }\n": types.OnUserTypingDocument,
     "\n  mutation sendFriendRequest($input: FriendTag!) {\n    sendFriendRequest(friendTag: $input) {\n      id\n      username\n      requestStatus\n    }\n  }\n": types.SendFriendRequestDocument,
     "\n                fragment NewFriendRequest on FriendRequest {\n                  id\n                  username\n                  requestStatus\n                }\n              ": types.NewFriendRequestFragmentDoc,
     "\n  mutation deleteFriendRequest($friendId: Int!) {\n    deleteFriendRequest(friendId: $friendId) {\n      success\n    }\n  }\n": types.DeleteFriendRequestDocument,
@@ -104,7 +105,11 @@ export function graphql(source: "\n  mutation sendMessage($input: SendMessageInp
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  subscription OnUserTyping($channelId: Int!, $userId: Int!) {\n    userTyping(channelId: $channelId, userId: $userId) {\n      userId\n      username\n      channelId\n    }\n  }\n"): (typeof documents)["\n  subscription OnUserTyping($channelId: Int!, $userId: Int!) {\n    userTyping(channelId: $channelId, userId: $userId) {\n      userId\n      username\n      channelId\n    }\n  }\n"];
+export function graphql(source: "\n  mutation SendTypingNotification($channelId: Int!) {\n    typingMessage(channelId: $channelId)\n  }\n"): (typeof documents)["\n  mutation SendTypingNotification($channelId: Int!) {\n    typingMessage(channelId: $channelId)\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription OnUserTyping($input: UserTypingInput!) {\n    userTyping(userTypingInput: $input) {\n      userId\n      username\n      channelId\n    }\n  }\n"): (typeof documents)["\n  subscription OnUserTyping($input: UserTypingInput!) {\n    userTyping(userTypingInput: $input) {\n      userId\n      username\n      channelId\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

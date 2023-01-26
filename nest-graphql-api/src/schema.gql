@@ -177,7 +177,7 @@ type Subscription {
   friendRequestReceived(userId: Int!): FriendRequest!
   messageDeleted(userId: Int!): Message!
   messageReceived(userId: Int!): Message!
-  userTyping(channelId: Int!, userId: Int!): TypingNotification!
+  userTyping(userTypingInput: UserTypingInput!): TypingNotification!
 }
 
 type SuccessResponse {
@@ -195,4 +195,9 @@ enum UserStatus {
   INACTIVE
   INVISIBLE
   ONLINE
+}
+
+input UserTypingInput {
+  channelId: Int
+  userId: Int!
 }

@@ -12,6 +12,7 @@ import { MessagesService } from './messages.service';
 import { SuccessResponse } from '../auth/dto/success-response';
 import { TypingNotification } from './dto/typing-notification.response';
 import { MembersInChannels } from '@prisma/client';
+import { UserTypingInput } from './dto/user-typing.input';
 
 @Resolver((of) => Message)
 export class MessagesResolver {
@@ -69,11 +70,14 @@ export class MessagesResolver {
   }
 
   @Subscription((returns) => TypingNotification, {
-    filter: (payload, { userId, channelId }) =>
-      payload.membersInChannels.some((member: MembersInChannels) => member.memberId === userId) && channelId === payload.channelId,
+    filter: (payload, { userTypingInput }: { userTypingInput: UserTypingInput }) => {
+      const isMember = payload.membersInChannels.some((member: MembersInChannels) => member.memberId === userTypingInput.userId);
+      if (userTypingInput.channelId) return payload.channelId === userTypingInput.channelId && isMember;
+      return isMember;
+    },
     resolve: ({ channelId, userId, username }) => ({ channelId, userId, username }),
   })
-  userTyping(@Args('userId', { type: () => Int }) userId: number, @Args('channelId', { type: () => Int }) channelId: number) {
+  userTyping(@Args('userTypingInput') input: UserTypingInput) {
     return this.pubSub.asyncIterator('userTyping');
   }
 }
