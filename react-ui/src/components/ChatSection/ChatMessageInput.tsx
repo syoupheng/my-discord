@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";
@@ -6,7 +6,6 @@ import { SendMessageInput } from "../../gql/graphql";
 import useMessageReply from "../../hooks/chat-messages/useMessageReply";
 import useSendMessage from "../../hooks/chat-messages/useSendMessage";
 import useSendTypingNotification from "../../hooks/chat-messages/useSendTypingNotification";
-import useTypingSubscription from "../../hooks/chat-messages/useTypingSubscription";
 import useMentionAutocomplete from "../../hooks/mentions/useMentionsAutocomplete";
 import useSlateDecorator from "../../hooks/slate/useSlateDecorator";
 import useClickOutside from "../../hooks/ui/useClickOutside";
@@ -15,6 +14,7 @@ import ChatSlateEditor from "./ChatSlateEditor";
 import EmojiPickerBtn from "./EmojiPickerBtn";
 import MentionsAutocomplete from "./MentionsAutocomplete";
 import MessageResponseIndicator from "./MessageResponseIndicator";
+import UserTypingNotification from "./UserTypingNotification";
 
 const withMentions = (editor: BaseEditor & ReactEditor) => {
   const { isInline, isVoid } = editor;
@@ -29,6 +29,12 @@ const ChatMessageInput = () => {
   const [value, setValue] = useState<Descendant[]>([{ type: "paragraph", children: [{ text: "" }] }]);
   const { mentionAutocompleteState, mentions, mentionsAutocompleteControls, dispatchMentionAutocomplete } = useMentionAutocomplete(editor)!;
   const { showMentionsAutocomplete, mentionSearch, arrowPosition } = mentionAutocompleteState;
+
+  useEffect(() => {
+    Transforms.select(editor, []);
+    Transforms.delete(editor);
+  }, [channelId]);
+
   const ref = useClickOutside(() => {
     if (showMentionsAutocomplete) {
       dispatchMentionAutocomplete({ type: "CLOSE" });
@@ -82,8 +88,6 @@ const ChatMessageInput = () => {
     }
   };
 
-  useTypingSubscription(parseInt(channelId!));
-
   return (
     <Slate editor={editor} value={value} onChange={onChange}>
       <form className="relative shrink-0 px-4 mt-[-8px]">
@@ -101,6 +105,7 @@ const ChatMessageInput = () => {
             <MentionsAutocomplete arrowPosition={arrowPosition} mentions={mentions} mentionSearch={mentionSearch} slateValue={value} />
           )}
         </div>
+        <UserTypingNotification />
       </form>
     </Slate>
   );

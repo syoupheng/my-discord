@@ -1,6 +1,6 @@
-import { useSubscription } from "@apollo/client";
+import { OnSubscriptionDataOptions, useSubscription } from "@apollo/client";
 import { graphql } from "../../gql";
-import { UserTypingInput } from "../../gql/graphql";
+import { OnUserTypingSubscription, UserTypingInput } from "../../gql/graphql";
 import useAuthUser from "../auth/useAuthUser";
 
 const USER_TYPING_SUBSCRIPTION = graphql(`
@@ -13,16 +13,14 @@ const USER_TYPING_SUBSCRIPTION = graphql(`
   }
 `);
 
-const useTypingSubscription = (channelId?: number) => {
+const useTypingSubscription = (onSubscriptionData: (options: OnSubscriptionDataOptions<OnUserTypingSubscription>) => any, channelId?: number) => {
   const { data } = useAuthUser();
   if (!data) return;
   let input: UserTypingInput = { userId: data.me.id };
   if (channelId) input = { ...input, channelId };
   return useSubscription(USER_TYPING_SUBSCRIPTION, {
     variables: { input },
-    onSubscriptionData: ({ subscriptionData: { data } }) => {
-      console.log(data?.userTyping);
-    },
+    onSubscriptionData,
   });
 };
 
