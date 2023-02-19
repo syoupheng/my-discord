@@ -1,37 +1,51 @@
 import { ReactNode } from "react";
-import useTooltip from "../../hooks/ui/useTooltip";
-import { TooltipDirection } from "../../types/tooltip";
-import Tooltip from "../shared/Tooltip";
+import NotificationCounter from "../shared/NotificationCounter";
+import TooltipWrapper from "../shared/TooltipWrapper";
+
+type HoverVariant = "blue" | "green";
+
+type Variant = "blue" | "primary" | "red";
 
 interface Props {
   children: ReactNode;
   active?: boolean;
   tooltipTxt: string;
-  handleClick?: (() => any) | undefined;
+  onClick?: (() => any) | undefined;
+  hoverVariant?: HoverVariant;
+  variant?: Variant;
+  count?: number | undefined | null;
 }
 
-const TOOLTIP_DIRECTION: TooltipDirection = "right";
+const hoverVariantMap = new Map<HoverVariant, string>([
+  ["blue", "hover:bg-blue"],
+  ["green", "hover:bg-status-green"],
+]);
 
-const SidebarItem = ({ children, active = false, tooltipTxt, handleClick }: Props) => {
-  const { handleHover, setIsShown, containerRef, isShown, position } = useTooltip({
-    direction: TOOLTIP_DIRECTION,
-    gap: 14,
-  });
+const variantMap = new Map<Variant, string>([
+  ["primary", "bg-primary"],
+  ["blue", "bg-blue"],
+  ["red", "bg-red"],
+]);
 
+const SidebarItem = ({ children, active = false, tooltipTxt, onClick, hoverVariant, variant = "primary", count }: Props) => {
   return (
-    <div
-      data-testid={tooltipTxt}
-      ref={containerRef}
-      onMouseOver={handleHover}
-      onMouseLeave={() => setIsShown(false)}
-      onClick={handleClick}
-      className={`${
-        active ? "bg-blue rounded-xl" : "bg-primary rounded-3xl hover:rounded-xl hover:bg-blue"
-      } relative shrink-0 flex items-center justify-center h-12 w-12 my-2 mx-auto text-white cursor-pointer transition-all ease-linear duration-100 group`}
-    >
-      {children}
-      {isShown && <Tooltip tooltipTxt={tooltipTxt} position={position} direction={TOOLTIP_DIRECTION} />}
-    </div>
+    <TooltipWrapper tooltipTxt={tooltipTxt} direction="right" gap={3}>
+      <div
+        onClick={onClick}
+        className={`${
+          active
+            ? `rounded-xl ${variantMap.get("blue")}`
+            : `${variantMap.get(variant)} rounded-3xl hover:rounded-xl ${hoverVariant ? hoverVariantMap.get(hoverVariant) : ""}`
+        } relative shrink-0 flex items-center justify-center h-12 w-12 my-2 mx-auto text-white cursor-pointer transition-all ease-linear duration-100 group`}
+      >
+        {children}
+        {!!count && (
+          <div className="border-4 border-tertiary rounded-full absolute -bottom-1 -right-1">
+            <NotificationCounter count={count} />
+          </div>
+        )}
+      </div>
+    </TooltipWrapper>
   );
 };
 

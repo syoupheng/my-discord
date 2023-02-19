@@ -11,6 +11,7 @@ interface IMessageCreateInput {
   respondsToId?: number;
   mentionsIds: number[];
   type: MessageType;
+  notifiedUsersIds: number[];
 }
 
 @Injectable()
@@ -51,13 +52,25 @@ export class MessageRepository {
     return this.prisma.message.findMany(params);
   }
 
+  findUserMessagesNotifications(userId: number) {
+    return this.prisma.newMessagesNotifications.findMany({
+      where: { userId },
+      include: {
+        message: true,
+      },
+    });
+  }
+
   create(payload: IMessageCreateInput) {
-    const { content, authorId, channelId, type } = payload;
+    const { content, authorId, channelId, type, notifiedUsersIds } = payload;
     const data: Prisma.MessageCreateInput = {
       content,
       type,
       channel: { connect: { id: channelId } },
       author: { connect: { id: authorId } },
+      notifiedTo: {
+        create: notifiedUsersIds.map((id) => ({ userId: id })),
+      },
     };
 
     if ('respondsToId' in payload) data.respondsTo = { connect: { id: payload.respondsToId } };
@@ -68,5 +81,14 @@ export class MessageRepository {
 
   delete(messageId: number) {
     return this.prisma.message.delete({ where: { id: messageId } });
+  }
+
+  deleteMessagesNotifications(messagesIds: number[], userId: number) {
+    return this.prisma.newMessagesNotifications.deleteMany({
+      where: {
+        userId,
+        messageId: { in: messagesIds },
+      },
+    });
   }
 }

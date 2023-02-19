@@ -12,4 +12,8 @@ export class ChannelRepository {
       },
     });
   }
+
+  findManyByMemberId(memberId: number) {
+    return this.prisma.membersInChannels.findMany({ where: { memberId } });
+  }
 }

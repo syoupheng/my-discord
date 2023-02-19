@@ -14,6 +14,7 @@ import NoAuthGuard from "./components/guards/NoAuthGuard";
 import FriendsTabProvider from "./providers/FriendsTabProvider";
 import { client } from "./apollo.config";
 import LoadingScreen from "./components/shared/LoadingScreen";
+import ChatScrollProvider from "./providers/ChatScrollProvider";
 // import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
 // import PrivateConversationPage from "./pages/PrivateConversationPage";
 // import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
@@ -65,9 +66,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <FriendsTabProvider>
-        <Suspense fallback={<LoadingScreen />}>
-          <RouterProvider router={router} />
-        </Suspense>
+        <ChatScrollProvider>
+          <Suspense fallback={<LoadingScreen />}>
+            <RouterProvider router={router} />
+          </Suspense>
+        </ChatScrollProvider>
       </FriendsTabProvider>
     </ApolloProvider>
   </React.StrictMode>

@@ -27,6 +27,16 @@ export const formatMessageDate = (isoDate: string) => {
   return formattedDate;
 };
 
+export const formatOldestNewMessageDate = (isoDate: string) => {
+  const creationDate = dayjs(isoDate);
+  let formattedDate = `le ${creationDate.format("dddd D MM")} à ${creationDate.format("HH:mm")}`;
+  const timeToNow = dayjs().diff(dayjs(isoDate), "day");
+  if (timeToNow < 1 && dayjs().day() === creationDate.day()) {
+    formattedDate = creationDate.format("HH:mm");
+  } else if (isYesterday(isoDate)) formattedDate = `hier à ${creationDate.format("HH:mm")}`;
+  return formattedDate;
+};
+
 export const formatUserSubscribeDate = (isoDate: string) => dayjs(isoDate).format("ll");
 
 export const getMinutesDiff = (date1: string, date2: string) => dayjs(date1).diff(date2, "minute");

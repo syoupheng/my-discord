@@ -43,6 +43,7 @@ export class MessagesService {
         authorId,
         type: MessageType.NORMAL,
         mentionsIds,
+        notifiedUsersIds: membersInChannelsIds.filter((id) => authorId !== id),
       });
       const result = { ...newMessage, type: MessageType[newMessage.type] };
       this.pubSub.publish('messageReceived', {

@@ -15,6 +15,8 @@ import { PrivateConversation } from '../private-conversations/entities/private-c
 import { PrivateConversationsService } from '../private-conversations/private-conversations.service';
 import { PrivateGroup } from '../private-groups/entities/private-group.entity';
 import { PrivateGroupsService } from '../private-groups/private-groups.service';
+import { Message } from '../messages/entities/message.entity';
+import { MessagesNotificationsService } from '../messages/messages-notifications.service';
 
 @Resolver((of) => AuthUser)
 export class AuthResolver {
@@ -24,6 +26,7 @@ export class AuthResolver {
     private friendsService: FriendsService,
     private privateConversationsService: PrivateConversationsService,
     private privateGroupsService: PrivateGroupsService,
+    private messagesNotificationsService: MessagesNotificationsService,
   ) {}
 
   @Mutation((returns) => AuthUser)
@@ -75,5 +78,11 @@ export class AuthResolver {
   getPrivateGroups(@Parent() authUser: AuthUser) {
     const { id: userId } = authUser;
     return this.privateGroupsService.findAll(userId);
+  }
+
+  @ResolveField('newMessagesNotifications', (returns) => [Message])
+  getNewMessagesNotifications(@Parent() authUser: AuthUser): Promise<Message[]> {
+    const { id: userId } = authUser;
+    return this.messagesNotificationsService.findAll(userId);
   }
 }

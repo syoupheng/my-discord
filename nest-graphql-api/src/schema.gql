@@ -8,6 +8,7 @@ type AuthUser implements BaseUser {
   friendRequests: [FriendRequest!]!
   friends: [Friend!]!
   id: Int!
+  newMessagesNotifications: [Message!]!
   phoneNumber: String
   privateConversations: [PrivateConversation!]!
   privateGroups: [PrivateGroup!]!
@@ -124,6 +125,7 @@ type Mutation {
   leaveGroup(groupId: Int!): PrivateGroup!
   login(loginUserInput: LoginUserInput!): AuthUser!
   logout: SuccessResponse!
+  markMessagesAsRead(messagesIds: [Int!]!): String!
   register(registerUserInput: RegisterUserInput!): AuthUser!
   sendFriendRequest(friendTag: FriendTag!): FriendRequest!
   sendMessage(sendMessageInput: SendMessageInput!): Message!

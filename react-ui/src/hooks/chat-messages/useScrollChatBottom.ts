@@ -1,26 +1,36 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { CHANNEL_MEMBER_FIELDS, MESSAGE_INFO } from "../../fragments/messages";
-import { useFragment } from "../../gql";
+import { useParams } from "react-router-dom";
 import { GetMessagesQuery } from "../../gql/graphql";
 import useAuthUser from "../auth/useAuthUser";
-import { MESSAGES_LIMIT } from "./useChatMessages";
+import useIntersectionObserver from "../ui/useIntersectionObserver";
+import useMarkMessagesAsRead from "./useMarkMessagesAsRead";
 
 const useScrollChatBottom = (messagesData: GetMessagesQuery | undefined) => {
+  const { channelId } = useParams();
   const bottomMessageListRef = useRef<HTMLDivElement>(null);
-  const messages = useFragment(MESSAGE_INFO, messagesData ? messagesData.getMessages.messages : []);
-  const { data: authUserData } = useAuthUser();
-  const lastMessageId = messages.at(-1)?.id;
-  const lastMessageAuthor = useFragment(CHANNEL_MEMBER_FIELDS, messages.at(-1)?.author);
-  useEffect(() => {
-    if (bottomMessageListRef.current && authUserData?.me.id === lastMessageAuthor?.id) bottomMessageListRef.current.scrollIntoView();
-  }, [lastMessageId]);
+  const scrollToBottom = () => {
+    if (bottomMessageListRef.current) bottomMessageListRef.current.scrollIntoView();
+  };
   const loadedInitialData = useRef(false);
+  const currentChannelId = useRef(channelId);
+  useEffect(() => {
+    loadedInitialData.current = false;
+  }, [channelId]);
   useLayoutEffect(() => {
-    if (bottomMessageListRef.current && !loadedInitialData.current && messages.length <= MESSAGES_LIMIT) {
-      bottomMessageListRef.current.scrollIntoView();
+    if (currentChannelId.current !== channelId || !loadedInitialData.current) {
+      scrollToBottom();
+      currentChannelId.current = channelId;
     }
     if (messagesData) loadedInitialData.current = true;
   }, [messagesData]);
+
+  const { data } = useAuthUser();
+  const unreadMessagesIds =
+    data?.me.newMessagesNotifications.filter((message) => message.channelId === parseInt(channelId!)).map(({ id }) => id) ?? [];
+  const [markAsRead, { loading }] = useMarkMessagesAsRead(unreadMessagesIds);
+  useIntersectionObserver(() => {
+    if (document.visibilityState === "visible" && document.hasFocus() && !loading && unreadMessagesIds.length > 0) markAsRead();
+  }, bottomMessageListRef);
   return bottomMessageListRef;
 };
 

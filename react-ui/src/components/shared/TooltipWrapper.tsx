@@ -9,10 +9,11 @@ interface Props {
   tooltipTxt: string;
   size?: Size;
   className?: string;
+  gap?: number;
 }
 
-const TooltipWrapper = ({ direction = "up", children, tooltipTxt, size = "md", className = "" }: Props) => {
-  const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({ direction });
+const TooltipWrapper = ({ direction = "up", children, tooltipTxt, size = "md", className = "", gap = 6 }: Props) => {
+  const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({ direction, gap });
 
   return (
     <>

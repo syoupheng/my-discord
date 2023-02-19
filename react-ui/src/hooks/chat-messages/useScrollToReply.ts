@@ -1,5 +1,5 @@
 import { ClickedReplyContext } from "../../providers/ClickedReplyProvider";
-import useSafeContext from "../useSafeContext";
+import useSafeContext from "../shared/useSafeContext";
 
 const useScrollReplyContext = () => useSafeContext(ClickedReplyContext, "useScrollReplyContext must be used inside of a ReplyScrollProvider !");
 

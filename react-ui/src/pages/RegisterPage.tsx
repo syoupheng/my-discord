@@ -10,8 +10,10 @@ import Button from "../components/shared/buttons/Button";
 import Spinner from "../components/shared/Spinner";
 import FormError from "../components/Form/FormError";
 import { filterEmptyFields } from "../utils/form";
+import useDocumentTitle from "../hooks/ui/useDocumentTitle";
 
 const RegisterPage = () => {
+  useDocumentTitle("Register");
   const {
     register,
     handleSubmit,

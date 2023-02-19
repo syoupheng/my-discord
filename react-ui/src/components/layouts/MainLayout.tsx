@@ -1,25 +1,19 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../SideBar/Sidebar";
-import SidebarItem from "../SideBar/SidebarItem";
-import { FaDiscord } from "react-icons/fa";
-import { FiLogOut } from "react-icons/fi";
-import useLogout from "../../hooks/auth/useLogout";
-import Spinner from "../shared/Spinner";
+import LogoutButton from "../SideBar/LogoutButton";
+import PrivateMessagesButton from "../SideBar/PrivateMessagesButton";
+import UnreadMessagesList from "../SideBar/UnreadMessagesList";
 
 const MainLayout = () => {
-  const [logout, { loading }] = useLogout();
-
   return (
     <div className="flex">
       <Sidebar className="bg-tertiary w-[72px] pt-1">
-        <Link to="/channels/@me">
-          <SidebarItem tooltipTxt="Messages privés" active>
-            <FaDiscord size={30} />
-          </SidebarItem>
-        </Link>
-        <SidebarItem tooltipTxt="Déconnexion" handleClick={logout}>
-          {loading ? <Spinner white /> : <FiLogOut size={23} />}
-        </SidebarItem>
+        <PrivateMessagesButton />
+        <UnreadMessagesList />
+        <div className="my-2 flex justify-center w-[72px]">
+          <div className="h-[2px] w-8 rounded-[1px] bg-background-modifier-accent" />
+        </div>
+        <LogoutButton />
       </Sidebar>
       <Outlet />
     </div>

@@ -6,6 +6,7 @@ import { graphql, useFragment } from "../../gql";
 import { Message } from "../../gql/graphql";
 import useAuthMutation from "../auth/useAuthMutation";
 import { GET_CHAT_MESSAGES } from "./useChatMessages";
+import useChatScrollContext from "./useChatScrollContext";
 
 const SEND_MESSAGE = graphql(`
   mutation sendMessage($input: SendMessageInput!) {
@@ -17,6 +18,7 @@ const SEND_MESSAGE = graphql(`
 
 const useSendMessage = (channelId: number, editor: ReactEditor) => {
   // const client = useApolloClient();
+  const chatScrollRef = useChatScrollContext();
   return useAuthMutation(SEND_MESSAGE, {
     onCompleted: () => {
       Transforms.delete(editor, {
@@ -43,6 +45,10 @@ const useSendMessage = (channelId: number, editor: ReactEditor) => {
         const existingMessages = existing ? useFragment(MESSAGE_INFO, existing?.getMessages.messages) : [];
         return { getMessages: { ...existing?.getMessages, messages: [...existingMessages, data.sendMessage] } };
       });
+
+      setTimeout(() => {
+        if (chatScrollRef.current) chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+      }, 200);
     },
   });
 };

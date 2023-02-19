@@ -13,10 +13,15 @@ import { SuccessResponse } from '../auth/dto/success-response';
 import { TypingNotification } from './dto/typing-notification.response';
 import { MembersInChannels } from '@prisma/client';
 import { UserTypingInput } from './dto/user-typing.input';
+import { MessagesNotificationsService } from './messages-notifications.service';
 
 @Resolver((of) => Message)
 export class MessagesResolver {
-  constructor(private readonly messagesService: MessagesService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(
+    private readonly messagesService: MessagesService,
+    private messagesNotificationsService: MessagesNotificationsService,
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   @Query((returns) => MessagesResponse)
   @UseGuards(JwtAuthGuard)
@@ -45,6 +50,12 @@ export class MessagesResolver {
   @UseGuards(JwtAuthGuard)
   typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @Context() ctx): Promise<string> {
     return this.messagesService.notifyTyping(channelId, ctx.req.user);
+  }
+
+  @Mutation((type) => String)
+  @UseGuards(JwtAuthGuard)
+  markMessagesAsRead(@Args('messagesIds', { type: () => [Int] }) messagesIds: number[], @Context() ctx): Promise<string> {
+    return this.messagesNotificationsService.deleteMany(messagesIds, ctx.req.user.id);
   }
 
   @ResolveField('referencedMessage', (returns) => ReferencedMessage, { nullable: true })

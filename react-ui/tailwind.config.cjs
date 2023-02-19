@@ -28,7 +28,8 @@ module.exports = {
         "btn-danger-hov": "#9f2d2f",
         "channels-default": "#96989c",
         "primary-dark-400": "#72767e",
-        "primary-dark-500": "rgba(79, 84, 92, 0.3)",
+        "primary-dark-500": "rgba(79, 84, 92, 0.4)",
+        "primary-dark-550": "rgb(79, 84, 92)",
         "primary-dark-560": "#3f434a",
         "brand-260": "#cbcffb",
         "mention-bg": "hsl(235 86% 65% / 0.3)",
@@ -39,6 +40,8 @@ module.exports = {
         "status-yellow-500": "hsl(38 96% 54%)",
         "message-highlight": "rgba(146, 154, 247, 0.08)",
         "message-highlight-hov": "rgba(146, 154, 247, 0.06)",
+        "status-green": "#3ba55d",
+        "red-divider": "#f24043",
       },
       fontSize: {
         "btw-sm-xs": ["13px", "18px"],
@@ -126,6 +129,10 @@ module.exports = {
           "0%, 100%": { opacity: 0.2 },
           "50%": { opacity: 0.45 },
         },
+        clicked: {
+          "0%, 100%": { "padding-top": "0" },
+          "50%": { "padding-top": "2px" },
+        },
       },
       animation: {
         drop: "drop 0.4s ease-out 1",
@@ -138,6 +145,7 @@ module.exports = {
         "fade-in": "fade-in 0.1s ease-out",
         "slide-in": "slide-in 0.5s ease-in-out",
         "my-pulse": "my-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        clicked: "clicked 0.1s ease-in-out",
       },
       backgroundImage: {
         emojiFaces: "url(/emoji-faces.png)",

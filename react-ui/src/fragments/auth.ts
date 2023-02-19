@@ -35,5 +35,10 @@ export const AUTH_USER_FIELDS = gql`
         username
       }
     }
+    newMessagesNotifications {
+      id
+      channelId
+      createdAt
+    }
   }
 `;

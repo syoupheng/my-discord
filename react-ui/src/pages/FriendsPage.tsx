@@ -4,13 +4,12 @@ import FriendsContent from "../components/FriendsPage/FriendsContent";
 import FriendsNav from "../components/FriendsPage/FriendsNav";
 import FriendsRightSidebar from "../components/FriendsPage/FriendsRightSidebar";
 import useAuthUser from "../hooks/auth/useAuthUser";
-import useFriendRequests from "../hooks/friend-requests/useFriendRequests";
-import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequestSub";
-import useFriends from "../hooks/friends/useFriends";
 import useFriendsTab from "../hooks/friendsNavTab/useFriendsTab";
+import useDocumentTitle from "../hooks/ui/useDocumentTitle";
 import { filterFriendsByTab } from "../utils/friends";
 
 const FriendsPage = () => {
+  useDocumentTitle("Amis");
   const [selectedTab] = useFriendsTab();
   // const friends = useFriends();
   // const friendRequests = useFriendRequests();

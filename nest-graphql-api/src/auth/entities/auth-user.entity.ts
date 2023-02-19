@@ -5,6 +5,7 @@ import { PrivateConversation } from '../../private-conversations/entities/privat
 import { BaseUser } from '../../users/interfaces/base-user.interface';
 import { UserStatus } from '../../users/enums/user-status.enum';
 import { PrivateGroup } from '../../private-groups/entities/private-group.entity';
+import { Message } from '../../messages/entities/message.entity';
 
 @ObjectType({ implements: () => [BaseUser] })
 export class AuthUser implements BaseUser {
@@ -34,4 +35,7 @@ export class AuthUser implements BaseUser {
 
   @Field((type) => [PrivateGroup])
   privateGroups?: PrivateGroup[];
+
+  @Field((type) => [Message])
+  newMessagesNotifications?: Message[];
 }

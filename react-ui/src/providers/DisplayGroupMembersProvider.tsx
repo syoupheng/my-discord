@@ -1,5 +1,5 @@
 import { createContext, ReactNode } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useLocalStorage from "../hooks/shared/useLocalStorage";
 
 type TContextValue = [boolean, (val: boolean) => void];
 

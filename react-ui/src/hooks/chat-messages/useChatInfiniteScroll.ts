@@ -1,9 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import useIntersectionObserver from "../ui/useIntersectionObserver";
+import useChatScrollContext from "./useChatScrollContext";
 
 const useChatInfiniteScroll = (fetchMoreMessages: () => void) => {
   const infiniteScrollDivRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useChatScrollContext();
   const [distanceFromBottom, setDistanceFromBottom] = useState(0);
   useIntersectionObserver(() => {
     const getMoreMessages = async () => {

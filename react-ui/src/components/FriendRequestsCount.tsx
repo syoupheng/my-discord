@@ -1,5 +1,6 @@
 import useAuthUser from "../hooks/auth/useAuthUser";
 import { FriendRequest } from "../types/user";
+import NotificationCounter from "./shared/NotificationCounter";
 
 interface Props {
   className?: string;
@@ -13,10 +14,8 @@ const FriendRequestsCount = ({ className = "" }: Props) => {
 
   if (requestsReceived.length <= 0) return null;
   return (
-    <div
-      className={`${className} bg-red rounded-full h-4 w-4 text-white flex items-center justify-center font-semibold text-xs basis-auto grow-0 shrink-0`}
-    >
-      {requestsReceived.length}
+    <div className={className}>
+      <NotificationCounter count={requestsReceived.length} />
     </div>
   );
 };

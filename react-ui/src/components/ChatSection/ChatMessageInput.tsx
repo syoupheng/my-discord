@@ -73,13 +73,15 @@ const ChatMessageInput = () => {
 
   const isTyping = useRef(false);
 
-  const onChange = (value: Descendant[]) => {
+  const onChange = (value: any[]) => {
     // const cursorAnchor = editor.selection?.anchor;
     // const nodeText = Node.string(value[cursorAnchor?.path[0] ?? 0]);
     // console.log("texte : ", nodeText);
     // handleUserMentions(nodeText, cursorAnchor?.offset ?? 0);
     setValue(value);
-    if (!isTyping.current) {
+    const slateEditorIsEmpty =
+      value.length === 1 && value[0].type === "paragraph" && value[0].children.length === 1 && value[0].children[0].text === "";
+    if (!isTyping.current && !slateEditorIsEmpty) {
       sendTypingNotification();
       isTyping.current = true;
       setTimeout(() => {
