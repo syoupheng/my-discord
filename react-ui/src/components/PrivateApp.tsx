@@ -7,6 +7,7 @@ import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequest
 import useFriendChangeSub from "../hooks/friends/useFriendChangeSub";
 import useFriendConfirmedSub from "../hooks/friends/useFriendConfirmedSub";
 import useFriendDeletedSub from "../hooks/friends/useFriendDeletedSub";
+import useInactiveUser from "../hooks/user/useInactiveUser";
 
 interface Props {
   children: ReactNode;
@@ -21,6 +22,7 @@ const PrivateApp = ({ children }: Props) => {
   useFriendChangeSub();
   useMessageReceivedSubscription();
   useMessageDeletedSubscription();
+  useInactiveUser();
 
   return <>{children}</>;
 };
