@@ -29,7 +29,7 @@ const FormInput = forwardRef<HTMLInputElement, Props>(({ type = "text", name, la
       <input
         id={name}
         name={name}
-        className="bg-tertiary rounded-[3px] h-10 text-secondary-light p-3 font-light focus:outline-none autofill:text-secondary-light"
+        className="bg-tertiary rounded-[3px] h-10 text-secondary-light p-3 font-light focus:outline-none autofill:text-secondary-light form-input"
         type={type}
         {...props}
         ref={ref}

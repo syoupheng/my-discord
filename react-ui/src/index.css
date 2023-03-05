@@ -21,6 +21,10 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #1f2123 inset;
 }
 
+.form-input:-webkit-autofill {
+  -webkit-text-fill-color: #dddedf !important;
+}
+
 .mp-btn:hover .tooltip {
   --tw-scale-x: 1;
   --tw-scale-y: 1;
