@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import useAuthUser from "../auth/useAuthUser";
 
-const BASE_TITLE = "My Discord";
+const BASE_TITLE = "Discord";
 
 const useDocumentTitle = (title: string) => {
   const { data } = useAuthUser();

@@ -1,5 +1,6 @@
 import { gql, useApolloClient, useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PUBLIC_ROUTES } from "../../main";
 
 const LOGOUT_USER = gql`
   mutation logoutUser {
@@ -12,11 +13,11 @@ const LOGOUT_USER = gql`
 const useLogout = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
-
+  const location = useLocation();
   return useMutation<{ logout: { success: boolean } }>(LOGOUT_USER, {
     onCompleted: async () => {
       await client.clearStore();
-      navigate("/login");
+      if (!PUBLIC_ROUTES.includes(location.pathname)) navigate("/login");
     },
   });
 };

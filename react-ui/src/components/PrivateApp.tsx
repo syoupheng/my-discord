@@ -7,6 +7,7 @@ import useNewFriendRequestSub from "../hooks/friend-requests/useNewFriendRequest
 import useFriendChangeSub from "../hooks/friends/useFriendChangeSub";
 import useFriendConfirmedSub from "../hooks/friends/useFriendConfirmedSub";
 import useFriendDeletedSub from "../hooks/friends/useFriendDeletedSub";
+import useDynamicFavicon from "../hooks/ui/useDynamicFavicon";
 import useInactiveUser from "../hooks/user/useInactiveUser";
 
 interface Props {
@@ -23,6 +24,8 @@ const PrivateApp = ({ children }: Props) => {
   useMessageReceivedSubscription();
   useMessageDeletedSubscription();
   useInactiveUser();
+
+  useDynamicFavicon();
 
   return <>{children}</>;
 };

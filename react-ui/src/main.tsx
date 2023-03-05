@@ -30,6 +30,8 @@ const PrivateChannelPage = lazy(() => import("./pages/PrivateChannelPage"));
 
 export const DEFAULT_ROUTE = "/channels/@me";
 
+export const PUBLIC_ROUTES = ["/login", "/register"];
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />} errorElement={<p>Error !</p>}>
