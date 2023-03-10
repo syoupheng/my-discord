@@ -30,11 +30,6 @@ const ChatMessageInput = () => {
   const { mentionAutocompleteState, mentions, mentionsAutocompleteControls, dispatchMentionAutocomplete } = useMentionAutocomplete(editor)!;
   const { showMentionsAutocomplete, mentionSearch, arrowPosition } = mentionAutocompleteState;
 
-  useEffect(() => {
-    Transforms.select(editor, []);
-    Transforms.delete(editor);
-  }, [channelId]);
-
   const ref = useClickOutside(() => {
     if (showMentionsAutocomplete) {
       dispatchMentionAutocomplete({ type: "CLOSE" });

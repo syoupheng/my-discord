@@ -80,7 +80,7 @@ const ChatContent = () => {
               <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>
             </div>
           </div>
-          <ChatMessageInput />
+          <ChatMessageInput key={channelId} />
         </main>
       </ReplyScrollProvider>
     </MessageReplyProvider>

@@ -32,15 +32,11 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
         />
         <div
           onClick={search !== "" ? () => handleChange("") : undefined}
-          className={`h-8 w-8 flex items-center justify-center ${
-            search === "" ? "cursor-text" : "cursor-pointer"
-          }`}
+          className={`h-8 w-8 flex items-center justify-center ${search === "" ? "cursor-text" : "cursor-pointer"}`}
         >
           <div className="h-5 w-5">
             {search === "" ? (
-              <SearchIcon
-                className={`text-h-secondary h-full w-full ${isDirty.current && "animate-spin-45"}`}
-              />
+              <SearchIcon className={`text-h-secondary h-full w-full ${isDirty.current && "animate-spin-45"}`} />
             ) : (
               <ClearIcon className="text-h-secondary h-full w-full animate-spin-45" />
             )}
