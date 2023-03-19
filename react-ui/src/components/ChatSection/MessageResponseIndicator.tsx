@@ -9,8 +9,8 @@ const MessageResponseIndicator = () => {
   const scrollToReplyMessage = () => {
     if (replyMessageRef) replyMessageRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
-  if (!replyMessageId) return null;
   const messages = useGetChannelMessages();
+  if (!replyMessageId) return null;
   const replyMessage = messages.find(({ id }) => replyMessageId === id);
   if (!replyMessage) return null;
   const replyAuthor = useFragment(CHANNEL_MEMBER_FIELDS, replyMessage.author);

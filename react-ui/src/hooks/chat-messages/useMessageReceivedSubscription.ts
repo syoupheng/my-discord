@@ -1,9 +1,7 @@
 import { useSubscription } from "@apollo/client";
 import { useParams } from "react-router-dom";
-import { AUTH_USER_FIELDS } from "../../fragments/auth";
 import { MESSAGE_INFO } from "../../fragments/messages";
 import { graphql, useFragment } from "../../gql";
-import { GetAuthUserQuery } from "../../gql/graphql";
 import useAuthUser, { GET_AUTH_USER } from "../auth/useAuthUser";
 import { GET_CHAT_MESSAGES } from "./useChatMessages";
 import useChatScrollContext from "./useChatScrollContext";

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
 import { ReactEditor, Slate, withReact } from "slate-react";

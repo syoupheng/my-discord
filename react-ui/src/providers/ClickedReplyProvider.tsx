@@ -18,7 +18,7 @@ const ClickedReplyProvider = ({ children }: Props) => {
   useEffect(() => {
     if (clickedReplyRef) clickedReplyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     setClickedReplyId(null);
-  }, [clickedReplyId, clickedReplyRef.current]);
+  }, [clickedReplyId]);
   return <ClickedReplyContext.Provider value={{ clickedReplyId, setClickedReplyId, clickedReplyRef }}>{children}</ClickedReplyContext.Provider>;
 };
 

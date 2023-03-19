@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { GetMessagesQuery } from "../../gql/graphql";
 import useAuthUser from "../auth/useAuthUser";
@@ -12,15 +12,8 @@ const useScrollChatBottom = (messagesData: GetMessagesQuery | undefined) => {
     if (bottomMessageListRef.current) bottomMessageListRef.current.scrollIntoView();
   };
   const loadedInitialData = useRef(false);
-  const currentChannelId = useRef(channelId);
-  useEffect(() => {
-    loadedInitialData.current = false;
-  }, [channelId]);
   useLayoutEffect(() => {
-    if (currentChannelId.current !== channelId || !loadedInitialData.current) {
-      scrollToBottom();
-      currentChannelId.current = channelId;
-    }
+    if (!loadedInitialData.current) scrollToBottom();
     if (messagesData) loadedInitialData.current = true;
   }, [messagesData]);
 

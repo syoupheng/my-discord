@@ -1,5 +1,5 @@
 import { OnSubscriptionDataOptions } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { OnUserTypingSubscription } from "../../gql/graphql";
 import useTypingSubscription from "./useTypingSubscription";
@@ -14,10 +14,6 @@ const TYPING_NOTIFICATION_DURATION = 4500;
 const useUserTypingNotification = () => {
   const { channelId } = useParams();
   const [usersTyping, setUsersTyping] = useState<Record<number, TUserTypingData | null>>({});
-
-  useEffect(() => {
-    setUsersTyping({});
-  }, [channelId]);
 
   const onUserTyping = ({ subscriptionData: { data } }: OnSubscriptionDataOptions<OnUserTypingSubscription>) => {
     if (!data) return;

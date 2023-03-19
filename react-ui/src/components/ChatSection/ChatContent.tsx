@@ -1,4 +1,3 @@
-import { NetworkStatus } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { MESSAGE_INFO } from "../../fragments/messages";
 import { useFragment } from "../../gql";
@@ -13,7 +12,7 @@ import GroupChatContentHeader from "./GroupChatContentHeader";
 import LoadingMessagesSkeleton from "./LoadingSkeleton/LoadingMessagesSkeleton";
 import useMarkAsReadOnWindowFocus from "../../hooks/chat-messages/useMarkAsReadOnWindowFocus";
 import NewMessagesBar from "./NewMessagesBar";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import useAuthUser from "../../hooks/auth/useAuthUser";
 import { getMillisecondsDiff } from "../../utils/dates";
 import { Message } from "../../gql/graphql";
@@ -21,12 +20,18 @@ import { Message } from "../../gql/graphql";
 const ChatContent = () => {
   const { channelId } = useParams();
   if (!channelId) return null;
-  const { data, loading, fetchMore, networkStatus } = useChatMessages(parseInt(channelId));
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const { data, loading, fetchMore } = useChatMessages(parseInt(channelId));
+  const previousCursorRef = useRef(null);
+  useLayoutEffect(() => {
+    if (lastMessageRef.current) lastMessageRef.current.scrollIntoView();
+  }, [data?.getMessages.cursor]);
   const { infiniteScrollDivRef, scrollContainerRef } = useChatInfiniteScroll(() => {
-    if (!loading && networkStatus !== NetworkStatus.loading && data?.getMessages.cursor) {
+    if (!loading && data?.getMessages.cursor) {
       fetchMore({
         variables: { cursor: data?.getMessages.cursor, limit: MESSAGES_LIMIT },
         updateQuery: (previousResults, { fetchMoreResult }) => {
+          previousCursorRef.current = previousResults.getMessages.cursor;
           const { cursor: newCursor, messages: newMessages } = fetchMoreResult.getMessages;
           return {
             getMessages: {
@@ -53,15 +58,9 @@ const ChatContent = () => {
   );
 
   const [oldestUnreadMessage, setOldestUnreadMessage] = useState<Message | null>(null);
-  useEffect(() => {
-    if (unreadMessages.length > 0) {
-      setOldestUnreadMessage(unreadMessages.reduce((prev, current) => (getMillisecondsDiff(prev.createdAt, current.createdAt) > 0 ? current : prev)));
-    }
-  }, [unreadMessages]);
-
-  useEffect(() => {
-    if (unreadMessages.length === 0) setOldestUnreadMessage(null);
-  }, [channelId]);
+  if (!oldestUnreadMessage && unreadMessages.length > 0) {
+    setOldestUnreadMessage(unreadMessages.reduce((prev, current) => (getMillisecondsDiff(prev.createdAt, current.createdAt) > 0 ? current : prev)));
+  }
 
   return (
     <MessageReplyProvider>
@@ -74,7 +73,13 @@ const ChatContent = () => {
               {data && (
                 <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
                   {!data.getMessages.cursor ? <GroupChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
-                  <ChatMessagesList messages={messages} oldestUnreadMessage={oldestUnreadMessage} newMessagesRef={newMessagesRef} />
+                  <ChatMessagesList
+                    messages={messages}
+                    oldestUnreadMessage={oldestUnreadMessage}
+                    newMessagesRef={newMessagesRef}
+                    lastMessageRef={lastMessageRef}
+                    previousCursorRef={previousCursorRef}
+                  />
                 </ol>
               )}
               <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>

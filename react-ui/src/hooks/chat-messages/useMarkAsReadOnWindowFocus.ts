@@ -17,7 +17,6 @@ const useMarkAsReadOnWindowFocus = () => {
     const isOnBottomOfChat =
       !!chatScrollRef.current &&
       Math.abs(chatScrollRef.current.scrollHeight - chatScrollRef.current.clientHeight - chatScrollRef.current.scrollTop) < 1;
-    console.log(unreadMessagesIds.length > 0);
     if (unreadMessagesIds.length > 0 && isOnBottomOfChat && !loading) markAsRead();
   };
 

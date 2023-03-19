@@ -31,15 +31,15 @@ export const client = new ApolloClient({
           getMessages: {
             keyArgs: ["channelId"],
             // merge: messagesMerger,
-            read(existing: { cursor: string; messages: Reference[] }, { readField }: { readField: ReadFieldFunction }) {
-              if (existing)
-                return {
-                  cursor: existing.cursor,
-                  messages: existing.messages
-                    .slice(0)
-                    .sort((message1, message2) => getMillisecondsDiff(readField("createdAt", message1)!, readField("createdAt", message2)!)),
-                };
-            },
+            // read(existing: { cursor: string; messages: Reference[] }, { readField }: { readField: ReadFieldFunction }) {
+            //   if (existing)
+            //     return {
+            //       cursor: existing.cursor,
+            //       messages: existing.messages
+            //         .slice(0)
+            //         .sort((message1, message2) => getMillisecondsDiff(readField("createdAt", message2)!, readField("createdAt", message1)!)),
+            //     };
+            // },
           },
         },
       },

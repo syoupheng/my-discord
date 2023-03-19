@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
 import ClearIcon from "../Icons/ClearIcon";
 import SearchIcon from "../Icons/SearchIcon";
@@ -16,8 +16,11 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
   };
 
   const [selectedTab] = useFriendsTab();
-
-  useEffect(() => handleChange(""), [selectedTab]);
+  const [previousTab, setPreviousTab] = useState(selectedTab);
+  if (previousTab !== selectedTab) {
+    setPreviousTab(selectedTab);
+    handleChange("");
+  }
 
   return (
     <div className="flex flex-none mt-4 mr-5 mb-2 ml-[30px] overflow-hidden rounded bg-tertiary">

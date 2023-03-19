@@ -11,9 +11,11 @@ interface Props {
   messages: readonly MessageInfoFragment[];
   oldestUnreadMessage: Message | null;
   newMessagesRef: RefObject<HTMLDivElement>;
+  lastMessageRef: RefObject<HTMLDivElement>;
+  previousCursorRef: RefObject<string>;
 }
 
-const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef }: Props) => {
+const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef, lastMessageRef, previousCursorRef }: Props) => {
   const { replyMessageId, replyMessageRef } = useMessageReply()!;
   const { clickedReplyId, clickedReplyRef } = useScrollReplyContext();
   const isOldestUnreadMessage = (msg: MessageInfoFragment) => !!oldestUnreadMessage && oldestUnreadMessage.id === msg.id;
@@ -29,7 +31,15 @@ const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef }: Pro
             <MessageDivider date={formatToDayMonthYear(msg.createdAt)} />
           ) : null}
           <MessageItem
-            ref={msg.id === clickedReplyId ? clickedReplyRef : msg.id === replyMessageId ? replyMessageRef : null}
+            ref={
+              msg.createdAt === previousCursorRef.current
+                ? lastMessageRef
+                : msg.id === clickedReplyId
+                ? clickedReplyRef
+                : msg.id === replyMessageId
+                ? replyMessageRef
+                : null
+            }
             msg={msg}
             isRepliedTo={msg.id === replyMessageId}
             isConsecutive={idx > 0 && isMessageConsecutive(msg, messages[idx - 1]) && !msg.referencedMessage && !isOldestUnreadMessage(msg)}

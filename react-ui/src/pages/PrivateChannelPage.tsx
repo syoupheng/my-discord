@@ -13,7 +13,7 @@ const PrivateChannelPage = () => {
   const group = dataGroups.me.privateGroups.find(({ id }) => parseInt(channelId!) === id);
   const conversation = dataConversations.me.privateConversations.find(({ id }) => parseInt(channelId!) === id);
 
-  if (group || conversation) return group ? <PrivateGroupPage /> : <PrivateConversationPage />;
+  if (group || conversation) return group ? <PrivateGroupPage key={group.id} /> : <PrivateConversationPage />;
   return <Navigate to={DEFAULT_ROUTE} />;
 };
 
