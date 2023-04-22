@@ -1,9 +1,9 @@
 import { MdPeopleAlt } from "react-icons/md";
-import { PrivateGroup } from "../../types/private-group";
 import AddGroupMemberBtn from "../ChatSection/AddGroupMemberBtn";
 import ChatNav from "../ChatSection/ChatNav";
 import DisplayMembersBtn from "./DisplayMembersBtn";
 import GroupName from "./GroupName";
+import { PrivateGroup } from "../../gql/graphql";
 
 interface Props {
   group: PrivateGroup;

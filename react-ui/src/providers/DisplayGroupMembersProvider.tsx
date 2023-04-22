@@ -10,7 +10,7 @@ interface Props {
 }
 
 const DisplayGroupMembersProvider = ({ children }: Props) => {
-  const [isMembersOpen, setIsMembersOpen] = useLocalStorage<boolean>("isMembersOpen", true);
+  const [isMembersOpen, setIsMembersOpen] = useLocalStorage("isMembersOpen", true);
   return <DisplayGroupMembersContext.Provider value={[isMembersOpen, setIsMembersOpen]}>{children}</DisplayGroupMembersContext.Provider>;
 };
 

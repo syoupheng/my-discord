@@ -1,17 +1,14 @@
 import { Transforms } from "slate";
 import { ReactEditor } from "slate-react";
-import useAuthUser from "../auth/useAuthUser";
-import useFindGroup from "../private-groups/useFindGroup";
 import useMentionAutocompleteState from "./useMentionsAutocompleteState";
+import { usePrivateChannelContext } from "../../providers/PrivateChannelProvider";
+import useChannelMembers from "../private-channel/useChannelMembers";
 
 const useMentionAutocomplete = (editor: ReactEditor) => {
-  const group = useFindGroup();
-  const { data } = useAuthUser();
+  const channel = usePrivateChannelContext();
   const [mentionAutocompleteState, dispatchMentionAutocomplete] = useMentionAutocompleteState();
   const { arrowPosition, mentionSearch } = mentionAutocompleteState;
-  if (!group) return null;
-  if (!data) return null;
-  const mentions = group.members.filter((member) => member.username.toLocaleLowerCase().startsWith(mentionSearch.toLocaleLowerCase()));
+  const mentions = channel.members.filter((member) => member.username.toLocaleLowerCase().startsWith(mentionSearch.toLocaleLowerCase()));
 
   const insertMention = () => {
     Transforms.delete(editor, {

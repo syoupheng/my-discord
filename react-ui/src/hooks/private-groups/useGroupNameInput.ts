@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { editGroupNameInputSchema, PrivateGroup } from "../../types/private-group";
+import { editGroupNameInputSchema } from "../../types/private-group";
 import useEditGroupName from "./useEditGroupName";
+import { PrivateGroup } from "../../gql/graphql";
 
 const useGroupNameInput = ({ id, name }: PrivateGroup) => {
   const [nameInput, setNameInput] = useState(name);

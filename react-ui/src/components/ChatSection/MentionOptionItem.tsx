@@ -1,12 +1,12 @@
 import { Transforms } from "slate";
 import { ReactEditor, useSlate } from "slate-react";
-import { User } from "../../types/user";
 import UserAvatar from "../shared/UserAvatar";
+import { AuthUser } from "../../gql/graphql";
 
 interface Props {
   id: number;
   username: string;
-  authUser: User;
+  authUser: AuthUser;
   mentionSearch: string;
   active: boolean;
 }

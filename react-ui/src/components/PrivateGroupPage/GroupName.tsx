@@ -1,5 +1,5 @@
+import { PrivateGroup } from "../../gql/graphql";
 import useGroupNameInput from "../../hooks/private-groups/useGroupNameInput";
-import { PrivateGroup } from "../../types/private-group";
 
 interface Props {
   group: PrivateGroup;

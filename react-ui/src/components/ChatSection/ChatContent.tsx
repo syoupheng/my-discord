@@ -8,7 +8,7 @@ import MessageReplyProvider from "../../providers/SelectedMessageReplyProvider";
 import ReplyScrollProvider from "../../providers/ClickedReplyProvider";
 import ChatMessageInput from "./ChatMessageInput";
 import ChatMessagesList from "./ChatMessagesList";
-import GroupChatContentHeader from "./GroupChatContentHeader";
+import ChatContentHeader from "./ChatContentHeader";
 import LoadingMessagesSkeleton from "./LoadingSkeleton/LoadingMessagesSkeleton";
 import useMarkAsReadOnWindowFocus from "../../hooks/chat-messages/useMarkAsReadOnWindowFocus";
 import NewMessagesBar from "./NewMessagesBar";
@@ -72,7 +72,7 @@ const ChatContent = () => {
               {loading && messages.length === 0 && <LoadingMessagesSkeleton />}
               {data && (
                 <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
-                  {!data.getMessages.cursor ? <GroupChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
+                  {!data.getMessages.cursor ? <ChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
                   <ChatMessagesList
                     messages={messages}
                     oldestUnreadMessage={oldestUnreadMessage}

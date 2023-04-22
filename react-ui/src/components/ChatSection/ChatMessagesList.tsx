@@ -19,8 +19,10 @@ const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef, lastM
   const { replyMessageId, replyMessageRef } = useMessageReply()!;
   const { clickedReplyId, clickedReplyRef } = useScrollReplyContext();
   const isOldestUnreadMessage = (msg: MessageInfoFragment) => !!oldestUnreadMessage && oldestUnreadMessage.id === msg.id;
-  const isNextDay = (prevMsg: MessageInfoFragment, nextMsg: MessageInfoFragment) =>
-    formatToDayMonthYear(nextMsg.createdAt) !== formatToDayMonthYear(prevMsg.createdAt);
+  const isNextDay = (prevMsg: MessageInfoFragment, nextMsg: MessageInfoFragment) => {
+    if (!nextMsg) return false;
+    return formatToDayMonthYear(nextMsg.createdAt) !== formatToDayMonthYear(prevMsg.createdAt);
+  };
   return (
     <>
       {messages.map((msg, idx) => (
