@@ -15,6 +15,7 @@ import FriendsTabProvider from "./providers/FriendsTabProvider";
 import { client } from "./apollo.config";
 import LoadingScreen from "./components/shared/LoadingScreen";
 import ChatScrollProvider from "./providers/ChatScrollProvider";
+import ErrorPage from "./pages/ErrorPage";
 // import PrivateGroupGuard from "./components/guards/PrivateGroupGuard";
 // import PrivateConversationPage from "./pages/PrivateConversationPage";
 // import PrivateConversationGuard from "./components/guards/PrivateConversationGuard";
@@ -34,7 +35,7 @@ export const PUBLIC_ROUTES = ["/login", "/register"];
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />} errorElement={<p>Error !</p>}>
+    <Route path="/" element={<App />} errorElement={<ErrorPage />}>
       {/* Public routes that should only be accessible to unauthenticated users */}
       <Route element={<NoAuthGuard />}>
         <Route path="login" element={<LoginPage />} />

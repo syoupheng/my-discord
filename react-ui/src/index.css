@@ -6,6 +6,15 @@
   html {
     font-family: "ABC Ginto Normal", Whitney, "Helvetica Neue", Helvetica, Arial,
       sans-serif;
+    height: 100vh;
+  }
+
+  body {
+    height: 100%;
+  }
+
+  #root {
+    height: 100%;
   }
 }
 
