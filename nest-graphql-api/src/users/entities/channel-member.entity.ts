@@ -1,5 +1,4 @@
-import { ObjectType, PickType } from '@nestjs/graphql';
-import { Friend } from '../../friends/entities/friends.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseUser } from '../interfaces/base-user.interface';
 
 @ObjectType({ implements: () => [BaseUser] })
@@ -9,4 +8,7 @@ export class ChannelMember implements BaseUser {
   username: string;
 
   createdAt: Date;
+
+  @Field(() => String, { nullable: true })
+  chatGptRole?: string;
 }

@@ -57,6 +57,20 @@ const documents = {
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ *
+ *
+ * @example
+ * ```ts
+ * const query = gql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
+ * ```
+ *
+ * The query argument is unknown!
+ * Please regenerate the types.
+ */
+export function graphql(source: string): unknown;
+
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    friends {\n      id\n      username\n      status\n    }\n    friendRequests {\n      id\n      username\n      requestStatus\n    }\n    privateConversations {\n      id\n      createdAt\n      member {\n        id\n        username\n      }\n    }\n    privateGroups {\n      id\n      createdAt\n      name\n      members {\n        id\n        username\n      }\n    }\n    newMessagesNotifications {\n      id\n      channelId\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    friends {\n      id\n      username\n      status\n    }\n    friendRequests {\n      id\n      username\n      requestStatus\n    }\n    privateConversations {\n      id\n      createdAt\n      member {\n        id\n        username\n      }\n    }\n    privateGroups {\n      id\n      createdAt\n      name\n      members {\n        id\n        username\n      }\n    }\n    newMessagesNotifications {\n      id\n      channelId\n      createdAt\n    }\n  }\n"];
 /**
@@ -215,20 +229,6 @@ export function graphql(source: "\n  query GetGroups {\n    me {\n      privateG
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation editProfile($input: EditProfileInput!) {\n    editProfile(editProfileInput: $input) {\n      id\n      username\n      status\n      phoneNumber\n      email\n    }\n  }\n"): (typeof documents)["\n  mutation editProfile($input: EditProfileInput!) {\n    editProfile(editProfileInput: $input) {\n      id\n      username\n      status\n      phoneNumber\n      email\n    }\n  }\n"];
-
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- *
- *
- * @example
- * ```ts
- * const query = gql(`query GetUser($id: ID!) { user(id: $id) { name } }`);
- * ```
- *
- * The query argument is unknown!
- * Please regenerate the types.
-**/
-export function graphql(source: string): unknown;
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { MessageRepository } from '../prisma/repositories/message.repository';
 import { SendMessageInput } from './dto/send-message.input';
@@ -11,16 +11,19 @@ import { ChannelMember } from 'src/users/entities/channel-member.entity';
 import { IPagination } from './interfaces/pagination.interface';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
-import { PrismaService } from '../prisma/prisma.service';
-import { AuthUser } from '../auth/entities/auth-user.entity';
+import { ChatGptService } from '../chat-gpt/chat-gpt.service';
+import { MembersInChannels, User } from '@prisma/client';
+import { ChatCompletionRequestMessage } from 'openai';
+
+type MembersInChannel = MembersInChannels & { member: Pick<User, 'chatGptRole' | 'username'> };
 
 @Injectable()
 export class MessagesService {
   constructor(
-    private prisma: PrismaService,
     private messageRepository: MessageRepository,
     private usersRepository: UsersRepository,
     private channelRepository: ChannelRepository,
+    private chatGptService: ChatGptService,
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
@@ -49,6 +52,8 @@ export class MessagesService {
       this.pubSub.publish('messageReceived', {
         messageReceived: { payload: result, membersIds: membersInChannelsIds.filter((id) => id !== authorId) },
       });
+      const isAuthorChatGptUser = !!membersInChannels.find((member) => member.memberId === authorId)?.member.chatGptRole;
+      if (!isAuthorChatGptUser) this.callChatGPT(payload.channelId, mentionsIds, membersInChannels, result);
       return result;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
@@ -117,15 +122,55 @@ export class MessagesService {
     return membersInChannels;
   }
 
-  async notifyTyping(channelId: number, user: AuthUser) {
+  async notifyTyping(channelId: number, user: any) {
     const { id: userId, username } = user;
     const membersInChannels = await this.isChannelMember(channelId, userId);
+    this.publishTypingNotification(channelId, userId, username, membersInChannels);
+    return 'received';
+  }
+
+  publishTypingNotification(channelId: number, userId: number, username: string, membersInChannels: MembersInChannel[]) {
     this.pubSub.publish('userTyping', {
       channelId,
       userId,
       username,
       membersInChannels: membersInChannels.filter((member) => member.memberId !== userId),
     });
-    return 'received';
+  }
+
+  async callChatGPT(channelId: number, mentionsIds: number[], membersInChannel: MembersInChannel[], message: Message) {
+    let chatGptUsers = membersInChannel.filter((member) => member.member.chatGptRole);
+    if (mentionsIds.length) chatGptUsers = chatGptUsers.filter((member) => mentionsIds.includes(member.memberId));
+    if (!chatGptUsers.length) return;
+    const chatGptUser = chatGptUsers[Math.floor(Math.random() * chatGptUsers.length)];
+
+    const latestMessages = await this.messageRepository.findManyByChannelId(channelId, { cursor: message.createdAt.toISOString(), take: 4 });
+    const chatGptMessages: ChatCompletionRequestMessage[] = [
+      ...latestMessages,
+      { ...message, content: `As ${chatGptUser.member.chatGptRole} ${message.content}` },
+    ].map((message) => ({
+      role: message.authorId === chatGptUser.memberId ? 'assistant' : 'user',
+      content: message.content,
+    }));
+    chatGptMessages.unshift({
+      role: 'system',
+      content: `You are ${chatGptUser.member.chatGptRole}. Do not mention the fact that you are AI language model.`,
+    });
+    this.publishTypingNotification(channelId, chatGptUser.memberId, chatGptUser.member.username, membersInChannel);
+    const interval = setInterval(() => {
+      this.publishTypingNotification(channelId, chatGptUser.memberId, chatGptUser.member.username, membersInChannel);
+    }, 4000);
+    try {
+      const { data } = await this.chatGptService.createChatCompletion(chatGptMessages);
+      clearInterval(interval);
+      if (!data) return;
+      const response = data.choices[0].message.content;
+      this.send({ channelId, content: response, respondsToId: message.id }, chatGptUser.memberId);
+    } catch (err: any) {
+      clearInterval(interval);
+      if ('response' in err && err.response?.status === 429) {
+        console.error('Too many requests');
+      } else console.error(err);
+    }
   }
 }

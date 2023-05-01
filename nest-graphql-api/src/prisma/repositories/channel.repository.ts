@@ -10,6 +10,11 @@ export class ChannelRepository {
       where: {
         channelId,
       },
+      include: {
+        member: {
+          select: { chatGptRole: true, username: true },
+        },
+      },
     });
   }
 

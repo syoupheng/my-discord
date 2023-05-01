@@ -17,6 +17,7 @@ import { DataloaderService } from './dataloader/dataloader.service';
 import { PrivateGroupsModule } from './private-groups/private-groups.module';
 import { MessagesModule } from './messages/messages.module';
 import { GraphQLError } from 'graphql';
+import { ChatGptModule } from './chat-gpt/chat-gpt.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { GraphQLError } from 'graphql';
     DataloaderModule,
     PrivateGroupsModule,
     MessagesModule,
+    ChatGptModule,
   ],
   controllers: [AppController],
   providers: [AppService],

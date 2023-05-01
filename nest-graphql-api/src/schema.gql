@@ -30,6 +30,7 @@ interface BaseUser {
 }
 
 type ChannelMember implements BaseUser {
+  chatGptRole: String
   createdAt: DateTime!
   id: Int!
   username: String!
