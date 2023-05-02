@@ -37,6 +37,7 @@ export class AuthService {
       password: hashedPassword,
       status: UserStatus.ONLINE,
     });
+    await this.usersService.initAccount(user);
     return this.login(user);
   }
 

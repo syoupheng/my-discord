@@ -46,7 +46,6 @@ export type BaseUser = {
 
 export type ChannelMember = BaseUser & {
   __typename?: 'ChannelMember';
-  chatGptRole?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['Int'];
   username: Scalars['String'];
