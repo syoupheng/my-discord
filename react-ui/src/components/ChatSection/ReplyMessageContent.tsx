@@ -1,5 +1,5 @@
 import useMessageContext from "../../hooks/chat-messages/useMessageContext";
-import useScrollReplyContext from "../../hooks/chat-messages/useScrollToReply";
+import { useMessageItemScrollContext } from "../../providers/MessageItemScrollProvider";
 import MessageContent from "./MessageContent";
 
 interface Props {
@@ -7,10 +7,13 @@ interface Props {
 }
 
 const ReplyMessageContent = ({ content }: Props) => {
-  const { setClickedReplyId } = useScrollReplyContext();
   const { id } = useMessageContext();
+  const { scrollToId } = useMessageItemScrollContext();
   return (
-    <div onClick={() => setClickedReplyId(id)} className="cursor-pointer flex-initial overflow-hidden hover:text-secondary-light">
+    <div
+      onClick={() => scrollToId(id, { behavior: "smooth", block: "center" })}
+      className="cursor-pointer flex-initial overflow-hidden hover:text-secondary-light"
+    >
       <MessageContent messageContent={content} type="reply" />
     </div>
   );

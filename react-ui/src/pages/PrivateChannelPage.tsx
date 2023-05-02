@@ -10,6 +10,7 @@ import PrivateChannelContentContainer from "../components/PrivateChannelPage/Pri
 import PrivateChannelNav from "../components/PrivateChannelPage/PrivateChannelNav";
 import PrivateChannelProvider from "../providers/PrivateChannelProvider";
 import useAuthUser from "../hooks/auth/useAuthUser";
+import MessageItemScrollProvider from "../providers/MessageItemScrollProvider";
 
 const PrivateChannelPage = () => {
   const { data } = useAuthUser();
@@ -23,7 +24,9 @@ const PrivateChannelPage = () => {
         <DisplayGroupMembersProvider>
           <PrivateChannelNav channel={channel} />
           <PrivateChannelContentContainer>
-            <ChatContent />
+            <MessageItemScrollProvider>
+              <ChatContent />
+            </MessageItemScrollProvider>
             {channelModel.displaySidebar && <MembersSidebar members={isPrivateGroup(channel) ? channel.members : []} />}
           </PrivateChannelContentContainer>
         </DisplayGroupMembersProvider>

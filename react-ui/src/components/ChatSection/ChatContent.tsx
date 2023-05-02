@@ -5,17 +5,17 @@ import useChatInfiniteScroll from "../../hooks/chat-messages/useChatInfiniteScro
 import useChatMessages, { MESSAGES_LIMIT } from "../../hooks/chat-messages/useChatMessages";
 import useScrollChatBottom from "../../hooks/chat-messages/useScrollChatBottom";
 import MessageReplyProvider from "../../providers/SelectedMessageReplyProvider";
-import ReplyScrollProvider from "../../providers/ClickedReplyProvider";
 import ChatMessageInput from "./ChatMessageInput";
 import ChatMessagesList from "./ChatMessagesList";
 import ChatContentHeader from "./ChatContentHeader";
 import LoadingMessagesSkeleton from "./LoadingSkeleton/LoadingMessagesSkeleton";
 import useMarkAsReadOnWindowFocus from "../../hooks/chat-messages/useMarkAsReadOnWindowFocus";
 import NewMessagesBar from "./NewMessagesBar";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import useAuthUser from "../../hooks/auth/useAuthUser";
 import { getMillisecondsDiff } from "../../utils/dates";
 import { Message } from "../../gql/graphql";
+import useInfiniteScrollPosition from "../../hooks/chat-messages/useInfiniteScrollPosition";
 
 const ChatContent = () => {
   const { channelId } = useParams();
@@ -23,9 +23,7 @@ const ChatContent = () => {
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const { data, loading, fetchMore } = useChatMessages(parseInt(channelId));
   const previousCursorRef = useRef(null);
-  useLayoutEffect(() => {
-    if (lastMessageRef.current) lastMessageRef.current.scrollIntoView();
-  }, [data?.getMessages.cursor]);
+  useInfiniteScrollPosition(data?.getMessages.messages as Message[] | undefined, previousCursorRef, data?.getMessages.cursor);
   const { infiniteScrollDivRef, scrollContainerRef } = useChatInfiniteScroll(() => {
     if (!loading && data?.getMessages.cursor) {
       fetchMore({
@@ -64,30 +62,28 @@ const ChatContent = () => {
 
   return (
     <MessageReplyProvider>
-      <ReplyScrollProvider>
-        <main className="relative flex flex-col min-w-0 min-h-0 flex-auto">
-          <div className="flex relative flex-auto min-h-0 min-w-0">
-            {unreadMessages.length > 0 && <NewMessagesBar newMessagesRef={newMessagesRef} unreadMessages={unreadMessages} />}
-            <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
-              {loading && messages.length === 0 && <LoadingMessagesSkeleton />}
-              {data && (
-                <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
-                  {!data.getMessages.cursor ? <ChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
-                  <ChatMessagesList
-                    messages={messages}
-                    oldestUnreadMessage={oldestUnreadMessage}
-                    newMessagesRef={newMessagesRef}
-                    lastMessageRef={lastMessageRef}
-                    previousCursorRef={previousCursorRef}
-                  />
-                </ol>
-              )}
-              <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>
-            </div>
+      <main className="relative flex flex-col min-w-0 min-h-0 flex-auto">
+        <div className="flex relative flex-auto min-h-0 min-w-0">
+          {unreadMessages.length > 0 && <NewMessagesBar newMessagesRef={newMessagesRef} unreadMessages={unreadMessages} />}
+          <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
+            {loading && messages.length === 0 && <LoadingMessagesSkeleton />}
+            {data && (
+              <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
+                {!data.getMessages.cursor ? <ChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
+                <ChatMessagesList
+                  messages={messages}
+                  oldestUnreadMessage={oldestUnreadMessage}
+                  newMessagesRef={newMessagesRef}
+                  lastMessageRef={lastMessageRef}
+                  previousCursorRef={previousCursorRef}
+                />
+              </ol>
+            )}
+            <div ref={bottomMessageListRef} className="h-[30px] w-[1px] pointer-events-none"></div>
           </div>
-          <ChatMessageInput key={channelId} />
-        </main>
-      </ReplyScrollProvider>
+        </div>
+        <ChatMessageInput key={channelId} />
+      </main>
     </MessageReplyProvider>
   );
 };
