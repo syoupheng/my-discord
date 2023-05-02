@@ -28,19 +28,27 @@ const RegisterPage = () => {
 
   return (
     <FormContainer>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <h1 className="text-white font-bold text-2xl text-center mb-2">Créer un compte</h1>
         <FormGroup>
           <FormInput label="E-mail" required error={errors.email} gqlError={gqlError} {...register("email")} />
         </FormGroup>
         <FormGroup>
-          <FormInput label="Nom d'utilisateur" required error={errors.username} gqlError={gqlError} {...register("username")} />
+          <FormInput autoComplete="off" label="Nom d'utilisateur" required error={errors.username} gqlError={gqlError} {...register("username")} />
         </FormGroup>
         <FormGroup>
           <FormInput label="Numéro de téléphone" error={errors.phoneNumber} gqlError={gqlError} {...register("phoneNumber")} />
         </FormGroup>
         <FormGroup>
-          <FormInput label="Mot de passe" required error={errors.password} gqlError={gqlError} type="password" {...register("password")} />
+          <FormInput
+            autoComplete="off"
+            label="Mot de passe"
+            required
+            error={errors.password}
+            gqlError={gqlError}
+            type="password"
+            {...register("password")}
+          />
         </FormGroup>
         <Button type="submit" disabled={loading} className="w-full h-11 text-btw-base-sm">
           {loading ? <Spinner white /> : "Connexion"}
