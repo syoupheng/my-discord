@@ -19,7 +19,7 @@ const PrivateApp = ({ children }: Props) => {
   useFriendReqDeletedSub();
   useFriendConfirmedSub();
   useFriendDeletedSub();
-  useRefetchUserOnFocus();
+  // useRefetchUserOnFocus(); TODO: fix performance problem
   useFriendChangeSub();
   useMessageReceivedSubscription();
   useMessageDeletedSubscription();

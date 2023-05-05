@@ -12,6 +12,7 @@ import { AuthUser } from 'src/auth/entities/auth-user.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
 import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
+import { AvatarService } from '../avatar/avatar.service';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +23,7 @@ export class UsersService {
     private friendsService: FriendsService,
     private privateConversationRepository: PrivateConversationsRepository,
     private privateGroupRepository: PrivateGroupsRepository,
+    private avatarService: AvatarService,
   ) {}
 
   async create(userCreateInput: Prisma.UserCreateInput): Promise<AuthUser> {
@@ -115,7 +117,11 @@ export class UsersService {
       selectedMembers.push(randomUser);
     }
     await this.privateGroupRepository
-      .create({ name: selectedMembers.map((member) => member.username).join(', '), members: selectedMembers })
+      .create({
+        name: selectedMembers.map((member) => member.username).join(', '),
+        members: selectedMembers,
+        avatarColor: this.avatarService.getColor(),
+      })
       .catch((err) => console.error(err));
   }
 }

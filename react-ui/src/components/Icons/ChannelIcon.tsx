@@ -9,6 +9,7 @@ interface Props {
   className?: string;
   size?: AvatarSize;
   channelType?: "group" | "conversation";
+  avatarColor?: string;
 }
 
 interface SizeValues {
@@ -26,18 +27,18 @@ const IconMap = new Map<ChannelType, IconType>([
   ["conversation", FaDiscord],
 ]);
 
-const ColorMap = new Map<ChannelType, string>([
-  ["group", "bg-positive"],
-  ["conversation", "bg-red"],
-]);
+// const ColorMap = new Map<ChannelType, string>([
+//   ["group", "bg-positive"],
+//   ["conversation", "bg-red"],
+// ]);
 
-const ChannelIcon = ({ className, size = "sm", channelType = "conversation" }: Props) => {
+const ChannelIcon = ({ className, size = "sm", channelType = "conversation", avatarColor = "#ef4444" }: Props) => {
   const sizeValue = SizeMap.get(size)?.circleSize;
   const Icon = IconMap.get(channelType) ?? MdPeopleAlt;
   return (
     <div
-      className={`text-white rounded-full p-[5px] ${ColorMap.get(channelType)} aspect-square ${className} flex items-center justify-center`}
-      style={{ height: sizeValue, width: sizeValue }}
+      className={`text-white rounded-full p-[5px] aspect-square ${className} flex items-center justify-center`}
+      style={{ height: sizeValue, width: sizeValue, backgroundColor: avatarColor }}
     >
       <Icon size={SizeMap.get(size)?.iconSize} />
     </div>

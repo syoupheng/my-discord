@@ -93,7 +93,12 @@ export class MessagesService {
     const mentions = await this.findMentionsByMessageIds(messagesIds);
     return messagesIds.map((messageId) => {
       const mentionsOnMessage = mentions.filter((mention) => mention.messageId === messageId);
-      return mentionsOnMessage.map(({ mentionId, mention }) => ({ id: mentionId, username: mention.username, createdAt: mention.createdAt }));
+      return mentionsOnMessage.map(({ mentionId, mention }) => ({
+        id: mentionId,
+        username: mention.username,
+        createdAt: mention.createdAt,
+        avatarColor: mention.avatarColor,
+      }));
     });
   }
 

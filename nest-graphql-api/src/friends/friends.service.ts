@@ -23,15 +23,15 @@ export class FriendsService {
     const friend = await this.friendsRepository.findUsersFriendById({ userId: authUserId, friendId });
     if (!friend) throw new NotFoundException("Vous n'êtes pas amis avec cet utilisateur !");
     const { isFriendsWith, hasFriends } = friend;
-    const { id, username, status, createdAt } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
-    return { id, username, createdAt, status: UserStatus[status] };
+    const { id, username, status, createdAt, avatarColor } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
+    return { id, username, createdAt, avatarColor, status: UserStatus[status] };
   }
 
   async findAll(authUserId: number): Promise<Friend[]> {
     const rawFriends = await this.friendsRepository.findAllFriends(authUserId);
     const friends = rawFriends.map(({ hasFriends, isFriendsWith }) => {
-      const { id, username, status, createdAt } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
-      return { id, username, createdAt, status: UserStatus[status] };
+      const { id, username, status, createdAt, avatarColor } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
+      return { id, username, createdAt, avatarColor, status: UserStatus[status] };
     });
     return friends;
   }

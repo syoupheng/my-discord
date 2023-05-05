@@ -12,6 +12,7 @@ import { PrivateConversationsModule } from '../private-conversations/private-con
 import { PrivateGroupsModule } from '../private-groups/private-groups.module';
 import { ConfigModule } from '@nestjs/config';
 import { MessagesModule } from '../messages/messages.module';
+import { AvatarModule } from '../avatar/avatar.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MessagesModule } from '../messages/messages.module';
     PrivateGroupsModule,
     MessagesModule,
     ConfigModule,
+    AvatarModule,
     JwtModule.register({
       signOptions: { expiresIn: process.env.JWT_EXP_TIME ?? '1d' },
       secret: process.env.JWT_SECRET ?? 'secret',

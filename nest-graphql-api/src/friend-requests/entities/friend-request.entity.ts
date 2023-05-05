@@ -10,6 +10,8 @@ export class FriendRequest implements BaseUser {
 
   createdAt: Date;
 
+  avatarColor: string;
+
   @Field((type) => FriendRequestStatus)
   requestStatus: FriendRequestStatus;
 }

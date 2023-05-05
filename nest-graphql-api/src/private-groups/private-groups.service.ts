@@ -5,17 +5,22 @@ import { AuthUser } from '../auth/entities/auth-user.entity';
 import { EditNameInput } from './dto/edit-name.input';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
-import { ChannelMember } from 'src/users/entities/channel-member.entity';
+import { ChannelMember } from '../users/entities/channel-member.entity';
+import { AvatarService } from '../avatar/avatar.service';
 
 @Injectable()
 export class PrivateGroupsService {
-  constructor(private friendsService: FriendsService, private privateGroupsRepository: PrivateGroupsRepository) {}
+  constructor(
+    private friendsService: FriendsService,
+    private privateGroupsRepository: PrivateGroupsRepository,
+    private avatarService: AvatarService,
+  ) {}
 
   async findAll(userId: number): Promise<PrivateGroup[]> {
     const items = await this.privateGroupsRepository.findManyByMemberId(userId);
     return items.map(({ channel }) => {
-      const { id, name, createdAt } = channel;
-      return { id, name, createdAt };
+      const { id, name, createdAt, avatarColor } = channel;
+      return { id, name, createdAt, avatarColor };
     });
   }
 
@@ -25,8 +30,8 @@ export class PrivateGroupsService {
       groups.map((group) => [
         group.id,
         group.members.map(({ member }) => {
-          const { id, username, createdAt } = member;
-          return { id, username, createdAt };
+          const { id, username, createdAt, avatarColor } = member;
+          return { id, username, createdAt, avatarColor };
         }),
       ]),
     );
@@ -44,14 +49,15 @@ export class PrivateGroupsService {
       throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 1 au minimum !');
     const friends = await this.friendsService.findAll(authUser.id);
     const groupMembers = uniqueIds.map((memberId) => {
-      if (memberId === authUser.id) return { id: authUser.id, username: authUser.username, createdAt: authUser.createdAt };
+      if (memberId === authUser.id)
+        return { id: authUser.id, username: authUser.username, createdAt: authUser.createdAt, avatarColor: authUser.avatarColor };
       const member = friends.find((friend) => friend.id === memberId);
       if (!member) throw new ForbiddenException('Un ou plusieurs des utilisateurs ne font pas partie de tes amis !');
-      return { id: memberId, username: member.username, createdAt: member.createdAt };
+      return { id: memberId, username: member.username, createdAt: member.createdAt, avatarColor: member.avatarColor };
     });
 
     const groupName = groupMembers.map(({ username }) => username).join(', ');
-    return this.privateGroupsRepository.create({ name: groupName, members: groupMembers });
+    return this.privateGroupsRepository.create({ name: groupName, members: groupMembers, avatarColor: this.avatarService.getColor() });
   }
 
   async editName(editNameInput: EditNameInput, userId: number) {

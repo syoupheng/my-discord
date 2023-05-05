@@ -45,6 +45,7 @@ export class FriendRequestsService {
       return {
         id: recipientId,
         username: recipientName,
+        avatarColor: recipient.avatarColor,
         createdAt: recipient.createdAt,
         requestStatus: FriendRequestStatus.SENT,
       };
@@ -60,11 +61,12 @@ export class FriendRequestsService {
   async findAll(userId: number): Promise<FriendRequest[]> {
     const rawFriendRequests = await this.friendRequestRepository.findAllByUserId(userId);
     const friendRequests = rawFriendRequests.map((request) => {
-      const { id, username, createdAt } = request.sender.id === userId ? request.recipient : request.sender;
+      const { id, username, createdAt, avatarColor } = request.sender.id === userId ? request.recipient : request.sender;
       return {
         id,
         username,
         createdAt,
+        avatarColor,
         requestStatus: request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
       };
     });

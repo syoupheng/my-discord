@@ -3,6 +3,7 @@
 # ------------------------------------------------------
 
 type AuthUser implements BaseUser {
+  avatarColor: String!
   createdAt: DateTime!
   email: String!
   friendRequests: [FriendRequest!]!
@@ -24,12 +25,14 @@ interface BaseMessage {
 }
 
 interface BaseUser {
+  avatarColor: String!
   createdAt: DateTime!
   id: Int!
   username: String!
 }
 
 type ChannelMember implements BaseUser {
+  avatarColor: String!
   createdAt: DateTime!
   id: Int!
   username: String!
@@ -54,6 +57,7 @@ input EditProfileInput {
 }
 
 type Friend implements BaseUser {
+  avatarColor: String!
   createdAt: DateTime!
   id: Int!
   status: UserStatus!
@@ -61,6 +65,7 @@ type Friend implements BaseUser {
 }
 
 type FriendRequest implements BaseUser {
+  avatarColor: String!
   createdAt: DateTime!
   id: Int!
   requestStatus: FriendRequestStatus!
@@ -140,6 +145,7 @@ type PrivateConversation {
 }
 
 type PrivateGroup {
+  avatarColor: String!
   createdAt: DateTime!
   id: Int!
   members: [ChannelMember!]!

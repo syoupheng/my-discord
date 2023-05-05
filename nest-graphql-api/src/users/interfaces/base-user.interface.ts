@@ -10,4 +10,7 @@ export abstract class BaseUser {
 
   @Field()
   createdAt: Date;
+
+  @Field()
+  avatarColor: string;
 }

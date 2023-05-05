@@ -57,7 +57,7 @@ const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = fa
                   className="absolute pointer-events-auto left-4 overflow-hidden cursor-pointer select-none"
                   style={{ marginTop: "calc(4px - 0.125rem)" }}
                 >
-                  <AvatarIconNoHole size={40} />
+                  <AvatarIconNoHole bgColor={author.avatarColor} size={40} />
                 </div>
                 <h3 className="overflow-hidden block relative leading-[1.375rem] min-h-[1.375rem] text-muted" style={{ whiteSpace: "break-spaces" }}>
                   <span className="mr-[0.25rem] text-btw-base-sm font-medium leading-[1.375rem] overflow-hidden relative align-baseline text-white hover:underline cursor-pointer">

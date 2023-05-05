@@ -10,6 +10,8 @@ export class Friend implements BaseUser {
 
   createdAt: Date;
 
+  avatarColor: string;
+
   @Field((type) => UserStatus)
   status: UserStatus;
 }

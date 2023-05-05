@@ -29,6 +29,7 @@ model User {
   mentionedBy              MentionsOnMessages[]
   newMessagesNotifications NewMessagesNotifications[]
   chatGptRole              String?
+  avatarColor              String                     @default("#ef4444")
 
   @@map("users")
 }
@@ -80,12 +81,13 @@ model FriendsWith {
 // }
 
 model Channel {
-  id        Int                 @id @default(autoincrement())
-  name      String?
-  createdAt DateTime            @default(now())
-  members   MembersInChannels[]
-  messages  Message[]
-  type      ChannelType         @default(PRIVATE_CONVERSATION)
+  id          Int                 @id @default(autoincrement())
+  name        String?
+  createdAt   DateTime            @default(now())
+  members     MembersInChannels[]
+  messages    Message[]
+  type        ChannelType         @default(PRIVATE_CONVERSATION)
+  avatarColor String              @default("#45c46d")
 
   @@map("channels")
 }

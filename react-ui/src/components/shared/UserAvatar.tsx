@@ -28,20 +28,21 @@ interface Props {
   className?: string;
   status?: UserStatus | null;
   size?: Sizes;
+  avatarColor?: string;
 }
 
-const UserAvatar = ({ className, status = null, size = "base" }: Props) => {
+const UserAvatar = ({ className, status = null, size = "base", avatarColor = "#EF4444" }: Props) => {
   return (
     <div className={`relative ${className}`}>
       {status ? (
         <>
-          <AvatarIconHole size={sizeMap.get(size)?.avatarSize} />
+          <AvatarIconHole bgColor={avatarColor} size={sizeMap.get(size)?.avatarSize} />
           <div className={`absolute ${sizeMap.get(size)?.position} rounded-full flex items-center justify-center overflow-hidden`}>
             <UserStatusIcon status={status} size={sizeMap.get(size)?.userStatusSize} />
           </div>
         </>
       ) : (
-        <AvatarIconNoHole size={sizeMap.get(size)?.avatarSize} />
+        <AvatarIconNoHole bgColor={avatarColor} size={sizeMap.get(size)?.avatarSize} />
       )}
     </div>
   );

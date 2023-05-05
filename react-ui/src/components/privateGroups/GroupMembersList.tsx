@@ -26,14 +26,14 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0">
-        {filterFriends.map(({ status, username, id }, idx) => (
+        {filterFriends.map(({ status, username, id, avatarColor }, idx) => (
           <div onClick={() => handleClick(id)} key={id} className="cursor-pointer py-[1px] mr-1 ml-3" onMouseOver={() => handleHover(idx)}>
             <div
               className={`${
                 hoveredIndex === idx && "bg-primary-dark-500"
               } rounded-[3px] h-10 py-[6px] px-2 whitespace-nowrap text-ellipsis overflow-hidden flex items-center justify-start flex-nowrap`}
             >
-              <UserAvatar status={status} />
+              <UserAvatar avatarColor={avatarColor} status={status} />
               <div className="flex-auto whitespace-nowrap text-ellipsis overflow-hidden mx-[10px] flex flex-nowrap justify-start items-baseline">
                 <strong className="mr-1 text-sm text-secondary-light font-normal">{username}</strong>
                 <div

@@ -2,16 +2,17 @@ import { Transforms } from "slate";
 import { ReactEditor, useSlate } from "slate-react";
 import UserAvatar from "../shared/UserAvatar";
 import { AuthUser } from "../../gql/graphql";
+import { ConversationMember } from "../../types/private-conversation";
 
 interface Props {
-  id: number;
-  username: string;
+  mention: ConversationMember;
   authUser: AuthUser;
   mentionSearch: string;
   active: boolean;
 }
 
-const MentionOptionItem = ({ username, id, authUser, mentionSearch, active }: Props) => {
+const MentionOptionItem = ({ mention, authUser, mentionSearch, active }: Props) => {
+  const { username, id, avatarColor } = mention;
   const { friends, id: authUserId, status: authUserStatus } = authUser;
   const editor = useSlate();
   const { path, offset } = editor.selection?.anchor!;
@@ -34,6 +35,7 @@ const MentionOptionItem = ({ username, id, authUser, mentionSearch, active }: Pr
         <div className="flex items-center text-h-secondary min-h-[16px]">
           <div className="shrink-0 grow-0 basis-auto mr-2">
             <UserAvatar
+              avatarColor={avatarColor}
               size="sm"
               status={[...friends, { id: authUserId, status: authUserStatus }].find((friend) => friend.id === id)?.status ?? "INVISIBLE"}
             />

@@ -12,9 +12,10 @@ export interface User extends Omit<RegisterInput, "password"> {
   friendRequests: FriendRequest[];
   privateConversations: PrivateConversation[];
   privateGroups: PrivateGroup[];
+  avatarColor: string;
 }
 
-export interface Friend extends Pick<User, "id" | "username" | "status"> {}
+export interface Friend extends Pick<User, "id" | "username" | "status" | "avatarColor"> {}
 
 export type FriendRequestStatus = "SENT" | "RECEIVED";
 

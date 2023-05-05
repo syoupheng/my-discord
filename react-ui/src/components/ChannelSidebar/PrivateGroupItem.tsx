@@ -11,7 +11,7 @@ interface Props {
 }
 
 const PrivateGroupItem = ({ group }: Props) => {
-  const { members, id, name } = group;
+  const { members, id, name, avatarColor } = group;
   const location = useLocation();
   const isActive = location.pathname === `/channels/@me/${id}`;
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ const PrivateGroupItem = ({ group }: Props) => {
     <ChannelSidebarItem url={`/${id}`} onClose={() => setIsOpen(true)} isActive={isActive}>
       <div className="flex items-center px-2">
         <div className=" shrink-0 mr-3">
-          <ChannelIcon size="sm" channelType="group" />
+          <ChannelIcon avatarColor={avatarColor} size="sm" channelType="group" />
         </div>
         <MessageItemLabel label={name} nbMembers={members.length} />
         <LeaveGroupDialog modalOpen={isOpen} onModalOpen={setIsOpen} group={group} />

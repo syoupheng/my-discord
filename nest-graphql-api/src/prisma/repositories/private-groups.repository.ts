@@ -6,6 +6,7 @@ import { PrismaService } from '../prisma.service';
 interface IGroupCreateInput {
   name: string;
   members: ChannelMember[];
+  avatarColor: string;
 }
 
 @Injectable()
@@ -31,7 +32,7 @@ export class PrivateGroupsRepository {
       },
       include: {
         channel: {
-          select: { id: true, name: true, createdAt: true },
+          select: { id: true, name: true, createdAt: true, avatarColor: true },
         },
       },
     });
@@ -50,16 +51,17 @@ export class PrivateGroupsRepository {
     });
   }
 
-  create({ name, members }: IGroupCreateInput) {
+  create({ name, members, avatarColor }: IGroupCreateInput) {
     return this.prisma.channel.create({
       data: {
         type: 'PRIVATE_GROUP',
+        avatarColor,
         name,
         members: {
           createMany: { data: members.map((member) => ({ memberId: member.id })) },
         },
       },
-      select: { id: true, name: true, createdAt: true },
+      select: { id: true, name: true, createdAt: true, avatarColor: true },
     });
   }
 

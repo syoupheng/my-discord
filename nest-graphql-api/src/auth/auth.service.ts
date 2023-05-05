@@ -6,12 +6,18 @@ import { RegisterUserInput } from './dto/register-user.input';
 import { ConfigService } from '@nestjs/config';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthUser } from './entities/auth-user.entity';
+import { AvatarService } from '../avatar/avatar.service';
 
 const dayjs = require('dayjs');
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService, private config: ConfigService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private config: ConfigService,
+    private avatarService: AvatarService,
+  ) {}
 
   async validateUser(email: string, password: string): Promise<AuthUser> {
     const user = await this.usersService.findOneByEmail(email);
@@ -34,6 +40,7 @@ export class AuthService {
     const hashedPassword = await argon.hash(registerUserInput.password);
     const user = await this.usersService.create({
       ...registerUserInput,
+      avatarColor: this.avatarService.getColor(),
       password: hashedPassword,
       status: UserStatus.ONLINE,
     });

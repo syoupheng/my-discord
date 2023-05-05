@@ -14,4 +14,7 @@ export class PrivateGroup {
 
   @Field((type) => [ChannelMember])
   members?: ChannelMember[];
+
+  @Field()
+  avatarColor: string;
 }

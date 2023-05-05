@@ -29,7 +29,7 @@ const friendRequestMap: Record<FriendRequestStatus, string> = {
 const FriendItemTag = ({ friend, friendRequest }: Props) => {
   return (
     <div className="flex overflow-hidden">
-      <UserAvatar status={friend?.status} className="mr-3 w-8 h-8 shrink-0" />
+      <UserAvatar avatarColor={friend?.avatarColor ?? friendRequest?.avatarColor} status={friend?.status} className="mr-3 w-8 h-8 shrink-0" />
       <div className="flex flex-col overflow-hidden">
         <div className="flex overflow-hidden grow items-end justify-start leading-[1.1]">
           <span className="whitespace-nowrap overflow-hidden font-semibold block flex-initial text-white">{(friend ?? friendRequest)?.username}</span>

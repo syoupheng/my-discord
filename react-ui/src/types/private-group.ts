@@ -6,6 +6,7 @@ export interface PrivateGroup {
   createdAt: string;
   name: string;
   members: ConversationMember[];
+  avatarColor: string;
   __typename: "PrivateGroup";
 }
 

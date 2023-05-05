@@ -9,6 +9,7 @@ export const GET_AUTH_USER_FRIENDS = gql`
         id
         username
         status
+        avatarColor
       }
     }
   }

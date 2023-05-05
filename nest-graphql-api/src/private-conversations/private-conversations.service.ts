@@ -22,7 +22,7 @@ export class PrivateConversationsService {
       where: {
         id: { in: ids },
       },
-      select: { id: true, username: true, createdAt: true },
+      select: { id: true, username: true, createdAt: true, avatarColor: true },
     });
   }
 

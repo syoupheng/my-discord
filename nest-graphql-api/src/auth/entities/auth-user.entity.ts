@@ -15,6 +15,8 @@ export class AuthUser implements BaseUser {
 
   createdAt: Date;
 
+  avatarColor: string;
+
   @Field()
   email: string;
 

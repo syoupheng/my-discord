@@ -37,6 +37,7 @@ export class FriendRequestRepository {
             id: true,
             username: true,
             createdAt: true,
+            avatarColor: true,
           },
         },
         recipient: {
@@ -44,6 +45,7 @@ export class FriendRequestRepository {
             id: true,
             username: true,
             createdAt: true,
+            avatarColor: true,
           },
         },
       },

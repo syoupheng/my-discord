@@ -26,7 +26,7 @@ const PrivateConversationItem = ({ conversation, friends }: Props) => {
   return (
     <ChannelSidebarItem url={`/${id}`} onClose={handleClose} isActive={isActive}>
       <div className="flex items-center px-2">
-        <UserAvatar status={friendStatus} className="mr-3 w-8 h-8 shrink-0" />
+        <UserAvatar avatarColor={member.avatarColor} status={friendStatus} className="mr-3 w-8 h-8 shrink-0" />
         <MessageItemLabel label={member.username} />
       </div>
     </ChannelSidebarItem>

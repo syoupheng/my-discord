@@ -16,4 +16,6 @@ export interface ChannelModel {
   get type(): ChannelType;
 
   get members(): ChannelMember[];
+
+  get avatarColor(): string;
 }

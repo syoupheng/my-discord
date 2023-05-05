@@ -35,4 +35,8 @@ export class PrivateGroupModel implements ChannelModel {
   get members(): ChannelMember[] {
     return this.group.members;
   }
+
+  get avatarColor(): string {
+    return this.group.avatarColor;
+  }
 }

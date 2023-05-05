@@ -19,13 +19,13 @@ const UserProfilePopover = () => {
   } = useFloating({ placement: "top-start", middleware: [offset(16)] });
 
   if (!authUser) return null;
-  const { createdAt } = authUser.me;
+  const { createdAt, avatarColor } = authUser.me;
   const formattedDate = formatUserSubscribeDate(createdAt);
 
   return (
     <Popover className="grow max-w-[120px]">
       <Popover.Button ref={popoverRef} className="flex items-center rounded hover:bg-grey-hov cursor-pointer focus:outline-none w-full">
-        <UserAvatar status={authUser.me.status} className="mr-2" />
+        <UserAvatar avatarColor={avatarColor} status={authUser.me.status} className="mr-2" />
         <div className="whitespace-nowrap overflow-hidden text-btw-sm-xs">
           <div className="text-white font-bold">{authUser.me.username}</div>
           <div className="text-h-secondary text-left">#{authUser?.me.id}</div>
@@ -44,9 +44,9 @@ const UserProfilePopover = () => {
         >
           {({ close }) => (
             <div>
-              <div className="bg-red h-14 mb-8 min-w-[335px] rounded-t-md relative">
+              <div className="h-14 mb-8 min-w-[335px] rounded-t-md relative" style={{ backgroundColor: avatarColor }}>
                 <div className="absolute bottom-0 left-4 translate-y-1/2">
-                  <BigUserAvatar status={authUser.me.status} />
+                  <BigUserAvatar avatarColor={avatarColor} status={authUser.me.status} />
                 </div>
               </div>
               <div className="p-4">

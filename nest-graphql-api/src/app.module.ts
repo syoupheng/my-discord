@@ -18,6 +18,7 @@ import { PrivateGroupsModule } from './private-groups/private-groups.module';
 import { MessagesModule } from './messages/messages.module';
 import { GraphQLError } from 'graphql';
 import { ChatGptModule } from './chat-gpt/chat-gpt.module';
+import { AvatarModule } from './avatar/avatar.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ChatGptModule } from './chat-gpt/chat-gpt.module';
     PrivateGroupsModule,
     MessagesModule,
     ChatGptModule,
+    AvatarModule,
   ],
   controllers: [AppController],
   providers: [AppService],

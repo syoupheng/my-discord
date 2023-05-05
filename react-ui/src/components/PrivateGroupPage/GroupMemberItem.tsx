@@ -27,7 +27,7 @@ const GroupMemberItem = ({ member }: Props) => {
       } relative max-w-[224px] ml-2 py-[1px] rounded text-channels-default cursor-pointer hover:text-secondary-light hover:bg-mod-hov`}
     >
       <div className="flex items-center rounded px-2 h-[42px]">
-        <UserAvatar status={userStatus} className="mr-3" />
+        <UserAvatar avatarColor={member.avatarColor} status={userStatus} className="mr-3" />
         <div className="leading-5 whitespace-nowrap text-ellipsis overflow-hidden flex-auto min-w-0">{member.username}</div>
       </div>
     </div>

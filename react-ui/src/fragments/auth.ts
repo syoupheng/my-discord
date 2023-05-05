@@ -8,15 +8,18 @@ export const AUTH_USER_FIELDS = gql`
     email
     status
     phoneNumber
+    avatarColor
     friends {
       id
       username
       status
+      avatarColor
     }
     friendRequests {
       id
       username
       requestStatus
+      avatarColor
     }
     privateConversations {
       id
@@ -24,15 +27,18 @@ export const AUTH_USER_FIELDS = gql`
       member {
         id
         username
+        avatarColor
       }
     }
     privateGroups {
       id
       createdAt
       name
+      avatarColor
       members {
         id
         username
+        avatarColor
       }
     }
     newMessagesNotifications {

@@ -32,8 +32,8 @@ const MentionsAutocomplete = ({ mentionSearch, mentions, arrowPosition, slateVal
             )}
           </h3>
         </div>
-        {mentions.map(({ username, id }, idx) => (
-          <MentionOptionItem active={arrowPosition === idx} key={id} id={id} username={username} authUser={data.me} mentionSearch={mentionSearch} />
+        {mentions.map((mention, idx) => (
+          <MentionOptionItem active={arrowPosition === idx} key={mention.id} mention={mention} authUser={data.me} mentionSearch={mentionSearch} />
         ))}
       </div>
     </div>

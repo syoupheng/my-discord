@@ -5,6 +5,7 @@ export const CHANNEL_MEMBER_FIELDS = graphql(`
     id
     username
     createdAt
+    avatarColor
   }
 `);
 
