@@ -1,6 +1,6 @@
-import { useCallback } from "react";
-import { BaseRange, NodeEntry } from "slate";
-import { Editable, RenderLeafProps } from "slate-react";
+import { useCallback, useEffect } from "react";
+import { BaseRange, Editor, NodeEntry, Transforms } from "slate";
+import { Editable, RenderLeafProps, useSlate } from "slate-react";
 import MentionElement from "./MentionElement";
 import SlateLeaf from "./SlateLeaf";
 import { usePrivateChannelContext } from "../../providers/PrivateChannelProvider";
@@ -21,6 +21,15 @@ const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown }: Props) => {
       default:
         return <DefaultElement {...props} />;
     }
+  }, []);
+
+  const editor = useSlate();
+
+  useEffect(() => {
+    Transforms.select(editor, {
+      anchor: Editor.start(editor, []),
+      focus: Editor.start(editor, []),
+    });
   }, []);
 
   return (
