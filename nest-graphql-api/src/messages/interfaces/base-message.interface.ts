@@ -9,17 +9,17 @@ import { ReferencedMessage } from '../entities/referenced-message.entity';
   },
 })
 export abstract class BaseMessage {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Field()
   content: string;
 
-  @Field((type) => ChannelMember)
+  @Field(() => ChannelMember)
   author?: ChannelMember;
 
   authorId: number;
 
-  @Field((type) => [ChannelMember])
+  @Field(() => [ChannelMember])
   mentions?: ChannelMember[];
 }

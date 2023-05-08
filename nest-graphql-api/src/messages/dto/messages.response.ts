@@ -3,9 +3,9 @@ import { Message } from '../entities/message.entity';
 
 @ObjectType()
 export class MessagesResponse {
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   cursor: Date | null;
 
-  @Field((type) => [Message])
+  @Field(() => [Message])
   messages: Message[];
 }

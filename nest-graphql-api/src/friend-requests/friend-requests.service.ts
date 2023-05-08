@@ -1,5 +1,4 @@
 import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
 import { FriendTag } from './dto/friend-tag.input';
 import { FriendRequest } from './entities/friend-request.entity';
 import { FriendRequestStatus } from './enums/friend-request-status.enum';
@@ -9,6 +8,7 @@ import { FriendRequestRepository } from '../prisma/repositories/friend-requests.
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { FriendsRepository } from '../prisma/repositories/friends.repository';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthUser } from 'src/auth/entities/auth-user.entity';
 
 @Injectable()
 export class FriendRequestsService {
@@ -20,7 +20,7 @@ export class FriendRequestsService {
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
-  async create(friendTag: FriendTag, sender: User): Promise<FriendRequest> {
+  async create(friendTag: FriendTag, sender: AuthUser): Promise<FriendRequest> {
     const { id: recipientId, username: recipientName } = friendTag;
     const { id: senderId, username: senderName } = sender;
     const [recipient, existingFriendRequest, isAlreadyFriend] = await Promise.all([
@@ -61,13 +61,14 @@ export class FriendRequestsService {
   async findAll(userId: number): Promise<FriendRequest[]> {
     const rawFriendRequests = await this.friendRequestRepository.findAllByUserId(userId);
     const friendRequests = rawFriendRequests.map((request) => {
-      const { id, username, createdAt, avatarColor } = request.sender.id === userId ? request.recipient : request.sender;
+      const isSender = request.sender.id === userId;
+      const { id, username, createdAt, avatarColor } = isSender ? request.recipient : request.sender;
       return {
         id,
         username,
         createdAt,
         avatarColor,
-        requestStatus: request.sender.id === userId ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
+        requestStatus: isSender ? FriendRequestStatus.SENT : FriendRequestStatus.RECEIVED,
       };
     });
 
@@ -77,9 +78,8 @@ export class FriendRequestsService {
   async delete(senderId: number, recipientId: number) {
     const friendRequest = await this.friendRequestRepository.findOne({ senderId, recipientId });
     if (!friendRequest) throw new NotFoundException("Aucune demande d'ami n'a été envoyée !");
-    const { ignored } = friendRequest;
     await this.friendRequestRepository.delete({ senderId, recipientId });
-    if (!ignored) this.pubSub.publish('friendRequestDeleted', { friendRequestDeleted: { senderId, recipientId } });
+    if (!friendRequest.ignored) this.pubSub.publish('friendRequestDeleted', { friendRequestDeleted: { senderId, recipientId } });
   }
 
   async ignore(userId: number, friendId: number): Promise<number> {

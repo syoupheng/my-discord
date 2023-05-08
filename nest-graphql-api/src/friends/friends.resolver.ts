@@ -7,26 +7,27 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Friend } from './entities/friends.entity';
 import { FriendsService } from './friends.service';
 import { FriendRequestConfirmedPayload } from './dto/friend-request-confirmed-payload.dto';
+import { GraphQLContextWithUser } from 'src/types';
 
 @Resolver(() => Friend)
 export class FriendsResolver {
   constructor(private readonly friendsService: FriendsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
-  @Mutation((returns) => Friend)
+  @Mutation(() => Friend)
   @UseGuards(JwtAuthGuard)
-  async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
+  async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx: GraphQLContextWithUser) {
     const newFriend = await this.friendsService.add(friendId, ctx.req.user);
     return newFriend;
   }
 
-  @Mutation((returns) => SuccessResponse)
+  @Mutation(() => SuccessResponse)
   @UseGuards(JwtAuthGuard)
-  async deleteFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
+  async deleteFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx: GraphQLContextWithUser) {
     await this.friendsService.delete(friendId, ctx.req.user.id);
     return { success: true };
   }
 
-  @Subscription((returns) => FriendRequestConfirmedPayload, {
+  @Subscription(() => FriendRequestConfirmedPayload, {
     filter: (payload, variables) => payload.friendRequestConfirmed.senderId === variables.userId,
     resolve: ({ friendRequestConfirmed }) => {
       const { senderId, ...newFriend } = friendRequestConfirmed;
@@ -37,7 +38,7 @@ export class FriendsResolver {
     return this.pubSub.asyncIterator('friendRequestConfirmed');
   }
 
-  @Subscription((returns) => Int, {
+  @Subscription(() => Int, {
     filter: (payload, variables) => payload.friendDeleted.userId === variables.userId,
     resolve: ({ friendDeleted }) => {
       const { friendToRemoveId } = friendDeleted;
@@ -48,7 +49,7 @@ export class FriendsResolver {
     return this.pubSub.asyncIterator('friendDeleted');
   }
 
-  @Subscription((returns) => Friend, {
+  @Subscription(() => Friend, {
     async filter(payload, variables) {
       return payload.friendProfileChanged.friends.some((friend: Friend) => friend.id === variables.userId);
     },

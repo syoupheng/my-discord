@@ -149,7 +149,7 @@ type PrivateGroup {
   createdAt: DateTime!
   id: Int!
   members: [ChannelMember!]!
-  name: String!
+  name: String
 }
 
 type Query {

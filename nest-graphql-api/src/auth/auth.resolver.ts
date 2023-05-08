@@ -17,8 +17,9 @@ import { PrivateGroup } from '../private-groups/entities/private-group.entity';
 import { PrivateGroupsService } from '../private-groups/private-groups.service';
 import { Message } from '../messages/entities/message.entity';
 import { MessagesNotificationsService } from '../messages/messages-notifications.service';
+import { GraphQLContext, GraphQLContextWithUser } from 'src/types';
 
-@Resolver((of) => AuthUser)
+@Resolver(() => AuthUser)
 export class AuthResolver {
   constructor(
     private authService: AuthService,
@@ -29,60 +30,55 @@ export class AuthResolver {
     private messagesNotificationsService: MessagesNotificationsService,
   ) {}
 
-  @Mutation((returns) => AuthUser)
+  @Mutation(() => AuthUser)
   @UseGuards(GqlAuthGuard)
-  async login(@Args('loginUserInput') loginUserInput: LoginUserInput, @Context() ctx): Promise<AuthUser> {
+  async login(@Args('loginUserInput') loginUserInput: LoginUserInput, @Context() ctx: GraphQLContext & { user: AuthUser }): Promise<AuthUser> {
     const { user, token } = await this.authService.login(ctx.user);
     this.authService.generateCookie(ctx.req, token);
     return user;
   }
 
-  @Mutation((returns) => AuthUser)
-  async register(@Args('registerUserInput') registerUserInput: RegisterUserInput, @Context() ctx): Promise<AuthUser> {
+  @Mutation(() => AuthUser)
+  async register(@Args('registerUserInput') registerUserInput: RegisterUserInput, @Context() ctx: GraphQLContext): Promise<AuthUser> {
     const { user, token } = await this.authService.register(registerUserInput);
     this.authService.generateCookie(ctx.req, token);
     return user;
   }
 
-  @Mutation((returns) => SuccessResponse)
-  logout(@Context() ctx) {
+  @Mutation(() => SuccessResponse)
+  logout(@Context() ctx: GraphQLContext): SuccessResponse {
     ctx.req.res?.clearCookie('access_token');
     return { success: true };
   }
 
-  @Query((returns) => AuthUser, { name: 'me' })
+  @Query(() => AuthUser, { name: 'me' })
   @UseGuards(JwtAuthGuard)
-  getMe(@Context() ctx): AuthUser {
+  getMe(@Context() ctx: GraphQLContextWithUser): AuthUser {
     return ctx.req.user;
   }
 
-  @ResolveField('friendRequests', (returns) => [FriendRequest])
-  getFriendRequests(@Parent() authUser: AuthUser) {
-    const { id: userId } = authUser;
-    return this.friendRequestsService.findAll(userId);
+  @ResolveField('friendRequests', () => [FriendRequest])
+  getFriendRequests(@Parent() authUser: AuthUser): Promise<FriendRequest[]> {
+    return this.friendRequestsService.findAll(authUser.id);
   }
 
-  @ResolveField('friends', (returns) => [Friend])
-  getFriends(@Parent() authUser: AuthUser) {
-    const { id: userId } = authUser;
-    return this.friendsService.findAll(userId);
+  @ResolveField('friends', () => [Friend])
+  getFriends(@Parent() authUser: AuthUser): Promise<Friend[]> {
+    return this.friendsService.findAll(authUser.id);
   }
 
-  @ResolveField('privateConversations', (returns) => [PrivateConversation])
-  getPrivateConversations(@Parent() authUser: AuthUser) {
-    const { id: userId } = authUser;
-    return this.privateConversationsService.findAll(userId);
+  @ResolveField('privateConversations', () => [PrivateConversation])
+  getPrivateConversations(@Parent() authUser: AuthUser): Promise<PrivateConversation[]> {
+    return this.privateConversationsService.findAll(authUser.id);
   }
 
-  @ResolveField('privateGroups', (returns) => [PrivateGroup])
-  getPrivateGroups(@Parent() authUser: AuthUser) {
-    const { id: userId } = authUser;
-    return this.privateGroupsService.findAll(userId);
+  @ResolveField('privateGroups', () => [PrivateGroup])
+  getPrivateGroups(@Parent() authUser: AuthUser): Promise<PrivateGroup[]> {
+    return this.privateGroupsService.findAll(authUser.id);
   }
 
-  @ResolveField('newMessagesNotifications', (returns) => [Message])
+  @ResolveField('newMessagesNotifications', () => [Message])
   getNewMessagesNotifications(@Parent() authUser: AuthUser): Promise<Message[]> {
-    const { id: userId } = authUser;
-    return this.messagesNotificationsService.findAll(userId);
+    return this.messagesNotificationsService.findAll(authUser.id);
   }
 }

@@ -16,8 +16,8 @@ const PrivateChannelPage = () => {
   const { data } = useAuthUser();
   const { channelId } = useParams();
   const { channel, channelModel } = useFindPrivateChannel(parseInt(channelId!));
-  if (!channel || !data) return <Navigate to={DEFAULT_ROUTE} />;
-  useDocumentTitle(channelModel.title);
+  useDocumentTitle(channelModel?.title ?? "");
+  if (!channel || !channelModel || !data) return <Navigate to={DEFAULT_ROUTE} />;
   return (
     <div className="min-h-0 min-w-0 flex relative flex-col overflow-hidden flex-auto">
       <PrivateChannelProvider channel={channelModel}>

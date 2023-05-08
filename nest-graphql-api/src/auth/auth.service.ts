@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthUser } from './entities/auth-user.entity';
 import { AvatarService } from '../avatar/avatar.service';
-
-const dayjs = require('dayjs');
+import { Response } from 'express';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +19,7 @@ export class AuthService {
     private avatarService: AvatarService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<AuthUser> {
+  async validateUser(email: string, password: string): Promise<AuthUser | null> {
     const user = await this.usersService.findOneByEmail(email);
     if (user && (await argon.verify(user?.password, password))) {
       const { password, status, ...result } = user;
@@ -48,7 +48,7 @@ export class AuthService {
     return this.login(user);
   }
 
-  generateCookie(req, token: string) {
+  generateCookie(req: { res: Response }, token: string) {
     const COOKIE_OPTIONS = {
       secure: false,
       httpOnly: true,
@@ -57,6 +57,6 @@ export class AuthService {
         .toDate(),
     };
 
-    return req.res?.cookie('access_token', token, COOKIE_OPTIONS);
+    return req.res.cookie('access_token', token, COOKIE_OPTIONS);
   }
 }

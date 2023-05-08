@@ -18,29 +18,18 @@ export class PrivateGroupsService {
 
   async findAll(userId: number): Promise<PrivateGroup[]> {
     const items = await this.privateGroupsRepository.findManyByMemberId(userId);
-    return items.map(({ channel }) => {
-      const { id, name, createdAt, avatarColor } = channel;
-      return { id, name, createdAt, avatarColor };
-    });
+    return items.map(({ channel }) => channel);
   }
 
-  async findGroupMembersByIds(ids: number[]) {
-    const groups = await this.privateGroupsRepository.findMembersByGroupIds(ids);
-    const membersMap = new Map<number, ChannelMember[]>(
-      groups.map((group) => [
-        group.id,
-        group.members.map(({ member }) => {
-          const { id, username, createdAt, avatarColor } = member;
-          return { id, username, createdAt, avatarColor };
-        }),
-      ]),
-    );
+  async findGroupMembersByIds(groupsIds: number[]) {
+    const groups = await this.privateGroupsRepository.findMembersByGroupIds(groupsIds);
+    const membersMap = new Map<number, ChannelMember[]>(groups.map((group) => [group.id, group.members.map(({ member }) => member)]));
     return membersMap;
   }
 
-  async findGroupMembersByBatch(groupsIds: number[]): Promise<Array<ChannelMember[]>> {
+  async findGroupMembersByBatch(groupsIds: number[]): Promise<Array<ChannelMember[] | Error>> {
     const membersMap = await this.findGroupMembersByIds(groupsIds);
-    return groupsIds.map((groupId) => membersMap.get(groupId));
+    return groupsIds.map((groupId) => membersMap.get(groupId) ?? Error(`Group ${groupId} not found`));
   }
 
   async create(membersIds: number[], authUser: AuthUser): Promise<PrivateGroup> {
@@ -49,18 +38,17 @@ export class PrivateGroupsService {
       throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 1 au minimum !');
     const friends = await this.friendsService.findAll(authUser.id);
     const groupMembers = uniqueIds.map((memberId) => {
-      if (memberId === authUser.id)
-        return { id: authUser.id, username: authUser.username, createdAt: authUser.createdAt, avatarColor: authUser.avatarColor };
+      if (memberId === authUser.id) return authUser;
       const member = friends.find((friend) => friend.id === memberId);
       if (!member) throw new ForbiddenException('Un ou plusieurs des utilisateurs ne font pas partie de tes amis !');
-      return { id: memberId, username: member.username, createdAt: member.createdAt, avatarColor: member.avatarColor };
+      return member;
     });
 
     const groupName = groupMembers.map(({ username }) => username).join(', ');
     return this.privateGroupsRepository.create({ name: groupName, members: groupMembers, avatarColor: this.avatarService.getColor() });
   }
 
-  async editName(editNameInput: EditNameInput, userId: number) {
+  async editName(editNameInput: EditNameInput, userId: number): Promise<PrivateGroup> {
     const { groupId, name } = editNameInput;
     await this.canEdit(groupId, userId);
     return this.privateGroupsRepository.update(groupId, { name });

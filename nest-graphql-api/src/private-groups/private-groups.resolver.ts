@@ -6,42 +6,42 @@ import { IDataLoaders } from '../dataloader/dataloader.interface';
 import { EditNameInput } from './dto/edit-name.input';
 import { PrivateGroup } from './entities/private-group.entity';
 import { PrivateGroupsService } from './private-groups.service';
+import { GraphQLContextWithUser } from 'src/types';
 
-@Resolver((of) => PrivateGroup)
+@Resolver(() => PrivateGroup)
 export class PrivateGroupsResolver {
   constructor(private readonly privateGroupsService: PrivateGroupsService) {}
 
-  @Mutation((returns) => PrivateGroup)
+  @Mutation(() => PrivateGroup)
   @UseGuards(JwtAuthGuard)
-  createGroup(@Args('membersIds', { type: () => [Int] }) membersIds: number[], @Context() ctx) {
+  createGroup(@Args('membersIds', { type: () => [Int] }) membersIds: number[], @Context() ctx: GraphQLContextWithUser): Promise<PrivateGroup> {
     return this.privateGroupsService.create(membersIds, ctx.req.user);
   }
 
-  @Mutation((returns) => PrivateGroup)
+  @Mutation(() => PrivateGroup)
   @UseGuards(JwtAuthGuard)
-  editGroupName(@Args('editNameInput') editNameInput: EditNameInput, @Context() ctx) {
+  editGroupName(@Args('editNameInput') editNameInput: EditNameInput, @Context() ctx: GraphQLContextWithUser): Promise<PrivateGroup> {
     return this.privateGroupsService.editName(editNameInput, ctx.req.user.id);
   }
 
-  @Mutation((returns) => PrivateGroup)
+  @Mutation(() => PrivateGroup)
   @UseGuards(JwtAuthGuard)
   addGroupMembers(
     @Args('groupId', { type: () => Int }) groupId: number,
     @Args('membersIds', { type: () => [Int] }) membersIds: number[],
-    @Context() ctx,
-  ) {
+    @Context() ctx: GraphQLContextWithUser,
+  ): Promise<PrivateGroup> {
     return this.privateGroupsService.addMember(groupId, membersIds, ctx.req.user.id);
   }
 
-  @Mutation((returns) => PrivateGroup)
+  @Mutation(() => PrivateGroup)
   @UseGuards(JwtAuthGuard)
-  leaveGroup(@Args('groupId', { type: () => Int }) groupId: number, @Context() ctx) {
+  leaveGroup(@Args('groupId', { type: () => Int }) groupId: number, @Context() ctx: GraphQLContextWithUser): Promise<PrivateGroup> {
     return this.privateGroupsService.leave(groupId, ctx.req.user.id);
   }
 
-  @ResolveField('members', (returns) => [ChannelMember])
-  getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders) {
-    const { id } = privateGroup;
-    return loaders.groupMembersLoader.load(id);
+  @ResolveField('members', () => [ChannelMember])
+  getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders): Promise<ChannelMember[]> {
+    return loaders.groupMembersLoader.load(privateGroup.id);
   }
 }

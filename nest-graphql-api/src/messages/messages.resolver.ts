@@ -14,8 +14,9 @@ import { TypingNotification } from './dto/typing-notification.response';
 import { MembersInChannels } from '@prisma/client';
 import { UserTypingInput } from './dto/user-typing.input';
 import { MessagesNotificationsService } from './messages-notifications.service';
+import { GraphQLContextWithUser } from 'src/types';
 
-@Resolver((of) => Message)
+@Resolver(() => Message)
 export class MessagesResolver {
   constructor(
     private readonly messagesService: MessagesService,
@@ -23,48 +24,48 @@ export class MessagesResolver {
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
-  @Query((returns) => MessagesResponse)
+  @Query(() => MessagesResponse)
   @UseGuards(JwtAuthGuard)
   getMessages(
-    @Context() ctx,
+    @Context() ctx: GraphQLContextWithUser,
     @Args('channelId', { type: () => Int }) channelId: number,
+    @Args('limit', { nullable: true, defaultValue: 15, type: () => Int }) limit: number,
     @Args('cursor', { nullable: true }) cursor?: string,
-    @Args('limit', { nullable: true, defaultValue: 15, type: () => Int }) limit?: number,
   ): Promise<MessagesResponse> {
     return this.messagesService.findAll(ctx.req.user.id, channelId, { cursor, take: limit });
   }
 
-  @Mutation((type) => Message)
+  @Mutation(() => Message)
   @UseGuards(JwtAuthGuard)
-  sendMessage(@Args('sendMessageInput') input: SendMessageInput, @Context() ctx) {
+  sendMessage(@Args('sendMessageInput') input: SendMessageInput, @Context() ctx: GraphQLContextWithUser): Promise<Message> {
     return this.messagesService.send(input, ctx.req.user.id);
   }
 
-  @Mutation((type) => SuccessResponse)
+  @Mutation(() => SuccessResponse)
   @UseGuards(JwtAuthGuard)
-  deleteMessage(@Args('messageId', { type: () => Int }) messageId: number, @Context() ctx): Promise<SuccessResponse> {
+  deleteMessage(@Args('messageId', { type: () => Int }) messageId: number, @Context() ctx: GraphQLContextWithUser): Promise<SuccessResponse> {
     return this.messagesService.delete(messageId, ctx.req.user.id);
   }
 
-  @Mutation((type) => String)
+  @Mutation(() => String)
   @UseGuards(JwtAuthGuard)
-  typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @Context() ctx): Promise<string> {
+  typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @Context() ctx: GraphQLContextWithUser): Promise<string> {
     return this.messagesService.notifyTyping(channelId, ctx.req.user);
   }
 
-  @Mutation((type) => String)
+  @Mutation(() => String)
   @UseGuards(JwtAuthGuard)
-  markMessagesAsRead(@Args('messagesIds', { type: () => [Int] }) messagesIds: number[], @Context() ctx): Promise<string> {
+  markMessagesAsRead(@Args('messagesIds', { type: () => [Int] }) messagesIds: number[], @Context() ctx: GraphQLContextWithUser): Promise<string> {
     return this.messagesNotificationsService.deleteMany(messagesIds, ctx.req.user.id);
   }
 
-  @ResolveField('referencedMessage', (returns) => ReferencedMessage, { nullable: true })
-  getReferencedMessage(@Parent() message: Message, @Context('loaders') loaders: IDataLoaders) {
+  @ResolveField('referencedMessage', () => ReferencedMessage, { nullable: true })
+  getReferencedMessage(@Parent() message: Message, @Context('loaders') loaders: IDataLoaders): Promise<ReferencedMessage> | null {
     if (!message?.respondsToId) return null;
     return loaders.referencedMessagesLoader.load(message.respondsToId);
   }
 
-  @Subscription((returns) => Message, {
+  @Subscription(() => Message, {
     filter: ({ messageReceived }, variables) => messageReceived.membersIds.includes(variables.userId),
     resolve: ({ messageReceived }) => messageReceived.payload,
   })
@@ -72,7 +73,7 @@ export class MessagesResolver {
     return this.pubSub.asyncIterator('messageReceived');
   }
 
-  @Subscription((returns) => Message, {
+  @Subscription(() => Message, {
     filter: ({ messageDeleted }, variables) => messageDeleted.membersIds.includes(variables.userId),
     resolve: ({ messageDeleted }) => messageDeleted.message,
   })
@@ -80,7 +81,7 @@ export class MessagesResolver {
     return this.pubSub.asyncIterator('messageDeleted');
   }
 
-  @Subscription((returns) => TypingNotification, {
+  @Subscription(() => TypingNotification, {
     filter: (payload, { userTypingInput }: { userTypingInput: UserTypingInput }) => {
       const isMember = payload.membersInChannels.some((member: MembersInChannels) => member.memberId === userTypingInput.userId);
       if (userTypingInput.channelId) return payload.channelId === userTypingInput.channelId && isMember;

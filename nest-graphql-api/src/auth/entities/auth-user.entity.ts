@@ -20,24 +20,24 @@ export class AuthUser implements BaseUser {
   @Field()
   email: string;
 
-  @Field((type) => UserStatus)
+  @Field(() => UserStatus)
   status: UserStatus;
 
-  @Field({ nullable: true })
-  phoneNumber?: string;
+  @Field(() => String, { nullable: true })
+  phoneNumber: string | null;
 
-  @Field((type) => [FriendRequest])
+  @Field(() => [FriendRequest])
   friendRequests?: FriendRequest[];
 
-  @Field((type) => [Friend])
+  @Field(() => [Friend])
   friends?: Friend[];
 
-  @Field((type) => [PrivateConversation])
+  @Field(() => [PrivateConversation])
   privateConversations?: PrivateConversation[];
 
-  @Field((type) => [PrivateGroup])
+  @Field(() => [PrivateGroup])
   privateGroups?: PrivateGroup[];
 
-  @Field((type) => [Message])
+  @Field(() => [Message])
   newMessagesNotifications?: Message[];
 }

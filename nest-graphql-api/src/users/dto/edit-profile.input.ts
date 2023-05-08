@@ -7,6 +7,6 @@ import { UserStatus } from '../enums/user-status.enum';
 export class EditProfileInput extends PartialType(RegisterUserInput) {
   @IsOptional()
   @IsEnum(UserStatus)
-  @Field((type) => UserStatus, { nullable: true })
+  @Field(() => UserStatus, { nullable: true })
   status?: UserStatus;
 }

@@ -1,34 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { PrivateConversation } from './entities/private-conversation.entity';
 import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
 import { ChannelMember } from '../users/entities/channel-member.entity';
+import { UsersRepository } from '../prisma/repositories/users.repository';
 
 @Injectable()
 export class PrivateConversationsService {
-  constructor(private prisma: PrismaService, private privateConversationsRepository: PrivateConversationsRepository) {}
+  constructor(private usersRepository: UsersRepository, private privateConversationsRepository: PrivateConversationsRepository) {}
 
   async findAll(userId: number): Promise<PrivateConversation[]> {
     const rawConversations = await this.privateConversationsRepository.findAllByUserId(userId);
     return rawConversations.map(({ id, members, createdAt }) => ({
       id,
       createdAt,
-      memberId: members.find(({ memberId }) => userId !== memberId).memberId,
+      memberId: members.find(({ memberId }) => userId !== memberId)?.memberId,
     }));
   }
 
   async findConversationMembersByIds(ids: number[]): Promise<ChannelMember[]> {
-    return this.prisma.user.findMany({
-      where: {
-        id: { in: ids },
-      },
-      select: { id: true, username: true, createdAt: true, avatarColor: true },
-    });
+    return this.usersRepository.findManyByIds(ids);
   }
 
-  async findConversationMembersByBatch(ids: number[]): Promise<(ChannelMember | null)[]> {
+  async findConversationMembersByBatch(ids: number[]): Promise<(ChannelMember | Error)[]> {
     const members = await this.findConversationMembersByIds(ids);
-    return ids.map((id) => members.find((member) => member.id === id) ?? null);
+    return ids.map((id) => members.find((member) => member.id === id) ?? Error(`Conversation member ${id} not found`));
   }
 
   async findById(conversationId: number): Promise<PrivateConversation> {
@@ -52,9 +47,12 @@ export class PrivateConversationsService {
   }
 
   async hide(conversationId: number, userId: number): Promise<PrivateConversation> {
-    const { createdAt, members } = await this.privateConversationsRepository.findById(conversationId);
+    const conversation = await this.privateConversationsRepository.findById(conversationId);
+    if (!conversation) throw new NotFoundException("Cette conversation n'existe pas !");
+    const { createdAt, members } = conversation;
     await this.privateConversationsRepository.updateMemberInChannel({ memberId: userId, channelId: conversationId, payload: { hidden: true } });
-    const { memberId } = members.find(({ memberId }) => memberId !== userId);
-    return { id: conversationId, createdAt, memberId };
+    const member = members.find(({ memberId }) => memberId !== userId);
+    if (!member) throw new NotFoundException("Cette conversation n'existe pas !");
+    return { id: conversationId, createdAt, memberId: member.memberId };
   }
 }

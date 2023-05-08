@@ -9,14 +9,14 @@ import { ReferencedMessage } from './referenced-message.entity';
 export class Message implements BaseMessage {
   id: number;
 
-  @Field((type) => MessageType)
+  @Field(() => MessageType)
   type: PrismaMessageType;
 
   @Field()
   createdAt: Date;
 
-  @Field({ nullable: true })
-  editedAt?: Date;
+  @Field(() => Date, { nullable: true })
+  editedAt: Date | null;
 
   content: string;
 
@@ -24,13 +24,13 @@ export class Message implements BaseMessage {
 
   authorId: number;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   channelId?: number;
 
-  @Field((type) => ReferencedMessage, { nullable: true })
+  @Field(() => ReferencedMessage, { nullable: true })
   referencedMessage?: ReferencedMessage;
 
-  respondsToId?: number;
+  respondsToId: number | null;
 
   mentions?: ChannelMember[];
 }

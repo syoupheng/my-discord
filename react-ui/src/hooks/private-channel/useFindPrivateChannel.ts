@@ -9,13 +9,11 @@ const useFindPrivateChannel = (channelId: number | undefined) => {
   if (!data) return { channel: null, channelModel: null };
   const { privateConversations, privateGroups } = data.me;
   const channel = channelId ? [...privateGroups, ...privateConversations].find((channel) => channel.id === channelId) ?? null : null;
-  let channelModel: ChannelModel;
+  let channelModel: ChannelModel | null = null;
   if (isPrivateGroup(channel)) {
     channelModel = new PrivateGroupModel(channel);
   } else if (isPrivateConversation(channel)) {
     channelModel = new PrivateConversationModel(channel, data.me);
-  } else {
-    throw new Error("This channel is not a valid type of channel !");
   }
   return { channel, channelModel };
 };

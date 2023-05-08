@@ -26,8 +26,8 @@ import { AvatarModule } from '../avatar/avatar.module';
     ConfigModule,
     AvatarModule,
     JwtModule.register({
-      signOptions: { expiresIn: process.env.JWT_EXP_TIME ?? '1d' },
-      secret: process.env.JWT_SECRET ?? 'secret',
+      signOptions: { expiresIn: process.env.JWT_EXP_TIME },
+      secret: process.env.JWT_SECRET,
     }),
   ],
   providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],

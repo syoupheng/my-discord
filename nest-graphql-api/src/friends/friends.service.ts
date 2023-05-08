@@ -4,10 +4,10 @@ import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { Friend } from './entities/friends.entity';
-import { User } from '../users/entities/user.entity';
 import { FriendRequestRepository } from '../prisma/repositories/friend-requests.repository';
 import { FriendsRepository } from '../prisma/repositories/friends.repository';
 import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
+import { AuthUser } from 'src/auth/entities/auth-user.entity';
 
 @Injectable()
 export class FriendsService {
@@ -36,7 +36,7 @@ export class FriendsService {
     return friends;
   }
 
-  async add(friendId: number, authUser: User) {
+  async add(friendId: number, authUser: AuthUser) {
     const { id: authUserId, username, status } = authUser;
     const uniqueInput = {
       senderId: friendId,
@@ -44,11 +44,11 @@ export class FriendsService {
     };
     const friendRequest = await this.friendRequestRepository.findOne(uniqueInput);
     if (!friendRequest) throw new ForbiddenException("Cet utilisateur ne vous a pas envoyé de demande d'ami !");
+    const conversation = await this.privateConversationsRepository.findByFriendIds(authUserId, friendId);
+
     const deleteFriendRequest = this.friendRequestRepository.delete(uniqueInput);
 
     const addNewFriend = this.friendsRepository.create({ userId: authUserId, friendId });
-
-    const conversation = await this.privateConversationsRepository.findByFriendIds(authUserId, friendId);
 
     const createPrivateConversation = this.privateConversationsRepository.create(authUserId, friendId);
 

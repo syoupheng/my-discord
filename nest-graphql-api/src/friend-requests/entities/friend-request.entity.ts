@@ -12,6 +12,6 @@ export class FriendRequest implements BaseUser {
 
   avatarColor: string;
 
-  @Field((type) => FriendRequestStatus)
+  @Field(() => FriendRequestStatus)
   requestStatus: FriendRequestStatus;
 }

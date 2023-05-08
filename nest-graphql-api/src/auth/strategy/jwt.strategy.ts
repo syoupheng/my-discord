@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/users/entities/user.entity';
 import { UserStatus } from '../../users/enums/user-status.enum';
 import { UsersService } from '../../users/users.service';
+import { AuthUser } from '../entities/auth-user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return null;
   }
 
-  async validate(payload: { username: string; sub: number }): Promise<User> {
+  async validate(payload: { username: string; sub: number }): Promise<AuthUser> {
     const user = await this.usersService.findOneById(payload.sub);
     if (!user) throw new UnauthorizedException('JWT not valid !');
     const { password, status, ...result } = user;

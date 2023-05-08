@@ -3,16 +3,16 @@ import { ChannelMember } from '../../users/entities/channel-member.entity';
 
 @ObjectType()
 export class PrivateGroup {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
-  @Field()
-  name: string;
+  @Field(() => String, { nullable: true })
+  name: string | null;
 
   @Field()
   createdAt: Date;
 
-  @Field((type) => [ChannelMember])
+  @Field(() => [ChannelMember])
   members?: ChannelMember[];
 
   @Field()

@@ -3,10 +3,10 @@ import { ChannelMember } from '../../users/entities/channel-member.entity';
 
 @ObjectType()
 export class PrivateConversation {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
-  @Field((type) => ChannelMember)
+  @Field(() => ChannelMember)
   member?: ChannelMember;
 
   memberId?: number;

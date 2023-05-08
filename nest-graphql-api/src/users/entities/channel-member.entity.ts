@@ -9,7 +9,7 @@ export class ChannelMember implements BaseUser {
 
   createdAt: Date;
 
-  chatGptRole?: string;
+  chatGptRole?: string | null;
 
   avatarColor: string;
 }

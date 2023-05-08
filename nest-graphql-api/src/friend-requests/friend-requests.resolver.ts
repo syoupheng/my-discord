@@ -7,32 +7,39 @@ import { FriendTag } from './dto/friend-tag.input';
 import { SuccessResponse } from '../auth/dto/success-response';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
+import { GraphQLContextWithUser } from 'src/types';
 
 @Resolver(() => FriendRequest)
 export class FriendRequestsResolver {
   constructor(private readonly friendRequestsService: FriendRequestsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
-  @Mutation((returns) => FriendRequest)
+  @Mutation(() => FriendRequest)
   @UseGuards(JwtAuthGuard)
-  sendFriendRequest(@Args('friendTag') friendTag: FriendTag, @Context() ctx) {
+  sendFriendRequest(@Args('friendTag') friendTag: FriendTag, @Context() ctx: GraphQLContextWithUser): Promise<FriendRequest> {
     return this.friendRequestsService.create(friendTag, ctx.req.user);
   }
 
-  @Mutation((returns) => SuccessResponse)
+  @Mutation(() => SuccessResponse)
   @UseGuards(JwtAuthGuard)
-  async deleteFriendRequest(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
+  async deleteFriendRequest(
+    @Args('friendId', { type: () => Int }) friendId: number,
+    @Context() ctx: GraphQLContextWithUser,
+  ): Promise<SuccessResponse> {
     await this.friendRequestsService.delete(ctx.req.user.id, friendId);
     return { success: true };
   }
 
-  @Mutation((returns) => SuccessResponse)
+  @Mutation(() => SuccessResponse)
   @UseGuards(JwtAuthGuard)
-  async ignoreFriendRequest(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx) {
+  async ignoreFriendRequest(
+    @Args('friendId', { type: () => Int }) friendId: number,
+    @Context() ctx: GraphQLContextWithUser,
+  ): Promise<SuccessResponse> {
     await this.friendRequestsService.ignore(ctx.req.user.id, friendId);
     return { success: true };
   }
 
-  @Subscription((returns) => FriendRequest, {
+  @Subscription(() => FriendRequest, {
     filter: (payload, variables) => payload.friendRequestReceived.recipientId === variables.userId,
     resolve: ({ friendRequestReceived }) => {
       const { recipientId, ...newFriendRequest } = friendRequestReceived;
@@ -43,7 +50,7 @@ export class FriendRequestsResolver {
     return this.pubSub.asyncIterator('friendRequestReceived');
   }
 
-  @Subscription((returns) => Int, {
+  @Subscription(() => Int, {
     filter: (payload, variables) => payload.friendRequestDeleted.recipientId === variables.userId,
     resolve: ({ friendRequestDeleted }) => {
       const { senderId } = friendRequestDeleted;

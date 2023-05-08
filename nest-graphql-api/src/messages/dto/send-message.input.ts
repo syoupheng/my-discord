@@ -10,11 +10,11 @@ export class SendMessageInput {
   content: string;
 
   @IsInt()
-  @Field((type) => Int)
+  @Field(() => Int)
   channelId: number;
 
   @IsInt()
   @IsOptional()
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   respondsToId?: number;
 }

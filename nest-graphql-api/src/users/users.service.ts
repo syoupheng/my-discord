@@ -13,6 +13,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
 import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
 import { AvatarService } from '../avatar/avatar.service';
+import { ChannelMember } from './entities/channel-member.entity';
 
 @Injectable()
 export class UsersService {
@@ -32,11 +33,6 @@ export class UsersService {
       const { password, status, ...result } = newUser;
       return { ...result, status: UserStatus[status] };
     } catch (err) {
-      // if (err instanceof PrismaClientKnownRequestError) {
-      //   if (err.code === 'P2002') {
-      //     throw new ConflictException("Ce nom d'utilisateur ou email existe déjà !");
-      //   }
-      // }
       this.prisma.throwDBError(err, { message: "Ce nom d'utilisateur ou email existe déjà !", errorType: 'conflict' });
       throw err;
     }
@@ -56,7 +52,7 @@ export class UsersService {
 
   async edit(input: EditProfileInput, userId: number) {
     try {
-      if ('password' in input) input.password = await argon.hash(input.password);
+      if ('password' in input && input.password) input.password = await argon.hash(input.password);
       const { status: prismaStatus, password, ...userData } = await this.usersRepository.update(userId, input);
       const editedProfile = { ...userData, status: UserStatus[prismaStatus] };
       const { id, username, status } = editedProfile;
@@ -110,7 +106,7 @@ export class UsersService {
   async initPrivateGroup(chatGptUsers: PrismaUser[], user: AuthUser) {
     const numMembers = Math.floor(Math.random() * Math.min(chatGptUsers.length, 7)) + 2;
     const remainingUsers = [...chatGptUsers];
-    const selectedMembers: (PrismaUser | AuthUser)[] = [user];
+    const selectedMembers: ChannelMember[] = [user];
     for (let i = 0; i < numMembers; i++) {
       const randomIndex = Math.floor(Math.random() * remainingUsers.length);
       const randomUser = remainingUsers.splice(randomIndex, 1)[0];

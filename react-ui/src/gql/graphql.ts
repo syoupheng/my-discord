@@ -259,7 +259,7 @@ export type PrivateGroup = {
   createdAt: Scalars['DateTime'];
   id: Scalars['Int'];
   members: Array<ChannelMember>;
-  name: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -372,7 +372,7 @@ export type UserTypingInput = {
   userId: Scalars['Int'];
 };
 
-export type AuthUserFieldsFragment = { __typename?: 'AuthUser', id: number, username: string, createdAt: any, email: string, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name: string, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } & { ' $fragmentName'?: 'AuthUserFieldsFragment' };
+export type AuthUserFieldsFragment = { __typename?: 'AuthUser', id: number, username: string, createdAt: any, email: string, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } & { ' $fragmentName'?: 'AuthUserFieldsFragment' };
 
 export type ChannelMemberFieldsFragment = { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } & { ' $fragmentName'?: 'ChannelMemberFieldsFragment' };
 
@@ -605,16 +605,16 @@ export type CreateGroupMutationVariables = Exact<{
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'PrivateGroup', id: number, name: string, createdAt: any, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> } };
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'PrivateGroup', id: number, name?: string | null, createdAt: any, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> } };
 
-export type NewPrivateGroupFragment = { __typename?: 'PrivateGroup', id: number, name: string, createdAt: any, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> } & { ' $fragmentName'?: 'NewPrivateGroupFragment' };
+export type NewPrivateGroupFragment = { __typename?: 'PrivateGroup', id: number, name?: string | null, createdAt: any, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> } & { ' $fragmentName'?: 'NewPrivateGroupFragment' };
 
 export type EditGroupNameMutationVariables = Exact<{
   input: EditNameInput;
 }>;
 
 
-export type EditGroupNameMutation = { __typename?: 'Mutation', editGroupName: { __typename?: 'PrivateGroup', id: number, name: string } };
+export type EditGroupNameMutation = { __typename?: 'Mutation', editGroupName: { __typename?: 'PrivateGroup', id: number, name?: string | null } };
 
 export type LeaveGroupMutationVariables = Exact<{
   groupId: Scalars['Int'];
@@ -626,7 +626,7 @@ export type LeaveGroupMutation = { __typename?: 'Mutation', leaveGroup: { __type
 export type GetGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGroupsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> }> } };
+export type GetGroupsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, members: Array<{ __typename?: 'ChannelMember', id: number, username: string }> }> } };
 
 export type EditProfileMutationVariables = Exact<{
   input: EditProfileInput;

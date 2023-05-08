@@ -44,7 +44,7 @@ export class PrivateGroupsRepository {
       include: {
         members: {
           include: {
-            member: true,
+            member: { select: { id: true, username: true, createdAt: true, avatarColor: true } },
           },
         },
       },

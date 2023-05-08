@@ -4,11 +4,11 @@ import { IsInt, IsOptional } from 'class-validator';
 @InputType()
 export class UserTypingInput {
   @IsInt()
-  @Field((type) => Int)
+  @Field(() => Int)
   userId: number;
 
   @IsInt()
   @IsOptional()
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   channelId?: number;
 }

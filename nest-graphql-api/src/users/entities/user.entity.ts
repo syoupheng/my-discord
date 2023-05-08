@@ -3,7 +3,7 @@ import { UserStatus } from '../enums/user-status.enum';
 
 @ObjectType()
 export class User {
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Field()
@@ -12,7 +12,7 @@ export class User {
   @Field()
   email: string;
 
-  @Field((type) => UserStatus)
+  @Field(() => UserStatus)
   status: UserStatus;
 
   password?: string;

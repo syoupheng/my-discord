@@ -12,6 +12,6 @@ export class Friend implements BaseUser {
 
   avatarColor: string;
 
-  @Field((type) => UserStatus)
+  @Field(() => UserStatus)
   status: UserStatus;
 }

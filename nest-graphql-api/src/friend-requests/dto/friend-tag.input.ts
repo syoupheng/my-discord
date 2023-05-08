@@ -5,7 +5,7 @@ import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 export class FriendTag {
   @IsInt()
   @IsNotEmpty()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @IsString()
