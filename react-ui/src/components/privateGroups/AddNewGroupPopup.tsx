@@ -80,7 +80,7 @@ const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null
       />
       <div className="h-[1px] mx-[10px] shadow-[0_-1px_0px_rgba(255,255,255,0.04)]"></div>
       <div className="flex-auto p-5 flex flex-col flex-nowrap justify-start items-stretch">
-        <Button onClick={confirmGroup} className="h-[38px]" disabled={!canValidate}>
+        <Button onClick={confirmGroup} disabled={!canValidate}>
           <div className="text-btw-sm-xs">{loading ? <Spinner white /> : groupId ? "Ajouter" : "Créer un groupe privé"}</div>
         </Button>
       </div>

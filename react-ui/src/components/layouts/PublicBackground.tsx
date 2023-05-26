@@ -1,10 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-interface Props {
-  children: ReactNode;
-}
-
-const PublicBackground = ({ children }: Props) => {
+const PublicBackground = ({ children }: PropsWithChildren) => {
   return (
     <div className="relative min-h-screen w-screen overflow-auto">
       <img className="fixed top-0 left-0 h-full w-full" src="./background.svg" />

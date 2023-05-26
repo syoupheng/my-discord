@@ -1,16 +1,15 @@
 import { ApolloError } from "@apollo/client";
-import { forwardRef } from "react";
+import { ComponentProps, forwardRef } from "react";
 import { FieldError } from "react-hook-form";
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+type Props = ComponentProps<"input"> & {
   type?: "text" | "password";
-  placeholder?: string;
   name: string;
   error?: FieldError | undefined;
   label: string;
   required?: boolean;
   gqlError: ApolloError | undefined;
-}
+};
 
 const FormInput = forwardRef<HTMLInputElement, Props>(({ type = "text", name, label, required = false, error, gqlError, ...props }: Props, ref) => {
   return (

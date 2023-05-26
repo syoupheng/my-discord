@@ -39,10 +39,7 @@ const AddFriendSection = () => {
                 onBlur={() => setIsFocused(false)}
               />
             </div>
-            <Button
-              disabled={friendTag === ""}
-              className="h-8 relative flex justify-center items-center border-0 px-4 py-[2px] text-btw-sm-xs font-medium"
-            >
+            <Button disabled={friendTag === ""} className="text-btw-sm-xs font-medium">
               Envoyer une demande d'ami
             </Button>
           </div>

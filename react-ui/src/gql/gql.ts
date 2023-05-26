@@ -13,13 +13,19 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
-    "\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      id\n      username\n      status\n      avatarColor\n    }\n    friendRequests {\n      id\n      username\n      requestStatus\n      avatarColor\n    }\n    privateConversations {\n      id\n      createdAt\n      member {\n        id\n        username\n        avatarColor\n      }\n    }\n    privateGroups {\n      id\n      createdAt\n      name\n      avatarColor\n      members {\n        id\n        username\n        avatarColor\n      }\n    }\n    newMessagesNotifications {\n      id\n      channelId\n      createdAt\n    }\n  }\n": types.AuthUserFieldsFragmentDoc,
     "\n  fragment ChannelMemberFields on ChannelMember {\n    id\n    username\n    createdAt\n    avatarColor\n  }\n": types.ChannelMemberFieldsFragmentDoc,
+    "\n  fragment FriendFields on Friend {\n    id\n    username\n    status\n    avatarColor\n  }\n": types.FriendFieldsFragmentDoc,
+    "\n  fragment FriendRequestFields on FriendRequest {\n    id\n    username\n    requestStatus\n    avatarColor\n  }\n": types.FriendRequestFieldsFragmentDoc,
+    "\n  fragment PrivateConversationFields on PrivateConversation {\n    id\n    createdAt\n    member {\n      ...ChannelMemberFields\n    }\n  }\n": types.PrivateConversationFieldsFragmentDoc,
+    "\n  fragment PrivateGroupFields on PrivateGroup {\n    id\n    createdAt\n    name\n    avatarColor\n    members {\n      ...ChannelMemberFields\n    }\n  }\n": types.PrivateGroupFieldsFragmentDoc,
+    "\n  fragment MessageNotificationFields on Message {\n    id\n    channelId\n    createdAt\n  }\n": types.MessageNotificationFieldsFragmentDoc,
+    "\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      ...FriendFields\n    }\n    friendRequests {\n      ...FriendRequestFields\n    }\n    privateConversations {\n      ...PrivateConversationFields\n    }\n    privateGroups {\n      ...PrivateGroupFields\n    }\n    newMessagesNotifications {\n      ...MessageNotificationFields\n    }\n  }\n": types.AuthUserFieldsFragmentDoc,
     "\n  fragment MessageInfo on Message {\n    id\n    type\n    createdAt\n    editedAt\n    content\n    channelId\n    author {\n      ...ChannelMemberFields\n    }\n    referencedMessage {\n      id\n      content\n      author {\n        ...ChannelMemberFields\n      }\n      mentions {\n        ...ChannelMemberFields\n      }\n    }\n    mentions {\n      ...ChannelMemberFields\n    }\n  }\n": types.MessageInfoFragmentDoc,
-    "\n  \n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n": types.GetAuthUserDocument,
-    "\n  \n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n": types.LoginUserDocument,
+    "\n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n": types.GetAuthUserDocument,
+    "\n  query IsUserAuthenticated {\n    checkAuthCookie {\n      success\n    }\n  }\n": types.IsUserAuthenticatedDocument,
+    "\n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n": types.LoginUserDocument,
     "\n  mutation logoutUser {\n    logout {\n      success\n    }\n  }\n": types.LogoutUserDocument,
-    "\n  \n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n": types.RegisterUserDocument,
+    "\n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n": types.RegisterUserDocument,
     "\n  query GetMessages($channelId: Int!, $cursor: String, $limit: Int) {\n    getMessages(channelId: $channelId, cursor: $cursor, limit: $limit) {\n      cursor\n      messages {\n        ...MessageInfo\n      }\n    }\n  }\n": types.GetMessagesDocument,
     "\n  mutation DeleteMessage($messageId: Int!) {\n    deleteMessage(messageId: $messageId) {\n      success\n    }\n  }\n": types.DeleteMessageDocument,
     "\n  mutation markMessagesAsRead($messagesIds: [Int!]!) {\n    markMessagesAsRead(messagesIds: $messagesIds)\n  }\n": types.MarkMessagesAsReadDocument,
@@ -32,7 +38,6 @@ const documents = {
     "\n                fragment NewFriendRequest on FriendRequest {\n                  id\n                  username\n                  requestStatus\n                }\n              ": types.NewFriendRequestFragmentDoc,
     "\n  mutation deleteFriendRequest($friendId: Int!) {\n    deleteFriendRequest(friendId: $friendId) {\n      success\n    }\n  }\n": types.DeleteFriendRequestDocument,
     "\n  subscription OnFriendRequestDeleted($userId: Int!) {\n    friendRequestDeleted(userId: $userId)\n  }\n": types.OnFriendRequestDeletedDocument,
-    "\n      fragment friendRequests on AuthUser {\n        friendRequests {\n          id\n          username\n          requestStatus\n        }\n      }\n    ": types.FriendRequestsFragmentDoc,
     "\n  mutation ignoreFriendRequest($friendId: Int!) {\n    ignoreFriendRequest(friendId: $friendId) {\n      success\n    }\n  }\n": types.IgnoreFriendRequestDocument,
     "\n  subscription OnFriendRequestReceived($userId: Int!) {\n    friendRequestReceived(userId: $userId) {\n      id\n      username\n      requestStatus\n    }\n  }\n": types.OnFriendRequestReceivedDocument,
     "\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      id\n      username\n      status\n    }\n  }\n": types.AddNewFriendDocument,
@@ -72,11 +77,31 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      id\n      username\n      status\n      avatarColor\n    }\n    friendRequests {\n      id\n      username\n      requestStatus\n      avatarColor\n    }\n    privateConversations {\n      id\n      createdAt\n      member {\n        id\n        username\n        avatarColor\n      }\n    }\n    privateGroups {\n      id\n      createdAt\n      name\n      avatarColor\n      members {\n        id\n        username\n        avatarColor\n      }\n    }\n    newMessagesNotifications {\n      id\n      channelId\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      id\n      username\n      status\n      avatarColor\n    }\n    friendRequests {\n      id\n      username\n      requestStatus\n      avatarColor\n    }\n    privateConversations {\n      id\n      createdAt\n      member {\n        id\n        username\n        avatarColor\n      }\n    }\n    privateGroups {\n      id\n      createdAt\n      name\n      avatarColor\n      members {\n        id\n        username\n        avatarColor\n      }\n    }\n    newMessagesNotifications {\n      id\n      channelId\n      createdAt\n    }\n  }\n"];
+export function graphql(source: "\n  fragment ChannelMemberFields on ChannelMember {\n    id\n    username\n    createdAt\n    avatarColor\n  }\n"): (typeof documents)["\n  fragment ChannelMemberFields on ChannelMember {\n    id\n    username\n    createdAt\n    avatarColor\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment ChannelMemberFields on ChannelMember {\n    id\n    username\n    createdAt\n    avatarColor\n  }\n"): (typeof documents)["\n  fragment ChannelMemberFields on ChannelMember {\n    id\n    username\n    createdAt\n    avatarColor\n  }\n"];
+export function graphql(source: "\n  fragment FriendFields on Friend {\n    id\n    username\n    status\n    avatarColor\n  }\n"): (typeof documents)["\n  fragment FriendFields on Friend {\n    id\n    username\n    status\n    avatarColor\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment FriendRequestFields on FriendRequest {\n    id\n    username\n    requestStatus\n    avatarColor\n  }\n"): (typeof documents)["\n  fragment FriendRequestFields on FriendRequest {\n    id\n    username\n    requestStatus\n    avatarColor\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment PrivateConversationFields on PrivateConversation {\n    id\n    createdAt\n    member {\n      ...ChannelMemberFields\n    }\n  }\n"): (typeof documents)["\n  fragment PrivateConversationFields on PrivateConversation {\n    id\n    createdAt\n    member {\n      ...ChannelMemberFields\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment PrivateGroupFields on PrivateGroup {\n    id\n    createdAt\n    name\n    avatarColor\n    members {\n      ...ChannelMemberFields\n    }\n  }\n"): (typeof documents)["\n  fragment PrivateGroupFields on PrivateGroup {\n    id\n    createdAt\n    name\n    avatarColor\n    members {\n      ...ChannelMemberFields\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment MessageNotificationFields on Message {\n    id\n    channelId\n    createdAt\n  }\n"): (typeof documents)["\n  fragment MessageNotificationFields on Message {\n    id\n    channelId\n    createdAt\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      ...FriendFields\n    }\n    friendRequests {\n      ...FriendRequestFields\n    }\n    privateConversations {\n      ...PrivateConversationFields\n    }\n    privateGroups {\n      ...PrivateGroupFields\n    }\n    newMessagesNotifications {\n      ...MessageNotificationFields\n    }\n  }\n"): (typeof documents)["\n  fragment AuthUserFields on AuthUser {\n    id\n    username\n    createdAt\n    email\n    status\n    phoneNumber\n    avatarColor\n    friends {\n      ...FriendFields\n    }\n    friendRequests {\n      ...FriendRequestFields\n    }\n    privateConversations {\n      ...PrivateConversationFields\n    }\n    privateGroups {\n      ...PrivateGroupFields\n    }\n    newMessagesNotifications {\n      ...MessageNotificationFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -84,11 +109,15 @@ export function graphql(source: "\n  fragment MessageInfo on Message {\n    id\n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  \n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  \n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n"];
+export function graphql(source: "\n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  query GetAuthUser {\n    me {\n      ...AuthUserFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  \n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"];
+export function graphql(source: "\n  query IsUserAuthenticated {\n    checkAuthCookie {\n      success\n    }\n  }\n"): (typeof documents)["\n  query IsUserAuthenticated {\n    checkAuthCookie {\n      success\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  mutation LoginUser($input: LoginUserInput!) {\n    login(loginUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -96,7 +125,7 @@ export function graphql(source: "\n  mutation logoutUser {\n    logout {\n      
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  \n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"];
+export function graphql(source: "\n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"): (typeof documents)["\n  mutation RegisterUser($input: RegisterUserInput!) {\n    register(registerUserInput: $input) {\n      ...AuthUserFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -145,10 +174,6 @@ export function graphql(source: "\n  mutation deleteFriendRequest($friendId: Int
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  subscription OnFriendRequestDeleted($userId: Int!) {\n    friendRequestDeleted(userId: $userId)\n  }\n"): (typeof documents)["\n  subscription OnFriendRequestDeleted($userId: Int!) {\n    friendRequestDeleted(userId: $userId)\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n      fragment friendRequests on AuthUser {\n        friendRequests {\n          id\n          username\n          requestStatus\n        }\n      }\n    "): (typeof documents)["\n      fragment friendRequests on AuthUser {\n        friendRequests {\n          id\n          username\n          requestStatus\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

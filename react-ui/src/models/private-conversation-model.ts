@@ -1,12 +1,12 @@
-import { AuthUser, ChannelMember, PrivateConversation } from "../gql/graphql";
+import { AuthUser, AuthUserFieldsFragment, ChannelMember, PrivateConversation } from "../gql/graphql";
 import { ChannelModel, ChannelType } from "./channel-model.interface";
 
 export class PrivateConversationModel implements ChannelModel {
   private conversation: PrivateConversation;
 
-  private authUser: AuthUser;
+  private authUser: AuthUser | AuthUserFieldsFragment;
 
-  constructor(conversation: PrivateConversation, authUser: AuthUser) {
+  constructor(conversation: PrivateConversation, authUser: AuthUser | AuthUserFieldsFragment) {
     this.conversation = conversation;
     this.authUser = authUser;
   }

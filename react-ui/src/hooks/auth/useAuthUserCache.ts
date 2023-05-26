@@ -1,14 +1,14 @@
-import { useApolloClient } from "@apollo/client";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-import { AUTH_USER_FIELDS } from "../../fragments/auth";
-import { User } from "../../types/user";
+import { useNavigate } from "react-router-dom";
+import useAuthUser from "./useAuthUser";
+import { useFragment } from "../../gql";
+import { AUTH_USER_FRAGMENT } from "../../fragments/auth";
 
-const useAuthUserCache = (): User | null => {
-  const client = useApolloClient();
-  return client.readFragment({
-    id: AUTH_USER_CACHE_ID,
-    fragment: AUTH_USER_FIELDS,
-  });
+const useAuthUserCache = () => {
+  const navigate = useNavigate();
+  const { data } = useAuthUser({ fetchPolicy: "cache-only" });
+  if (!data) navigate("/login");
+  const authUser = useFragment(AUTH_USER_FRAGMENT, data.me);
+  return authUser;
 };
 
 export default useAuthUserCache;

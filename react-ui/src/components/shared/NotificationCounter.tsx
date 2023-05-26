@@ -1,6 +1,6 @@
-interface Props {
+type Props = {
   count: number;
-}
+};
 
 const NotificationCounter = ({ count }: Props) => {
   return (

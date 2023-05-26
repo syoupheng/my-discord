@@ -58,8 +58,8 @@ const EmptyFriends = ({ search = false }: Props) => {
         <div className="flex-initial bg-cover mb-10" style={{ backgroundImage: `url(${imageUrl})`, height, width }} />
         <div className="flex-initial mt-2 text-center text-sm text-muted">{text}</div>
         {selectedTab === "ALL" && !search && (
-          <Button className="mt-4" onClick={() => setSelectedTab!("ADD_FRIEND")}>
-            <div className="py-2 text-btw-sm-xs px-3">Ajouter un ami</div>
+          <Button className="mt-4 text-btw-sm-xs" onClick={() => setSelectedTab!("ADD_FRIEND")}>
+            Ajouter un ami
           </Button>
         )}
       </div>

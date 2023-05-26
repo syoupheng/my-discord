@@ -5,6 +5,7 @@ import { graphql, useFragment } from "../../gql";
 import useAuthUser, { GET_AUTH_USER } from "../auth/useAuthUser";
 import { GET_CHAT_MESSAGES } from "./useChatMessages";
 import useChatScrollContext from "./useChatScrollContext";
+import { UserStatus } from "../../gql/graphql";
 
 const MESSAGE_RECEIVED_SUBSCRIPTION = graphql(`
   subscription OnMessageReceived($userId: Int!) {
@@ -63,8 +64,10 @@ const useMessageReceivedSubscription = () => {
         },
       });
 
-      const discordSoundNotification = new Audio("/discord-notification.mp3");
-      discordSoundNotification.play();
+      if (authUserData.me.status !== UserStatus.DoNotDisturb) {
+        const discordSoundNotification = new Audio("/discord-notification.mp3");
+        discordSoundNotification.play();
+      }
     },
   });
 };

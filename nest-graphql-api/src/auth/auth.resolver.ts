@@ -9,7 +9,6 @@ import { LoginUserInput } from './dto/login-user.input';
 import { SuccessResponse } from './dto/success-response';
 import { RegisterUserInput } from './dto/register-user.input';
 import { GqlAuthGuard } from './guards/gql-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { FriendsService } from '../friends/friends.service';
 import { PrivateConversation } from '../private-conversations/entities/private-conversation.entity';
 import { PrivateConversationsService } from '../private-conversations/private-conversations.service';
@@ -17,7 +16,9 @@ import { PrivateGroup } from '../private-groups/entities/private-group.entity';
 import { PrivateGroupsService } from '../private-groups/private-groups.service';
 import { Message } from '../messages/entities/message.entity';
 import { MessagesNotificationsService } from '../messages/messages-notifications.service';
-import { GraphQLContext, GraphQLContextWithUser } from 'src/types';
+import { GraphQLContext } from 'src/types';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { Public } from './decorators/public.decorator';
 
 @Resolver(() => AuthUser)
 export class AuthResolver {
@@ -31,6 +32,7 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => AuthUser)
+  @Public()
   @UseGuards(GqlAuthGuard)
   async login(@Args('loginUserInput') loginUserInput: LoginUserInput, @Context() ctx: GraphQLContext & { user: AuthUser }): Promise<AuthUser> {
     const { user, token } = await this.authService.login(ctx.user);
@@ -39,6 +41,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthUser)
+  @Public()
   async register(@Args('registerUserInput') registerUserInput: RegisterUserInput, @Context() ctx: GraphQLContext): Promise<AuthUser> {
     const { user, token } = await this.authService.register(registerUserInput);
     this.authService.generateCookie(ctx.req, token);
@@ -46,15 +49,20 @@ export class AuthResolver {
   }
 
   @Mutation(() => SuccessResponse)
+  @Public()
   logout(@Context() ctx: GraphQLContext): SuccessResponse {
     ctx.req.res?.clearCookie('access_token');
     return { success: true };
   }
 
+  @Query(() => SuccessResponse)
+  checkAuthCookie(): SuccessResponse {
+    return { success: true };
+  }
+
   @Query(() => AuthUser, { name: 'me' })
-  @UseGuards(JwtAuthGuard)
-  getMe(@Context() ctx: GraphQLContextWithUser): AuthUser {
-    return ctx.req.user;
+  getMe(@CurrentUser() user: AuthUser): AuthUser {
+    return user;
   }
 
   @ResolveField('friendRequests', () => [FriendRequest])

@@ -1,41 +1,32 @@
-import { Resolver, Mutation, Args, Context, Int, Subscription } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Int, Subscription } from '@nestjs/graphql';
 import { FriendRequestsService } from './friend-requests.service';
 import { FriendRequest } from './entities/friend-request.entity';
-import { Inject, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Inject } from '@nestjs/common';
 import { FriendTag } from './dto/friend-tag.input';
 import { SuccessResponse } from '../auth/dto/success-response';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
-import { GraphQLContextWithUser } from 'src/types';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { AuthUser } from '../auth/entities/auth-user.entity';
 
 @Resolver(() => FriendRequest)
 export class FriendRequestsResolver {
   constructor(private readonly friendRequestsService: FriendRequestsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   @Mutation(() => FriendRequest)
-  @UseGuards(JwtAuthGuard)
-  sendFriendRequest(@Args('friendTag') friendTag: FriendTag, @Context() ctx: GraphQLContextWithUser): Promise<FriendRequest> {
-    return this.friendRequestsService.create(friendTag, ctx.req.user);
+  sendFriendRequest(@Args('friendTag') friendTag: FriendTag, @CurrentUser() user: AuthUser): Promise<FriendRequest> {
+    return this.friendRequestsService.create(friendTag, user);
   }
 
   @Mutation(() => SuccessResponse)
-  @UseGuards(JwtAuthGuard)
-  async deleteFriendRequest(
-    @Args('friendId', { type: () => Int }) friendId: number,
-    @Context() ctx: GraphQLContextWithUser,
-  ): Promise<SuccessResponse> {
-    await this.friendRequestsService.delete(ctx.req.user.id, friendId);
+  async deleteFriendRequest(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser): Promise<SuccessResponse> {
+    await this.friendRequestsService.delete(user.id, friendId);
     return { success: true };
   }
 
   @Mutation(() => SuccessResponse)
-  @UseGuards(JwtAuthGuard)
-  async ignoreFriendRequest(
-    @Args('friendId', { type: () => Int }) friendId: number,
-    @Context() ctx: GraphQLContextWithUser,
-  ): Promise<SuccessResponse> {
-    await this.friendRequestsService.ignore(ctx.req.user.id, friendId);
+  async ignoreFriendRequest(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser): Promise<SuccessResponse> {
+    await this.friendRequestsService.ignore(user.id, friendId);
     return { success: true };
   }
 

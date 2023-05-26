@@ -153,6 +153,7 @@ type PrivateGroup {
 }
 
 type Query {
+  checkAuthCookie: SuccessResponse!
   getMessages(channelId: Int!, cursor: String, limit: Int = 15): MessagesResponse!
   me: AuthUser!
 }

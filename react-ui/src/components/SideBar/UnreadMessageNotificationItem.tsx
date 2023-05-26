@@ -1,6 +1,5 @@
 import { MdPeopleAlt } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import useAuthUser from "../../hooks/auth/useAuthUser";
 import SidebarItem from "./SidebarItem";
 import useFindPrivateChannel from "../../hooks/private-channel/useFindPrivateChannel";
 
@@ -12,7 +11,7 @@ interface Props {
 const UnreadMessageNotificationItem = ({ count, channelId }: Props) => {
   const navigate = useNavigate();
   const { channelModel } = useFindPrivateChannel(channelId);
-  if (!channelModel) return null;
+  if (!channelModel || !count) return null;
   return (
     <SidebarItem
       onClick={() => {
@@ -20,7 +19,7 @@ const UnreadMessageNotificationItem = ({ count, channelId }: Props) => {
       }}
       tooltipTxt={channelModel.name}
       count={count}
-      variant="red"
+      avatarColor={channelModel.avatarColor}
     >
       <MdPeopleAlt size={24} />
     </SidebarItem>

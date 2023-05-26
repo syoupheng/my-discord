@@ -18,7 +18,7 @@ const useConfirmGroup = ({ groupId, maxMembers, selectedMembersIds, currentMembe
   const [showConversation, { loading: loadingConversation }] = useShowConversation({ friendId: selectedMembersIds[0], redirect: true });
   const loading = creatingGroup || addingMembers || loadingConversation;
   const leftMembersAllowed = maxMembers - (selectedMembersIds.length + (groupId ? 0 : 1));
-  const canValidate = leftMembersAllowed >= 0 && !loading;
+  const canValidate = leftMembersAllowed >= 0 && !loading && selectedMembersIds.length > 0;
 
   const { data: privateConversationData } = usePrivateConversations();
   const { privateConversations } = privateConversationData?.me!;

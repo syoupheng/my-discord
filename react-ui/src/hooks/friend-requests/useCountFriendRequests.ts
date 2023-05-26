@@ -1,10 +1,8 @@
 import { FriendRequest } from "../../types/user";
-import useAuthUser from "../auth/useAuthUser";
+import useFriendRequests from "./useFriendRequests";
 
 const useCountFriendRequests = () => {
-  const { data } = useAuthUser();
-  if (!data) return null;
-  const { friendRequests } = data.me;
+  const friendRequests = useFriendRequests();
   const requestsReceived = friendRequests.filter((friendRequest: FriendRequest) => friendRequest.requestStatus === "RECEIVED");
   return requestsReceived.length;
 };

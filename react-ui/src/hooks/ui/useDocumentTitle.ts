@@ -1,20 +1,28 @@
 import { useEffect } from "react";
 import useAuthUser from "../auth/useAuthUser";
+import { useFragment } from "../../gql";
+import { AUTH_USER_FRAGMENT } from "../../fragments/auth";
+import { FRIEND_REQUEST_FRAGMENT } from "../../fragments/auth";
 
 const BASE_TITLE = "Discord";
 
 const useDocumentTitle = (title: string) => {
   const { data } = useAuthUser();
-  const numUnreadMessages = data ? data.me.newMessagesNotifications.length : 0;
-  const numFriendRequests = data ? data.me.friendRequests.filter((req) => req.requestStatus === "RECEIVED").length : 0;
-  const totalNewMessages = numFriendRequests + numUnreadMessages;
+  const authUser = useFragment(AUTH_USER_FRAGMENT, data ? data.me : null);
+  const friendRequests = useFragment(FRIEND_REQUEST_FRAGMENT, data ? authUser.friendRequests : []);
+  let documentTitle = BASE_TITLE;
+  if (data) {
+    const numUnreadMessages = authUser.newMessagesNotifications.length;
+    const numFriendRequests = friendRequests.filter((req) => req.requestStatus === "RECEIVED").length;
+    const totalNewMessages = numFriendRequests + numUnreadMessages;
+    documentTitle = (totalNewMessages ? `(${totalNewMessages})` : "•") + ` ${BASE_TITLE} | ${title}`;
+  }
   useEffect(() => {
-    if (!data) {
+    document.title = documentTitle;
+    return () => {
       document.title = BASE_TITLE;
-    } else {
-      document.title = (totalNewMessages ? `(${totalNewMessages})` : "•") + ` ${BASE_TITLE} | ${title}`;
-    }
-  }, [title, data]);
+    };
+  }, [documentTitle]);
 };
 
 export default useDocumentTitle;

@@ -1,29 +1,23 @@
-import { UseGuards } from '@nestjs/common';
 import { Parent, ResolveField, Resolver, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { IDataLoaders } from 'src/dataloader/dataloader.interface';
 import { ChannelMember } from '../users/entities/channel-member.entity';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PrivateConversation } from './entities/private-conversation.entity';
 import { PrivateConversationsService } from './private-conversations.service';
-import { GraphQLContextWithUser } from 'src/types';
+import { AuthUser } from '../auth/entities/auth-user.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Resolver(() => PrivateConversation)
 export class PrivateConversationsResolver {
   constructor(private readonly privateConversationsService: PrivateConversationsService) {}
 
   @Mutation(() => PrivateConversation)
-  @UseGuards(JwtAuthGuard)
-  hideConversation(
-    @Args('conversationId', { type: () => Int }) conversationId: number,
-    @Context() ctx: GraphQLContextWithUser,
-  ): Promise<PrivateConversation> {
-    return this.privateConversationsService.hide(conversationId, ctx.req.user.id);
+  hideConversation(@Args('conversationId', { type: () => Int }) conversationId: number, @CurrentUser() user: AuthUser): Promise<PrivateConversation> {
+    return this.privateConversationsService.hide(conversationId, user.id);
   }
 
   @Mutation(() => PrivateConversation)
-  @UseGuards(JwtAuthGuard)
-  showConversation(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx: GraphQLContextWithUser): Promise<PrivateConversation> {
-    return this.privateConversationsService.show(friendId, ctx.req.user.id);
+  showConversation(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser): Promise<PrivateConversation> {
+    return this.privateConversationsService.show(friendId, user.id);
   }
 
   @ResolveField('member', () => ChannelMember)

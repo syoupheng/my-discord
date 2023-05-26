@@ -1,18 +1,15 @@
-import { Resolver, Args, Mutation, Context } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { UsersService } from './users.service';
 import { EditProfileInput } from './dto/edit-profile.input';
-import { GraphQLContextWithUser } from 'src/types';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Resolver(() => AuthUser)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
   @Mutation(() => AuthUser)
-  @UseGuards(JwtAuthGuard)
-  editProfile(@Args('editProfileInput') editProfileInput: EditProfileInput, @Context() ctx: GraphQLContextWithUser): Promise<AuthUser> {
-    return this.usersService.edit(editProfileInput, ctx.req.user.id);
+  editProfile(@Args('editProfileInput') editProfileInput: EditProfileInput, @CurrentUser() user: AuthUser): Promise<AuthUser> {
+    return this.usersService.edit(editProfileInput, user.id);
   }
 }

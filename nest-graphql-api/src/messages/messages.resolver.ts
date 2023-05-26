@@ -1,9 +1,8 @@
-import { Inject, UseGuards } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { IDataLoaders } from '../dataloader/dataloader.interface';
 import { PUB_SUB } from '../pubsub/pubsub.module';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MessagesResponse } from './dto/messages.response';
 import { SendMessageInput } from './dto/send-message.input';
 import { Message } from './entities/message.entity';
@@ -14,7 +13,8 @@ import { TypingNotification } from './dto/typing-notification.response';
 import { MembersInChannels } from '@prisma/client';
 import { UserTypingInput } from './dto/user-typing.input';
 import { MessagesNotificationsService } from './messages-notifications.service';
-import { GraphQLContextWithUser } from 'src/types';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { AuthUser } from '../auth/entities/auth-user.entity';
 
 @Resolver(() => Message)
 export class MessagesResolver {
@@ -25,38 +25,33 @@ export class MessagesResolver {
   ) {}
 
   @Query(() => MessagesResponse)
-  @UseGuards(JwtAuthGuard)
   getMessages(
-    @Context() ctx: GraphQLContextWithUser,
+    @CurrentUser() user: AuthUser,
     @Args('channelId', { type: () => Int }) channelId: number,
     @Args('limit', { nullable: true, defaultValue: 15, type: () => Int }) limit: number,
     @Args('cursor', { nullable: true }) cursor?: string,
   ): Promise<MessagesResponse> {
-    return this.messagesService.findAll(ctx.req.user.id, channelId, { cursor, take: limit });
+    return this.messagesService.findAll(user.id, channelId, { cursor, take: limit });
   }
 
   @Mutation(() => Message)
-  @UseGuards(JwtAuthGuard)
-  sendMessage(@Args('sendMessageInput') input: SendMessageInput, @Context() ctx: GraphQLContextWithUser): Promise<Message> {
-    return this.messagesService.send(input, ctx.req.user.id);
+  sendMessage(@Args('sendMessageInput') input: SendMessageInput, @CurrentUser() user: AuthUser): Promise<Message> {
+    return this.messagesService.send(input, user.id);
   }
 
   @Mutation(() => SuccessResponse)
-  @UseGuards(JwtAuthGuard)
-  deleteMessage(@Args('messageId', { type: () => Int }) messageId: number, @Context() ctx: GraphQLContextWithUser): Promise<SuccessResponse> {
-    return this.messagesService.delete(messageId, ctx.req.user.id);
+  deleteMessage(@Args('messageId', { type: () => Int }) messageId: number, @CurrentUser() user: AuthUser): Promise<SuccessResponse> {
+    return this.messagesService.delete(messageId, user.id);
   }
 
   @Mutation(() => String)
-  @UseGuards(JwtAuthGuard)
-  typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @Context() ctx: GraphQLContextWithUser): Promise<string> {
-    return this.messagesService.notifyTyping(channelId, ctx.req.user);
+  typingMessage(@Args('channelId', { type: () => Int }) channelId: number, @CurrentUser() user: AuthUser): Promise<string> {
+    return this.messagesService.notifyTyping(channelId, user);
   }
 
   @Mutation(() => String)
-  @UseGuards(JwtAuthGuard)
-  markMessagesAsRead(@Args('messagesIds', { type: () => [Int] }) messagesIds: number[], @Context() ctx: GraphQLContextWithUser): Promise<string> {
-    return this.messagesNotificationsService.deleteMany(messagesIds, ctx.req.user.id);
+  markMessagesAsRead(@Args('messagesIds', { type: () => [Int] }) messagesIds: number[], @CurrentUser() user: AuthUser): Promise<string> {
+    return this.messagesNotificationsService.deleteMany(messagesIds, user.id);
   }
 
   @ResolveField('referencedMessage', () => ReferencedMessage, { nullable: true })

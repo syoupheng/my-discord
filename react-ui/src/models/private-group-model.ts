@@ -13,11 +13,11 @@ export class PrivateGroupModel implements ChannelModel {
   }
 
   get title(): string {
-    return this.group.name;
+    return this.group.name ?? "";
   }
 
   get name(): string {
-    return this.group.name;
+    return this.group.name ?? "";
   }
 
   get headerDescription(): string {

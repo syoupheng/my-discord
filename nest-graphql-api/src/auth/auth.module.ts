@@ -13,6 +13,8 @@ import { PrivateGroupsModule } from '../private-groups/private-groups.module';
 import { ConfigModule } from '@nestjs/config';
 import { MessagesModule } from '../messages/messages.module';
 import { AvatarModule } from '../avatar/avatar.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -30,6 +32,15 @@ import { AvatarModule } from '../avatar/avatar.module';
       secret: process.env.JWT_SECRET,
     }),
   ],
-  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    AuthResolver,
+    LocalStrategy,
+    JwtStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AuthModule {}

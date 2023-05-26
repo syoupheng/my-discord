@@ -135,7 +135,7 @@ module.exports = {
         },
       },
       animation: {
-        drop: "drop 0.4s ease-out 1",
+        drop: "drop 0.3s ease-out",
         "alt-spin": "alt-spin 0.4s ease-in-out -0.2s infinite alternate",
         "tooltip-up": "tooltip-up 0.15s ease-in-out",
         "tooltip-down": "tooltip-down 0.15s ease-in-out",

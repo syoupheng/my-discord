@@ -1,29 +1,27 @@
-import { Inject, UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Inject } from '@nestjs/common';
+import { Args, Int, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { PUB_SUB } from '../pubsub/pubsub.module';
 import { SuccessResponse } from '../auth/dto/success-response';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Friend } from './entities/friends.entity';
 import { FriendsService } from './friends.service';
 import { FriendRequestConfirmedPayload } from './dto/friend-request-confirmed-payload.dto';
-import { GraphQLContextWithUser } from 'src/types';
+import { AuthUser } from '../auth/entities/auth-user.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Resolver(() => Friend)
 export class FriendsResolver {
   constructor(private readonly friendsService: FriendsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
 
   @Mutation(() => Friend)
-  @UseGuards(JwtAuthGuard)
-  async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx: GraphQLContextWithUser) {
-    const newFriend = await this.friendsService.add(friendId, ctx.req.user);
+  async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser) {
+    const newFriend = await this.friendsService.add(friendId, user);
     return newFriend;
   }
 
   @Mutation(() => SuccessResponse)
-  @UseGuards(JwtAuthGuard)
-  async deleteFriend(@Args('friendId', { type: () => Int }) friendId: number, @Context() ctx: GraphQLContextWithUser) {
-    await this.friendsService.delete(friendId, ctx.req.user.id);
+  async deleteFriend(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser) {
+    await this.friendsService.delete(friendId, user.id);
     return { success: true };
   }
 

@@ -1,26 +1,10 @@
-import { FriendRequest } from "../../types/user";
+import useAuthUserCache from "../auth/useAuthUserCache";
+import { useFragment } from "../../gql";
+import { FRIEND_REQUEST_FRAGMENT } from "../../fragments/auth";
 
-import { gql, useApolloClient } from "@apollo/client";
-import { GET_AUTH_USER } from "../auth/useAuthUser";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-
-const useFriendRequests = (): FriendRequest[] => {
-  const client = useApolloClient();
-  const { friendRequests } = client.readFragment({
-    id: AUTH_USER_CACHE_ID,
-    fragment: gql`
-      fragment friendRequests on AuthUser {
-        friendRequests {
-          id
-          username
-          requestStatus
-        }
-      }
-    `,
-  });
-
-  const result = client.watchQuery({ query: GET_AUTH_USER });
-
+const useFriendRequests = () => {
+  const { friendRequests: friendRequestsFragment } = useAuthUserCache();
+  const friendRequests = useFragment(FRIEND_REQUEST_FRAGMENT, friendRequestsFragment);
   return friendRequests;
 };
 
