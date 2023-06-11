@@ -1,6 +1,6 @@
+import useSafeContext from "@/hooks/shared/useSafeContext";
 import { Placement, ReferenceType, UseFloatingReturn, offset, useFloating, shift, Middleware } from "@floating-ui/react-dom";
 import { createContext, PropsWithChildren } from "react";
-import useSafeContext from "../hooks/shared/useSafeContext";
 
 export const MyPopoverContext = createContext<UseFloatingReturn<ReferenceType> | null>(null);
 

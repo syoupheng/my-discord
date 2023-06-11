@@ -1,4 +1,4 @@
-import { ChannelMember } from "../gql/graphql";
+import { ChannelMemberFragment } from "@/gql/graphql";
 
 export type ChannelType = "group" | "conversation";
 
@@ -15,7 +15,7 @@ export interface ChannelModel {
 
   get type(): ChannelType;
 
-  get members(): ChannelMember[];
+  get members(): readonly ChannelMemberFragment[];
 
   get avatarColor(): string;
 }

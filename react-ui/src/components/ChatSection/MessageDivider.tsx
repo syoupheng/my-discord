@@ -1,6 +1,6 @@
-interface Props {
+type Props = {
   date: string;
-}
+};
 
 const MessageDivider = ({ date }: Props) => {
   return (

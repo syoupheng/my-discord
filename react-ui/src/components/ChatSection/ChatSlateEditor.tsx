@@ -1,25 +1,27 @@
-import { useCallback, useEffect } from "react";
-import { BaseRange, Editor, NodeEntry, Transforms } from "slate";
+import { PropsWithChildren, useCallback, useEffect } from "react";
+import { BaseRange, Descendant, Editor, NodeEntry, Transforms } from "slate";
 import { Editable, RenderLeafProps, useSlate } from "slate-react";
-import MentionElement from "./MentionElement";
-import SlateLeaf from "./SlateLeaf";
-import { usePrivateChannelContext } from "../../providers/PrivateChannelProvider";
+import { CustomElement, MentionElement as TMentionElement } from "@/types/slate";
+import { isMentionElement } from "@/utils/slate";
+import { usePrivateChannelContext } from "@/providers/PrivateChannelProvider";
+import SlateLeaf from "@/components/ChatSection/SlateLeaf";
+import MentionElement from "@/components/ChatSection/MentionElement";
 
-interface Props {
+type Props = {
   decorate: ((entry: NodeEntry<any>) => BaseRange[]) | undefined;
-  slateValue: any[];
+  slateValue: Descendant[];
   handleKeyDown: (event: any) => void;
-}
+  isEmpty: boolean;
+};
 
-const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown }: Props) => {
+const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown, isEmpty }: Props) => {
   const channel = usePrivateChannelContext();
   const renderLeaf = useCallback((props: RenderLeafProps) => <SlateLeaf {...props} />, []);
-  const renderElement = useCallback((props: any) => {
-    switch (props.element.type) {
-      case "mention":
-        return <MentionElement {...props} />;
-      default:
-        return <DefaultElement {...props} />;
+  const renderElement = useCallback((props: { element: CustomElement; attributes: any}) => {
+    if (isMentionElement(props.element)) {
+      return <MentionElement {...props as {element: TMentionElement; attributes: any}} />
+    } else {
+      return <DefaultElement {...props} />
     }
   }, []);
 
@@ -37,14 +39,13 @@ const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown }: Props) => {
       className="bg-transparent p-0 text-btw-base-sm leading-[1.375rem] w-full min-h-[44px] text-secondary-light relative"
       style={{ height: (1 + slateValue.length) * 22 }}
     >
-      {slateValue.length === 1 && slateValue[0].children.length === 1 && slateValue[0].children[0].text === "" && (
+      {isEmpty && (
         <div className="py-[11px] pr-[10px] absolute left-0 right-[10px] whitespace-nowrap text-ellipsis overflow-hidden text-primary-dark-400 select-none pointer-events-none">
           {channel.placeholderContent}
         </div>
       )}
       <Editable
         onKeyDown={handleKeyDown}
-        onSubmit={() => console.log("sub !")}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         decorate={decorate}
@@ -58,7 +59,7 @@ const ChatSlateEditor = ({ decorate, slateValue, handleKeyDown }: Props) => {
   );
 };
 
-const DefaultElement = ({ attributes, children }: any) => {
+const DefaultElement = ({ attributes, children }: PropsWithChildren & { attributes: any }) => {
   return <div {...attributes}>{children}</div>;
 };
 

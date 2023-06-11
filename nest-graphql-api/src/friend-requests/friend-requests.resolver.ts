@@ -8,6 +8,7 @@ import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuthUser } from '../auth/entities/auth-user.entity';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Resolver(() => FriendRequest)
 export class FriendRequestsResolver {
@@ -30,6 +31,7 @@ export class FriendRequestsResolver {
     return { success: true };
   }
 
+  @Public()
   @Subscription(() => FriendRequest, {
     filter: (payload, variables) => payload.friendRequestReceived.recipientId === variables.userId,
     resolve: ({ friendRequestReceived }) => {
@@ -41,6 +43,7 @@ export class FriendRequestsResolver {
     return this.pubSub.asyncIterator('friendRequestReceived');
   }
 
+  @Public()
   @Subscription(() => Int, {
     filter: (payload, variables) => payload.friendRequestDeleted.recipientId === variables.userId,
     resolve: ({ friendRequestDeleted }) => {

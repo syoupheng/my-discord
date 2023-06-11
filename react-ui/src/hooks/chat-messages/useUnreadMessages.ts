@@ -1,4 +1,4 @@
-import useMessageNotifications from "./useMessageNotifications";
+import useMessageNotifications from "@/hooks/chat-messages/useMessageNotifications";
 
 const useUnreadMessages = () => {
   const newMessagesNotifications = useMessageNotifications();

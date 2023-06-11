@@ -1,9 +1,9 @@
-import useDeleteFriend from "../../hooks/friends/useDeleteFriend";
-import { Friend } from "../../types/user";
-import ModalDialog from "../shared/ModalDialog";
+import ModalDialog from "@/components/shared/ModalDialog";
+import { FriendFragment } from "@/gql/graphql";
+import useDeleteFriend from "@/hooks/friends/useDeleteFriend";
 
-interface Props {
-  friend: Friend;
+type Props = {
+  friend: FriendFragment;
   isOpen: boolean;
   setIsOpen: (state: boolean) => void;
 }

@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
-import useAuthMutation from "../auth/useAuthMutation";
+import { graphql } from "@/gql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
 
-const ADD_MEMBERS_TO_GROUP = gql`
+const ADD_MEMBERS_TO_GROUP = graphql(`
   mutation addGroupMembers($groupId: Int!, $membersIds: [Int!]!) {
     addGroupMembers(groupId: $groupId, membersIds: $membersIds) {
       id
@@ -11,7 +11,7 @@ const ADD_MEMBERS_TO_GROUP = gql`
       }
     }
   }
-`;
+`);
 
 const useAddToGroup = () => {
   return useAuthMutation(ADD_MEMBERS_TO_GROUP);

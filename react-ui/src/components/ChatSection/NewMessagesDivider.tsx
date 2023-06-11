@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 import NewMessagesTriangle from "../Icons/NewMessagesTriangleIcon";
 
-interface Props {
+type Props = {
   date?: string | null;
-}
+};
 
 const NewMesaggesDivider = forwardRef<HTMLDivElement, Props>(({ date }, ref) => {
   return (
@@ -16,7 +16,7 @@ const NewMesaggesDivider = forwardRef<HTMLDivElement, Props>(({ date }, ref) => 
           {date}
         </span>
       )}
-      <span className="absolute h-[13px] flex items-center justify-center top-[-7px] right-0 text-[10px] leading-[9px] font-bold pr-1 pl-[1px] uppercase text-white bg-red-divider border-l-0">
+      <span className="absolute h-[13px] flex items-center justify-center top-[-7px] right-0 text-[10px] leading-[9px] font-bold pr-1 pl-[1px] uppercase text-white bg-red-divider border-l-0 rounded-r-sm">
         <div className="absolute -left-2 top-0 h-[13px] text-red-divider">
           <NewMessagesTriangle />
         </div>

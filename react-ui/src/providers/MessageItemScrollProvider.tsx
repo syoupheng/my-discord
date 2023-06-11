@@ -1,5 +1,5 @@
+import useSafeContext from "@/hooks/shared/useSafeContext";
 import { PropsWithChildren, createContext, useRef } from "react";
-import useSafeContext from "../hooks/shared/useSafeContext";
 
 type MessageItemScrollContextValue = {
   scrollToId: (messageId: number, scrollOptions?: ScrollIntoViewOptions) => void;

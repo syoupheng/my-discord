@@ -1,11 +1,11 @@
+import FormContainer from "@/components/Form/FormContainer";
+import FormError from "@/components/Form/FormError";
+import FormGroup from "@/components/Form/FormGroup";
+import FormInput from "@/components/Form/FormInput";
+import Spinner from "@/components/shared/Spinner";
+import Button from "@/components/shared/buttons/Button";
+import { RegisterFormProps } from "@/hooks/auth/useRegisterForm";
 import { Link } from "react-router-dom";
-import { RegisterFormProps } from "../../hooks/auth/useRegisterForm";
-import FormContainer from "../Form/FormContainer";
-import FormError from "../Form/FormError";
-import FormGroup from "../Form/FormGroup";
-import FormInput from "../Form/FormInput";
-import Spinner from "../shared/Spinner";
-import Button from "../shared/buttons/Button";
 
 type Props = RegisterFormProps & {
   onSubmit: (...args: any) => any;

@@ -1,9 +1,9 @@
-import { Friend } from "../../types/user";
-import GroupMemberTag from "./GroupMemberTag";
+import GroupMemberTag from "@/components/privateGroups/GroupMemberTag";
+import { FriendFragment } from "@/gql/graphql";
 
-interface Props {
+type Props = {
   selectedMembersIds: number[];
-  friends: Friend[];
+  friends: FriendFragment[];
   handleClickMemberTag: (id: number) => void;
 }
 

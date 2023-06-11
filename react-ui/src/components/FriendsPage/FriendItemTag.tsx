@@ -1,9 +1,9 @@
-import { Friend, FriendRequest, FriendRequestStatus, UserStatus } from "../../types/user";
-import UserAvatar from "../shared/UserAvatar";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { FriendFragment, FriendRequestFragment, FriendRequestStatus, UserStatus } from "@/gql/graphql";
 
-interface Props {
-  friend?: Friend;
-  friendRequest?: FriendRequest;
+type Props = {
+  friend?: FriendFragment;
+  friendRequest?: FriendRequestFragment;
 }
 
 const userStatusMap: Record<UserStatus, { desc: string }> = {

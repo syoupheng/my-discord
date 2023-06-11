@@ -1,28 +1,19 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
+import useAuthUser from "@/hooks/auth/useAuthUser";
 import { useEffect } from "react";
-import { PrivateConversation } from "../../types/private-conversation";
-import { Friend } from "../../types/user";
-import useAuthUser from "../auth/useAuthUser";
 
-const CONFIRM_FRIEND_REQUEST_SUBSCRIPTION = gql`
+const CONFIRM_FRIEND_REQUEST_SUBSCRIPTION = graphql(`
   subscription OnFriendRequestConfirmed($userId: Int!) {
     friendRequestConfirmed(userId: $userId) {
       newFriend {
-        id
-        username
-        status
+        ...Friend
       }
       newConversation {
-        id
-        createdAt
-        member {
-          id
-          username
-        }
+        ...PrivateConversation
       }
     }
   }
-`;
+`);
 
 const useFriendConfirmedSub = () => {
   const { subscribeToMore, data } = useAuthUser();
@@ -30,12 +21,11 @@ const useFriendConfirmedSub = () => {
   useEffect(() => {
     let unsubscribe: () => void;
     if (data) {
-      unsubscribe = subscribeToMore<{ friendRequestConfirmed: { newFriend: Friend; newConversation: PrivateConversation } }>({
+      unsubscribe = subscribeToMore({
         document: CONFIRM_FRIEND_REQUEST_SUBSCRIPTION,
         variables: { userId: data.me.id },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
-          console.log("sub payload : ", subscriptionData.data);
           const { newFriend, newConversation } = subscriptionData.data.friendRequestConfirmed;
           const newFriendRequests = prev.me.friendRequests.filter((request) => request.id !== newFriend.id);
           const newData = {

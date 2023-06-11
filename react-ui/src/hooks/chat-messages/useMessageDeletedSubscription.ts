@@ -1,9 +1,8 @@
 import { useSubscription } from "@apollo/client";
-import { MESSAGE_INFO } from "../../fragments/messages";
-import { graphql, useFragment } from "../../gql";
-import { MessageInfoFragment } from "../../gql/graphql";
-import useAuthUser from "../auth/useAuthUser";
-import { GET_CHAT_MESSAGES } from "./useChatMessages";
+import { graphql } from "@/gql";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
+import { MessageFragment } from "@/gql/graphql";
+import { GET_CHAT_MESSAGES } from "@/hooks/chat-messages/useChatMessages";
 
 const MESSAGE_DELETED_SUBSCRIPTION = graphql(`
   subscription OnMessageDeleted($userId: Int!) {
@@ -15,16 +14,16 @@ const MESSAGE_DELETED_SUBSCRIPTION = graphql(`
 `);
 
 const useMessageDeletedSubscription = () => {
-  const { data: authUserData } = useAuthUser({ fetchPolicy: "cache-only" });
+  const authUser = useAuthUserInfo();
   return useSubscription(MESSAGE_DELETED_SUBSCRIPTION, {
-    variables: { userId: authUserData!.me.id },
+    variables: { userId: authUser.id },
     onSubscriptionData: ({ client, subscriptionData: { data } }) => {
       if (!data) return;
       const { channelId, id: messageId } = data.messageDeleted;
       const cacheId = { query: GET_CHAT_MESSAGES, variables: { channelId: channelId } };
       const existing = client.readQuery(cacheId);
-      const existingMessages = existing ? useFragment(MESSAGE_INFO, existing.getMessages.messages) : [];
-      const newMessages: MessageInfoFragment[] = [];
+      const existingMessages = existing ? existing.getMessages.messages : [];
+      const newMessages: MessageFragment[] = [];
       existingMessages.forEach((message) => {
         if (message.id !== messageId)
           newMessages.push(message.referencedMessage?.id === messageId ? { ...message, referencedMessage: null } : { ...message });

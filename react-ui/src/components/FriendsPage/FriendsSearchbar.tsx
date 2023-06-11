@@ -1,9 +1,9 @@
+import ClearIcon from "@/components/Icons/ClearIcon";
+import SearchIcon from "@/components/Icons/SearchIcon";
+import useFriendsTab from "@/hooks/friendsNavTab/useFriendsTab";
 import { ChangeEvent, useRef, useState } from "react";
-import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
-import ClearIcon from "../Icons/ClearIcon";
-import SearchIcon from "../Icons/SearchIcon";
 
-interface Props {
+type Props = {
   search: string;
   handleChange: (search: string) => void;
 }

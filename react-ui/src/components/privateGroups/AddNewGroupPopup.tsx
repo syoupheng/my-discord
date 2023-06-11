@@ -1,31 +1,29 @@
+import GroupMembersList from "@/components/privateGroups/GroupMembersList";
+import GroupSearchBar from "@/components/privateGroups/GroupSearchBar";
+import MemberTagList from "@/components/privateGroups/MemberTagList";
+import Spinner from "@/components/shared/Spinner";
+import Button from "@/components/shared/buttons/Button";
+import useFriends from "@/hooks/friends/useFriends";
+import useConfirmGroup from "@/hooks/private-groups/useConfirmGroup";
+import useNewGroupState from "@/hooks/private-groups/useNewGroupState";
+import useScrollPosition from "@/hooks/ui/useScrollPosition";
 import { useRef, useState } from "react";
-import useFriends from "../../hooks/friends/useFriends";
-import useConfirmGroup from "../../hooks/private-groups/useConfirmGroup";
-import useNewGroupState from "../../hooks/private-groups/useNewGroupState";
-import useScrollPosition from "../../hooks/ui/useScrollPosition";
-import Button from "../shared/buttons/Button";
-import Spinner from "../shared/Spinner";
-import GroupMembersList from "./GroupMembersList";
-import GroupSearchBar from "./GroupSearchBar";
-import MemberTagList from "./MemberTagList";
 
-interface Props {
+type Props = {
   closePopover: () => void;
   currentMembersIds?: (number | undefined)[];
   groupId?: number | null;
 }
 
 const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null }: Props) => {
-  const { data } = useFriends();
+  const friends = useFriends();
   const friendListRef = useRef<HTMLDivElement>(null);
   const scrollTop = useScrollPosition(friendListRef);
   const MAX_MEMBERS = 10 - currentMembersIds.length;
-
-  if (!data) return null;
-  const friends = data.me.friends.filter(({ id }) => !currentMembersIds.includes(id));
+  const friendsToAdd = friends.filter(({ id }) => !currentMembersIds.includes(id));
 
   const [search, setSearch] = useState("");
-  const filterFriends = friends.filter((friend) => [friend.username.toLowerCase(), friend.id].join("#").includes(search.toLowerCase()));
+  const searchedFriends = friendsToAdd.filter((friend) => [friend.username.toLowerCase(), friend.id].join("#").includes(search.toLowerCase()));
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,7 +70,7 @@ const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null
       </div>
       <GroupMembersList
         ref={friendListRef}
-        filterFriends={filterFriends}
+        filterFriends={searchedFriends}
         hoveredIndex={hoveredIndex}
         handleClick={handleClickFriend}
         handleHover={setHoveredIndex}

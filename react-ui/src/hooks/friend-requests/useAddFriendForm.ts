@@ -1,6 +1,7 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import useAddFriend from "./useAddFriend";
 import { z } from "zod";
+import { ApolloError } from "@apollo/client";
+import useAddFriend from "@/hooks/friend-requests/useAddFriend";
 
 const useAddFriendForm = () => {
   const [friendTag, setFriendTag] = useState("");
@@ -46,8 +47,8 @@ const useAddFriendForm = () => {
       await sendFriendRequest({ variables: { input: payload } });
       setFriendTag("");
       setSuccess(friendTag);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof ApolloError) setError(err.message);
     }
   };
   return { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused };

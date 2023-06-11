@@ -1,5 +1,5 @@
+import WordSkeleton from "@/components/ChatSection/LoadingSkeleton/WordSkeleton";
 import { useRef } from "react";
-import WordSkeleton from "./WordSkeleton";
 
 const MessageSkeletonLine = () => {
   const numWords = useRef(Math.floor(Math.random() * 6) + 2);

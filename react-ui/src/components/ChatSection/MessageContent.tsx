@@ -1,12 +1,11 @@
-import { MessageInfoFragment } from "../../gql/graphql";
-import LinkRenderer from "./LinkRenderer";
+import LinkRenderer from "@/components/ChatSection/LinkRenderer";
 
 type MessageContentType = "reply" | "normal";
 
-interface Props {
+type Props = {
   messageContent: string;
   type?: MessageContentType;
-}
+};
 
 const stylesMapping = new Map<MessageContentType, { classes: string; styles: any }>([
   [

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { UserStatus } from "../../gql/graphql";
-import useAuthUser from "../auth/useAuthUser";
-import useEditProfile from "./useEditProfile";
+import { UserStatus } from "@/gql/graphql";
+import useAuthUser from "@/hooks/auth/useAuthUser";
+import useEditProfile from "@/hooks/user/useEditProfile";
 
 const IDLE_TIME = 300_000;
 

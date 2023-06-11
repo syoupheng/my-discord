@@ -8,6 +8,7 @@ import { FriendsService } from './friends.service';
 import { FriendRequestConfirmedPayload } from './dto/friend-request-confirmed-payload.dto';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Resolver(() => Friend)
 export class FriendsResolver {
@@ -25,6 +26,7 @@ export class FriendsResolver {
     return { success: true };
   }
 
+  @Public()
   @Subscription(() => FriendRequestConfirmedPayload, {
     filter: (payload, variables) => payload.friendRequestConfirmed.senderId === variables.userId,
     resolve: ({ friendRequestConfirmed }) => {
@@ -36,6 +38,7 @@ export class FriendsResolver {
     return this.pubSub.asyncIterator('friendRequestConfirmed');
   }
 
+  @Public()
   @Subscription(() => Int, {
     filter: (payload, variables) => payload.friendDeleted.userId === variables.userId,
     resolve: ({ friendDeleted }) => {
@@ -47,6 +50,7 @@ export class FriendsResolver {
     return this.pubSub.asyncIterator('friendDeleted');
   }
 
+  @Public()
   @Subscription(() => Friend, {
     async filter(payload, variables) {
       return payload.friendProfileChanged.friends.some((friend: Friend) => friend.id === variables.userId);

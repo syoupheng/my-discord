@@ -1,12 +1,12 @@
-import { AuthUser, AuthUserFieldsFragment, ChannelMember, PrivateConversation } from "../gql/graphql";
-import { ChannelModel, ChannelType } from "./channel-model.interface";
+import { AuthUserInfoFragment, ChannelMemberFragment, PrivateConversationFragment } from "@/gql/graphql";
+import { ChannelModel, ChannelType } from "@/models/channel/channel-model.interface";
 
 export class PrivateConversationModel implements ChannelModel {
-  private conversation: PrivateConversation;
+  private conversation: PrivateConversationFragment;
 
-  private authUser: AuthUser | AuthUserFieldsFragment;
+  private authUser: AuthUserInfoFragment;
 
-  constructor(conversation: PrivateConversation, authUser: AuthUser | AuthUserFieldsFragment) {
+  constructor(conversation: PrivateConversationFragment, authUser: AuthUserInfoFragment) {
     this.conversation = conversation;
     this.authUser = authUser;
   }
@@ -35,9 +35,9 @@ export class PrivateConversationModel implements ChannelModel {
     return false;
   }
 
-  get members(): ChannelMember[] {
+  get members(): readonly ChannelMemberFragment[] {
     const { createdAt, username, id, avatarColor } = this.authUser;
-    return [this.conversation.member, { createdAt, username, id, avatarColor }];
+    return [this.conversation.member, { createdAt, username, id, avatarColor, __typename: "ChannelMember" }];
   }
 
   get avatarColor(): string {

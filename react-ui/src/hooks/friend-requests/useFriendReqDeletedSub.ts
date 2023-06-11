@@ -1,12 +1,12 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
+import useAuthUser from "@/hooks/auth/useAuthUser";
 import { useEffect } from "react";
-import useAuthUser from "../auth/useAuthUser";
 
-const FRIEND_REQUEST_DELETED_SUBSCRIPTION = gql`
+const FRIEND_REQUEST_DELETED_SUBSCRIPTION = graphql(`
   subscription OnFriendRequestDeleted($userId: Int!) {
     friendRequestDeleted(userId: $userId)
   }
-`;
+`);
 
 const useFriendReqDeletedSub = () => {
   const { subscribeToMore, data } = useAuthUser();

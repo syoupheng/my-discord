@@ -1,7 +1,7 @@
 import { graphql } from "../gql";
 
 export const CHANNEL_MEMBER_FIELDS = graphql(`
-  fragment ChannelMemberFields on ChannelMember {
+  fragment ChannelMember on ChannelMember {
     id
     username
     createdAt
@@ -10,7 +10,7 @@ export const CHANNEL_MEMBER_FIELDS = graphql(`
 `);
 
 export const FRIEND_FRAGMENT = graphql(`
-  fragment FriendFields on Friend {
+  fragment Friend on Friend {
     id
     username
     status
@@ -19,7 +19,7 @@ export const FRIEND_FRAGMENT = graphql(`
 `);
 
 export const FRIEND_REQUEST_FRAGMENT = graphql(`
-  fragment FriendRequestFields on FriendRequest {
+  fragment FriendRequest on FriendRequest {
     id
     username
     requestStatus
@@ -28,58 +28,63 @@ export const FRIEND_REQUEST_FRAGMENT = graphql(`
 `);
 
 export const PRIVATE_CONVERSATION_FRAGMENT = graphql(`
-  fragment PrivateConversationFields on PrivateConversation {
+  fragment PrivateConversation on PrivateConversation {
     id
     createdAt
     member {
-      ...ChannelMemberFields
+      ...ChannelMember
     }
   }
 `);
 
 export const PRIVATE_GROUP_FRAGMENT = graphql(`
-  fragment PrivateGroupFields on PrivateGroup {
+  fragment PrivateGroup on PrivateGroup {
     id
     createdAt
     name
     avatarColor
     members {
-      ...ChannelMemberFields
+      ...ChannelMember
     }
   }
 `);
 
 export const MESSAGE_NOTIFICATION_FRAGMENT = graphql(`
-  fragment MessageNotificationFields on Message {
+  fragment MessageNotification on Message {
     id
     channelId
     createdAt
   }
 `);
 
-export const AUTH_USER_FRAGMENT = graphql(`
-  fragment AuthUserFields on AuthUser {
+export const AUTH_USER_INFO_FRAGMENT = graphql(`
+  fragment AuthUserInfo on AuthUser {
     id
     username
     createdAt
-    email
     status
     phoneNumber
     avatarColor
+  }
+`);
+
+export const AUTH_USER_FRAGMENT = graphql(`
+  fragment AuthUser on AuthUser {
+    ...AuthUserInfo
     friends {
-      ...FriendFields
+      ...Friend
     }
     friendRequests {
-      ...FriendRequestFields
+      ...FriendRequest
     }
     privateConversations {
-      ...PrivateConversationFields
+      ...PrivateConversation
     }
     privateGroups {
-      ...PrivateGroupFields
+      ...PrivateGroup
     }
     newMessagesNotifications {
-      ...MessageNotificationFields
+      ...MessageNotification
     }
   }
 `);

@@ -1,7 +1,7 @@
+import SidebarItem from "@/components/SideBar/SidebarItem";
+import Spinner from "@/components/shared/Spinner";
+import useLogout from "@/hooks/auth/useLogout";
 import { FiLogOut } from "react-icons/fi";
-import useLogout from "../../hooks/auth/useLogout";
-import Spinner from "../shared/Spinner";
-import SidebarItem from "./SidebarItem";
 
 const LogoutButton = () => {
   const [logout, { loading }] = useLogout();

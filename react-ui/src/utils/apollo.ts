@@ -1,6 +1,5 @@
 import { Reference } from "@apollo/client";
 import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
-import { InputMaybe, Message } from "../gql/graphql";
 
 // export const offsetFromCursor = (items: Message[], cursor: InputMaybe<string> | undefined, readField: ReadFieldFunction) => {
 //   for (let i = items.length - 1; i >= 0; i--) {

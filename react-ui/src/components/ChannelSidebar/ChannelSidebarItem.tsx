@@ -1,13 +1,12 @@
-import { ReactNode } from "react";
+import CloseIcon from "@/components/Icons/CloseIcon";
+import { PropsWithChildren } from "react";
 import { NavLink } from "react-router-dom";
-import CloseIcon from "../Icons/CloseIcon";
 
-interface Props {
+type Props = PropsWithChildren & {
   url?: string;
-  children: ReactNode;
   onClose?: () => any;
   isActive: boolean;
-}
+};
 
 const ChannelSidebarItem = ({ url = "", children, onClose, isActive }: Props) => {
   return (

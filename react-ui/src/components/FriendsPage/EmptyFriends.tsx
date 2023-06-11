@@ -1,56 +1,21 @@
-import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
-import { FriendsTabValues } from "../../providers/FriendsTabProvider";
-import Button from "../shared/buttons/Button";
+import Button from "@/components/shared/buttons/Button";
+import useFriendsTab from "@/hooks/friendsNavTab/useFriendsTab";
+import { FriendTabModel } from "@/models/friend-tab/friend-tab-model.interface";
 
-const selectedTabMap: Record<FriendsTabValues | "SEARCH", { imageUrl: string; text: string; height: string; width: string }> = {
-  ALL: {
-    imageUrl: "/no_friends.svg",
-    text: "Wumpus attend des amis. Mais rien ne t'oblige à en ajouter !",
-    height: "162px",
-    width: "376px",
-  },
-  ONLINE: {
-    imageUrl: "/no_friends-online.svg",
-    text: "Il n'y a personne dans les parages pour jouer avec Wumpus.",
-    height: "218px",
-    width: "421px",
-  },
-  PENDING: {
-    imageUrl: "/no_friends_requests.svg",
-    text: "Il n'y a aucune demande d'ami en attente. Tiens, voilà Wumpus en attendant .",
-    height: "200px",
-    width: "415px",
-  },
-  ADD_FRIEND: {
-    imageUrl: "/no_friends.svg",
-    text: "Wumpus attend des amis. Mais rien ne t'oblige à en ajouter !",
-    height: "162px",
-    width: "376px",
-  },
-  BLOCKED: {
-    imageUrl: "/no_friends_blocked.svg",
-    text: "Tu ne peux pas débloquer le Wumpus.",
-    height: "232px",
-    width: "433px",
-  },
-  SEARCH: {
+type Props = {
+  search?: boolean;
+  friendTabModel: FriendTabModel;
+};
+
+const EmptyFriends = ({ search = false, friendTabModel }: Props) => {
+  const [selectedTab, setSelectedTab] = useFriendsTab();
+  const emptySearchImage = {
     imageUrl: "/empty_search.svg",
     text: "Wumpus a cherché mais il n'y a personne avec ce nom.",
     height: "218px",
     width: "421px",
-  },
-};
-
-interface Props {
-  search?: boolean;
-}
-
-const EmptyFriends = ({ search = false }: Props) => {
-  const [selectedTab, setSelectedTab] = useFriendsTab();
-
-  if (!selectedTab) return null;
-
-  const { imageUrl, text, height, width } = selectedTabMap[search ? "SEARCH" : selectedTab];
+  };
+  const { imageUrl, text, height, width } = search ? emptySearchImage : friendTabModel.emptyImage;
 
   return (
     <div className="flex items-center justify-center h-full">
@@ -58,7 +23,7 @@ const EmptyFriends = ({ search = false }: Props) => {
         <div className="flex-initial bg-cover mb-10" style={{ backgroundImage: `url(${imageUrl})`, height, width }} />
         <div className="flex-initial mt-2 text-center text-sm text-muted">{text}</div>
         {selectedTab === "ALL" && !search && (
-          <Button className="mt-4 text-btw-sm-xs" onClick={() => setSelectedTab!("ADD_FRIEND")}>
+          <Button className="mt-4 text-btw-sm-xs" onClick={() => setSelectedTab("ADD_FRIEND")}>
             Ajouter un ami
           </Button>
         )}

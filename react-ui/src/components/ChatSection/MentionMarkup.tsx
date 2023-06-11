@@ -1,7 +1,7 @@
+import useMessageContext from "@/hooks/chat-messages/useMessageContext";
 import { useParams } from "react-router-dom";
-import useMessageContext from "../../hooks/chat-messages/useMessageContext";
 
-interface Props {
+type Props = {
   mentionId: number;
 }
 

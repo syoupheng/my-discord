@@ -1,10 +1,7 @@
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
-import { getMainDefinition, Reference } from "@apollo/client/utilities";
+import { getMainDefinition } from "@apollo/client/utilities";
 import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
-import { messagesMerger } from "./utils/apollo";
-import { getMillisecondsDiff } from "./utils/dates";
-import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
 
 const httpLink = new HttpLink({ uri: import.meta.env.VITE_API_URL, credentials: "include" });
 

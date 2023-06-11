@@ -1,8 +1,8 @@
+import useRegister from "@/hooks/auth/useRegister";
+import { filterEmptyFields } from "@/utils/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import useRegister from "./useRegister";
-import { filterEmptyFields } from "../../utils/form";
 
 export const registerFormValidator = z.object({
   email: z.string().min(1, "Veuillez renseigner votre email").email("Veuillez renseigner une adresse email valide"),

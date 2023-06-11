@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import useLogin from "./useLogin";
-import { registerFormValidator } from "./useRegisterForm";
+import { registerFormValidator } from "@/hooks/auth/useRegisterForm";
+import useLogin from "@/hooks/auth/useLogin";
 
 export const loginFormValidator = registerFormValidator.pick({ email: true, password: true });
 

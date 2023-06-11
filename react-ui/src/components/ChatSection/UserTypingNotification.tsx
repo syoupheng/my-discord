@@ -1,6 +1,6 @@
+import LoadingDotsIcon from "@/components/Icons/LoadingDotsIcon";
+import useUserTypingNotification from "@/hooks/chat-messages/useUserTypingNotification";
 import { Fragment } from "react";
-import useUserTypingNotification from "../../hooks/chat-messages/useUserTypingNotification";
-import LoadingDotsIcon from "../Icons/LoadingDotsIcon";
 
 const UserTypingNotification = () => {
   const usersTyping = useUserTypingNotification();

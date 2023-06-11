@@ -1,17 +1,16 @@
-import { useParams } from "react-router-dom";
-import useAuthUser from "../../hooks/auth/useAuthUser";
-import { UserStatus } from "../../types/user";
-import AddGroupMemberBtn from "../ChatSection/AddGroupMemberBtn";
-import ChatNav from "../ChatSection/ChatNav";
-import ArobasIcon from "../Icons/ArobasIcon";
-import UserStatusIcon from "../shared/UserStatusIcon";
+import AddGroupMemberBtn from "@/components/ChatSection/AddGroupMemberBtn";
+import ChatNav from "@/components/ChatSection/ChatNav";
+import ArobasIcon from "@/components/Icons/ArobasIcon";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import { PrivateConversationFragment, UserStatus } from "@/gql/graphql";
+import useFriends from "@/hooks/friends/useFriends";
 
-const PrivateConversationNav = () => {
-  const { data } = useAuthUser();
-  const { channelId: conversationId } = useParams();
-  if (!data) return null;
-  const { friends, privateConversations } = data.me;
-  const conversation = conversationId ? privateConversations.find((conv) => conv.id === parseInt(conversationId)) : undefined;
+type Props = {
+  conversation: PrivateConversationFragment;
+};
+
+const PrivateConversationNav = ({ conversation }: Props) => {
+  const friends = useFriends();
   const friendData = friends.find((friend) => friend.id === conversation?.member.id);
   const userStatus: UserStatus = friendData?.status ?? "INVISIBLE";
   return (

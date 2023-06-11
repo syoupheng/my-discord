@@ -1,7 +1,7 @@
+import DeleteMessageDialog from "@/components/ChatSection/DeleteMessageDialog";
+import MessageButton from "@/components/ChatSection/MessageButtons/MessageButton";
 import { useState } from "react";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import DeleteMessageDialog from "../DeleteMessageDialog";
-import MessageButton from "./MessageButton";
 
 const DeleteMessageButton = () => {
   const [modalOpen, setModalOpen] = useState(false);

@@ -15,6 +15,7 @@ import { UserTypingInput } from './dto/user-typing.input';
 import { MessagesNotificationsService } from './messages-notifications.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuthUser } from '../auth/entities/auth-user.entity';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Resolver(() => Message)
 export class MessagesResolver {
@@ -60,6 +61,7 @@ export class MessagesResolver {
     return loaders.referencedMessagesLoader.load(message.respondsToId);
   }
 
+  @Public()
   @Subscription(() => Message, {
     filter: ({ messageReceived }, variables) => messageReceived.membersIds.includes(variables.userId),
     resolve: ({ messageReceived }) => messageReceived.payload,
@@ -68,6 +70,7 @@ export class MessagesResolver {
     return this.pubSub.asyncIterator('messageReceived');
   }
 
+  @Public()
   @Subscription(() => Message, {
     filter: ({ messageDeleted }, variables) => messageDeleted.membersIds.includes(variables.userId),
     resolve: ({ messageDeleted }) => messageDeleted.message,
@@ -76,6 +79,7 @@ export class MessagesResolver {
     return this.pubSub.asyncIterator('messageDeleted');
   }
 
+  @Public()
   @Subscription(() => TypingNotification, {
     filter: (payload, { userTypingInput }: { userTypingInput: UserTypingInput }) => {
       const isMember = payload.membersInChannels.some((member: MembersInChannels) => member.memberId === userTypingInput.userId);

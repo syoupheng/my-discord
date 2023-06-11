@@ -1,18 +1,17 @@
-import useAuthUser from "../../hooks/auth/useAuthUser";
-import { ConversationMember } from "../../types/private-conversation";
-import MentionOptionItem from "./MentionOptionItem";
+import MentionOptionItem from "@/components/ChatSection/MentionOptionItem";
+import { ChannelMemberFragment } from "@/gql/graphql";
+import useAuthUserCache from "@/hooks/auth/useAuthUserCache";
 import { Descendant } from "slate";
 
-interface Props {
+type Props = {
   mentionSearch: string;
-  mentions: ConversationMember[];
+  mentions: ChannelMemberFragment[];
   arrowPosition: number;
   slateValue: Descendant[];
 }
 
 const MentionsAutocomplete = ({ mentionSearch, mentions, arrowPosition, slateValue }: Props) => {
-  const { data } = useAuthUser();
-  if (!data) return null;
+  const authUser = useAuthUserCache();
   if (mentions.length === 0) return null;
   return (
     <div
@@ -33,7 +32,7 @@ const MentionsAutocomplete = ({ mentionSearch, mentions, arrowPosition, slateVal
           </h3>
         </div>
         {mentions.map((mention, idx) => (
-          <MentionOptionItem active={arrowPosition === idx} key={mention.id} mention={mention} authUser={data.me} mentionSearch={mentionSearch} />
+          <MentionOptionItem active={arrowPosition === idx} key={mention.id} mention={mention} authUser={authUser} mentionSearch={mentionSearch} />
         ))}
       </div>
     </div>

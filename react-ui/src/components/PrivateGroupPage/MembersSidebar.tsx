@@ -1,9 +1,9 @@
-import useIsMembersOpen from "../../hooks/private-groups/useIsMembersOpen";
-import { ConversationMember } from "../../types/private-conversation";
-import GroupMemberItem from "./GroupMemberItem";
+import GroupMemberItem from "@/components/PrivateGroupPage/GroupMemberItem";
+import { ChannelMemberFragment } from "@/gql/graphql";
+import useIsMembersOpen from "@/hooks/private-groups/useIsMembersOpen";
 
-interface Props {
-  members: ConversationMember[];
+type Props = {
+  members: ChannelMemberFragment[];
 }
 
 const MembersSidebar = ({ members }: Props) => {

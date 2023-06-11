@@ -1,5 +1,5 @@
-import { PrivateConversation, PrivateConversationFieldsFragment, PrivateGroup, PrivateGroupFieldsFragment } from "../gql/graphql";
+import { MessageFragment, PrivateConversationFragment, PrivateGroupFragment } from "@/gql/graphql";
 
-export type PrivateChannel = PrivateConversation | PrivateGroup;
+export type PrivateChannelFragment = PrivateConversationFragment | PrivateGroupFragment;
 
-export type PrivateChannelFieldsFragment = PrivateConversationFieldsFragment | PrivateGroupFieldsFragment;
+export type ReferencedMessageFragment = MessageFragment["referencedMessage"];

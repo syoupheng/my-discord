@@ -1,15 +1,11 @@
-import { createContext, ReactNode } from "react";
-import useLocalStorage from "../hooks/shared/useLocalStorage";
+import useLocalStorage from "@/hooks/shared/useLocalStorage";
+import { createContext, PropsWithChildren } from "react";
 
-type TContextValue = [boolean, (val: boolean) => void];
+type ContextValue = [boolean, (val: boolean) => void];
 
-export const DisplayGroupMembersContext = createContext<TContextValue | []>([]);
+export const DisplayGroupMembersContext = createContext<ContextValue | null>(null);
 
-interface Props {
-  children: ReactNode;
-}
-
-const DisplayGroupMembersProvider = ({ children }: Props) => {
+const DisplayGroupMembersProvider = ({ children }: PropsWithChildren) => {
   const [isMembersOpen, setIsMembersOpen] = useLocalStorage("isMembersOpen", true);
   return <DisplayGroupMembersContext.Provider value={[isMembersOpen, setIsMembersOpen]}>{children}</DisplayGroupMembersContext.Provider>;
 };

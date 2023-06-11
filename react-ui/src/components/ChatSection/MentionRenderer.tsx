@@ -1,7 +1,7 @@
+import MentionMarkup from "@/components/ChatSection/MentionMarkup";
 import { Fragment } from "react";
-import MentionMarkup from "./MentionMarkup";
 
-interface Props {
+type Props = {
   content: string;
 }
 

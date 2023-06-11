@@ -1,13 +1,13 @@
+import { graphql } from "@/gql";
+import useLogoutOnError from "@/hooks/auth/useLogoutOnError";
 import { useQuery } from "@apollo/client";
-import { graphql } from "../../gql";
-import useLogoutOnError from "../auth/useLogoutOnError";
 
 export const GET_CHAT_MESSAGES = graphql(`
   query GetMessages($channelId: Int!, $cursor: String, $limit: Int) {
     getMessages(channelId: $channelId, cursor: $cursor, limit: $limit) {
       cursor
       messages {
-        ...MessageInfo
+        ...Message
       }
     }
   }

@@ -1,11 +1,20 @@
-import { MESSAGE_NOTIFICATION_FRAGMENT } from "../../fragments/auth";
-import { useFragment } from "../../gql";
-import useAuthUserCache from "../auth/useAuthUserCache";
+import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client";
+
+export const GET_AUTH_USER_NOTIFICATIONS = graphql(`
+  query GetNotifications {
+    me {
+      newMessagesNotifications {
+        ...MessageNotification
+      }
+    }
+  }
+`);
 
 const useMessageNotifications = () => {
-  const { newMessagesNotifications: newMessagesNotificationsFragment } = useAuthUserCache();
-  const newMessagesNotifications = useFragment(MESSAGE_NOTIFICATION_FRAGMENT, newMessagesNotificationsFragment);
-  return newMessagesNotifications;
+  const { data } = useQuery(GET_AUTH_USER_NOTIFICATIONS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.newMessagesNotifications;
 };
 
 export default useMessageNotifications;

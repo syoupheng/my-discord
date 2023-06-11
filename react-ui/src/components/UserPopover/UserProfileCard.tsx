@@ -1,8 +1,8 @@
-import { UserStatus } from "../../gql/graphql";
-import { formatUserSubscribeDate } from "../../utils/dates";
-import BigUserAvatar from "../shared/BigUserAvatar";
-import { PopoverCloseFunction } from "../shared/MyPopover";
-import UserStatusSelection from "./UserStatusSelection";
+import UserStatusSelection from "@/components/UserPopover/UserStatusSelection";
+import BigUserAvatar from "@/components/shared/BigUserAvatar";
+import { PopoverCloseFunction } from "@/components/shared/MyPopover";
+import { UserStatus } from "@/gql/graphql";
+import { formatUserSubscribeDate } from "@/utils/dates";
 
 type Props = {
   avatarColor: string;

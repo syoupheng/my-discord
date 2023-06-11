@@ -1,9 +1,8 @@
-import { FriendRequest } from "../../types/user";
-import useFriendRequests from "./useFriendRequests";
+import useFriendRequests from "@/hooks/friend-requests/useFriendRequests";
 
 const useCountFriendRequests = () => {
   const friendRequests = useFriendRequests();
-  const requestsReceived = friendRequests.filter((friendRequest: FriendRequest) => friendRequest.requestStatus === "RECEIVED");
+  const requestsReceived = friendRequests.filter((friendRequest) => friendRequest.requestStatus === "RECEIVED");
   return requestsReceived.length;
 };
 

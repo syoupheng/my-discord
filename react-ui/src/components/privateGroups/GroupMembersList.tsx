@@ -1,11 +1,12 @@
+import NoResultsIcon from "@/components/Icons/NoResultsIcon";
+import ValidateIcon from "@/components/Icons/ValidateIcon";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { FriendFragment } from "@/gql/graphql";
 import { forwardRef } from "react";
-import { Friend } from "../../types/user";
-import NoResultsIcon from "../Icons/NoResultsIcon";
-import ValidateIcon from "../Icons/ValidateIcon";
-import UserAvatar from "../shared/UserAvatar";
 
-interface Props {
-  filterFriends: Friend[];
+
+type Props = {
+  filterFriends: FriendFragment[];
   handleClick: (id: number) => void;
   hoveredIndex?: number;
   handleHover: (idx: number) => void;

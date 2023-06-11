@@ -1,14 +1,15 @@
-import { gql } from "@apollo/client";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-import useAuthMutation from "../auth/useAuthMutation";
+import { Reference } from "@apollo/client";
+import { graphql } from "@/gql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
+import { AUTH_USER_CACHE_ID } from "@/apollo.config";
 
-const IGNORE_FRIEND_REQUEST = gql`
+const IGNORE_FRIEND_REQUEST = graphql(`
   mutation ignoreFriendRequest($friendId: Int!) {
     ignoreFriendRequest(friendId: $friendId) {
       success
     }
   }
-`;
+`);
 
 const useIgnoreFriendRequest = (friendId: number) => {
   return useAuthMutation(IGNORE_FRIEND_REQUEST, {
@@ -18,7 +19,7 @@ const useIgnoreFriendRequest = (friendId: number) => {
         id: AUTH_USER_CACHE_ID,
         fields: {
           friendRequests(existingFriendRequestRefs, { readField }) {
-            return existingFriendRequestRefs.filter((ref: any) => readField("id", ref) !== friendId);
+            return existingFriendRequestRefs.filter((ref: Reference) => readField("id", ref) !== friendId);
           },
         },
       });

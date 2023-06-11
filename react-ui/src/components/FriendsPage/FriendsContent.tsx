@@ -1,32 +1,26 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { FriendFragment, FriendRequestFragment } from "@/gql/graphql";
+import EmptyFriends from "@/components/FriendsPage/EmptyFriends";
+import FriendRequestsList from "@/components/FriendsPage/FriendRequestsList";
+import FriendsList from "@/components/FriendsPage/FriendsList";
+import FriendsSearchbar from "@/components/FriendsPage/FriendsSearchbar";
+import { FriendTabModel } from "@/models/friend-tab/friend-tab-model.interface";
+import { FriendsTabValue } from "@/providers/FriendsTabProvider";
 import { useState } from "react";
-import { FriendsTabValues } from "../../providers/FriendsTabProvider";
-import { Friend, FriendRequest } from "../../types/user";
-import FriendRequestsList from "./FriendRequestsList";
-import FriendsList from "./FriendsList";
-import FriendsSearchbar from "./FriendsSearchbar";
 
-const friendsStatusMap = {
-  ALL: "Tous les amis",
-  ONLINE: "En ligne",
-  PENDING: "En attente",
-  BLOCKED: "Bloqués",
-  ADD_FRIEND: "",
+type Props = {
+  selectedTab: FriendsTabValue;
+  friendRequests: FriendRequestFragment[];
+  friendTabModel: FriendTabModel;
 };
 
-interface Props {
-  selectedTab: FriendsTabValues | undefined;
-  selectedFriends: Friend[];
-  friendRequests: FriendRequest[];
-}
-
-const FriendsContent = ({ selectedTab, selectedFriends, friendRequests }: Props) => {
+const FriendsContent = ({ selectedTab, friendTabModel }: Props) => {
   const [search, setSearch] = useState("");
   const lowercaseSearch = search.toLowerCase();
-  const filteredFriendItems =
-    selectedTab === "PENDING"
-      ? friendRequests.filter((item) => item.username.toLowerCase().includes(lowercaseSearch))
-      : selectedFriends.filter((item) => item.username.toLowerCase().includes(lowercaseSearch));
+  const filteredFriendItems = (friendTabModel.listItems as any[]).filter((item: FriendFragment | FriendRequestFragment) => "username" in item && item.username.toLowerCase().includes(lowercaseSearch));
+  // selectedTab === "PENDING"
+  //   ? friendRequests.filter((item) => item.username.toLowerCase().includes(lowercaseSearch))
+  //   : selectedFriends.filter((item) => item.username.toLowerCase().includes(lowercaseSearch));
 
   const [friendsListRef] = useAutoAnimate<HTMLDivElement>({ duration: 130 });
 
@@ -35,15 +29,17 @@ const FriendsContent = ({ selectedTab, selectedFriends, friendRequests }: Props)
       <FriendsSearchbar search={search} handleChange={setSearch} />
       <div>
         <h2 className="mt-4 mr-5 mb-2 ml-[30px] flex-auto text-h-secondary whitespace-nowrap overflow-hidden uppercase text-xs font-medium">
-          {selectedTab && friendsStatusMap[selectedTab]} - {filteredFriendItems.length}
+          {selectedTab && friendTabModel.listHeader} - {filteredFriendItems.length}
         </h2>
       </div>
       <div className="relative overflow-y-scroll overflow-x-hidden pr-0 pb-2 mt-2 min-h-0 flex-auto">
         <div ref={friendsListRef} className="absolute w-full h-full">
-          {selectedTab === "PENDING" ? (
-            <FriendRequestsList friendRequests={filteredFriendItems as FriendRequest[]} />
+          {filteredFriendItems.length <= 0 ? (
+            <EmptyFriends search friendTabModel={friendTabModel} />
+          ) : selectedTab === "PENDING" ? (
+            <FriendRequestsList friendRequests={filteredFriendItems} />
           ) : (
-            <FriendsList friends={filteredFriendItems as Friend[]} />
+            <FriendsList friends={filteredFriendItems} />
           )}
         </div>
       </div>

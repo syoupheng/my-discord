@@ -1,35 +1,33 @@
-import { useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { BaseEditor, createEditor, Descendant, Transforms, Editor } from "slate";
-import { ReactEditor, Slate, withReact } from "slate-react";
-import { SendMessageInput } from "../../gql/graphql";
-import useMessageReply from "../../hooks/chat-messages/useMessageReply";
-import useSendMessage from "../../hooks/chat-messages/useSendMessage";
-import useSendTypingNotification from "../../hooks/chat-messages/useSendTypingNotification";
-import useMentionAutocomplete from "../../hooks/mentions/useMentionsAutocomplete";
-import useSlateDecorator from "../../hooks/slate/useSlateDecorator";
-import useClickOutside from "../../hooks/ui/useClickOutside";
-import { serialize } from "../../utils/text";
-import ChatSlateEditor from "./ChatSlateEditor";
-import EmojiPickerBtn from "./EmojiPickerBtn";
-import MentionsAutocomplete from "./MentionsAutocomplete";
-import MessageResponseIndicator from "./MessageResponseIndicator";
-import UserTypingNotification from "./UserTypingNotification";
+import ChatSlateEditor from "@/components/ChatSection/ChatSlateEditor";
+import EmojiPickerBtn from "@/components/ChatSection/EmojiPickerBtn";
+import MentionsAutocomplete from "@/components/ChatSection/MentionsAutocomplete";
+import MessageResponseIndicator from "@/components/ChatSection/MessageResponseIndicator";
+import UserTypingNotification from "@/components/ChatSection/UserTypingNotification";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
+import useChatInputKeyDown from "@/hooks/chat-messages/useChatInputKeyDown";
+import useSendTypingNotification from "@/hooks/chat-messages/useSendTypingNotification";
+import useMentionAutocomplete from "@/hooks/mentions/useMentionsAutocomplete";
+import useSafeParams from "@/hooks/shared/useSafeParams";
+import useSlateDecorator from "@/hooks/slate/useSlateDecorator";
+import useClickOutside from "@/hooks/ui/useClickOutside";
+import { getNodeInSelection } from "@/utils/slate";
+import { useCallback, useRef, useState } from "react";
+import { createEditor, Descendant, Transforms, Editor, Element, Text } from "slate";
+import { Slate, withReact } from "slate-react";
 
-const withMentions = (editor: BaseEditor & ReactEditor) => {
+const withMentions = (editor: Editor) => {
   const { isInline, isVoid } = editor;
-  editor.isInline = (element: any) => (element.type === "mention" ? true : isInline(element));
-  editor.isVoid = (element: any) => (element.type === "mention" ? true : isVoid(element));
+  editor.isInline = (element: Element) => (element.type === "mention" ? true : isInline(element));
+  editor.isVoid = (element: Element) => (element.type === "mention" ? true : isVoid(element));
   return editor;
 };
 
 const ChatMessageInput = () => {
-  const { channelId } = useParams();
+  const { channelId } = useSafeParams(["channelId"]);
   const [editor] = useState(() => withMentions(withReact(createEditor())));
   const [value, setValue] = useState<Descendant[]>([{ type: "paragraph", children: [{ text: "" }] }]);
   const { mentionAutocompleteState, mentions, mentionsAutocompleteControls, dispatchMentionAutocomplete } = useMentionAutocomplete(editor)!;
   const { showMentionsAutocomplete, mentionSearch, arrowPosition } = mentionAutocompleteState;
-
   const ref = useClickOutside(() => {
     if (showMentionsAutocomplete) {
       dispatchMentionAutocomplete({ type: "CLOSE" });
@@ -40,43 +38,67 @@ const ChatMessageInput = () => {
       Transforms.deselect(editor);
     }
   });
-  const slateDecorator = useSlateDecorator(editor, value, mentionAutocompleteState, dispatchMentionAutocomplete);
-
-  const [sendMessage] = useSendMessage(parseInt(channelId!), editor);
-  const { replyMessageId, setReplyMessageId } = useMessageReply()!;
-  const handleKeyDown = async (event: KeyboardEvent) => {
-    if (showMentionsAutocomplete) {
-      mentionsAutocompleteControls(event);
-    } else {
-      switch (event.key) {
-        case "Enter":
-          if (event.shiftKey) break;
-          event.preventDefault();
-          const content = serialize(value);
-          if (content.length > 0) {
-            const input: SendMessageInput = { content, channelId: parseInt(channelId!) };
-            if (replyMessageId) input.respondsToId = replyMessageId;
-            setReplyMessageId!(null);
-            sendMessage({ variables: { input } });
-          }
-          break;
+  const slateDecorator = useSlateDecorator();
+  const handleUserMentions = useCallback(
+    (nodeText: string, cursorPosition: number) => {
+      if (!nodeText) {
+        if (showMentionsAutocomplete && cursorPosition === 0) {
+          dispatchMentionAutocomplete({ type: "CLOSE" });
+        }
+        return [];
       }
-    }
-  };
+      if (nodeText[0] === "@" && !nodeText.slice(0, cursorPosition).includes(" ") && cursorPosition >= 1) {
+        dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(1, cursorPosition) });
+      } else {
+        let shouldShowAutocomplete = false;
+        for (let i = cursorPosition - 1; i >= 0; i--) {
+          if (nodeText[i] === "@") {
+            if (nodeText[i - 1] === " ") {
+              dispatchMentionAutocomplete({ type: "OPEN", mentionSearch: nodeText.slice(i + 1, cursorPosition) });
+              shouldShowAutocomplete = true;
+            }
+            break;
+          }
+          if (nodeText[i] === " ") break;
+        }
+        if (!shouldShowAutocomplete && showMentionsAutocomplete) {
+          dispatchMentionAutocomplete({ type: "CLOSE" });
+        }
+      }
+    },
+    [showMentionsAutocomplete, mentionSearch]
+  );
+  
+  const handleKeyDown = useChatInputKeyDown({
+    channelId,
+    editor,
+    showMentionsAutocomplete,
+    mentionsAutocompleteControls,
+    inputValue: value,
+    mentions,
+  });
 
   const [sendTypingNotification] = useSendTypingNotification();
 
   const isTyping = useRef(false);
 
-  const onChange = (value: any[]) => {
-    // const cursorAnchor = editor.selection?.anchor;
-    // const nodeText = Node.string(value[cursorAnchor?.path[0] ?? 0]);
-    // console.log("texte : ", nodeText);
-    // handleUserMentions(nodeText, cursorAnchor?.offset ?? 0);
+  const slateEditorIsEmpty = (value: Descendant[]) =>
+    value.length === 1 &&
+    "type" in value[0] &&
+    value[0].type === "paragraph" &&
+    value[0].children.length === 1 &&
+    "text" in value[0].children[0] &&
+    value[0].children[0].text === "";
+
+  const onChange = (value: Descendant[]) => {
+    const node = getNodeInSelection(editor);
+    if (node && editor.selection) {
+      const cursorPosition = editor.selection.focus.offset;
+      const nodeText = Text.isText(node) ? node.text : "";
+      handleUserMentions(nodeText, cursorPosition);
+    }
     setValue(value);
-    const slateEditorIsEmpty =
-      value.length === 1 && value[0].type === "paragraph" && value[0].children.length === 1 && value[0].children[0].text === "";
-    if (!isTyping.current && !slateEditorIsEmpty) {
+    if (!isTyping.current && !slateEditorIsEmpty(value)) {
       sendTypingNotification();
       isTyping.current = true;
       setTimeout(() => {
@@ -92,10 +114,12 @@ const ChatMessageInput = () => {
           <MessageResponseIndicator />
           <div className="overflow-x-hidden overflow-y-scroll bg-primary-dark-560 max-h-[50vh] rounded-lg" style={{ scrollbarWidth: "none" }}>
             <div className="pl-4 flex">
-              <ChatSlateEditor handleKeyDown={handleKeyDown} decorate={slateDecorator} slateValue={value} />
-              <div className="flex h-11 sticky top-0 mr-1">
-                <EmojiPickerBtn />
-              </div>
+              <ChatSlateEditor isEmpty={slateEditorIsEmpty(value)} handleKeyDown={handleKeyDown} decorate={slateDecorator} slateValue={value} />
+              <TooltipWrapper tooltipTxt="Coming soon !">
+                <div className="flex h-11 sticky top-0 mr-1">
+                  <EmojiPickerBtn />
+                </div>
+              </TooltipWrapper>
             </div>
           </div>
           {showMentionsAutocomplete && (

@@ -1,11 +1,9 @@
-import { ChannelMemberFieldsFragment } from "../../gql/graphql";
-import useAuthUser from "../auth/useAuthUser";
+import { ChannelMemberFragment } from "@/gql/graphql";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 
-const useIsMentioned = (mentions: readonly ChannelMemberFieldsFragment[]) => {
-  const { data } = useAuthUser();
-  if (!data) return false;
-  const { id: authUserId } = data.me;
-  return mentions.some((mention) => mention.id === authUserId);
+const useIsMentioned = (mentions: ChannelMemberFragment[]) => {
+  const { id } = useAuthUserInfo();
+  return mentions.some((mention) => mention.id === id);
 };
 
 export default useIsMentioned;

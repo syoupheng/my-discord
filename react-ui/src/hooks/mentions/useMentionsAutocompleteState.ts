@@ -1,17 +1,17 @@
 import { useReducer } from "react";
 
-export interface IMentionAutocompleteState {
+export type MentionAutocompleteState = {
   showMentionsAutocomplete: boolean;
   mentionSearch: string;
   arrowPosition: number;
-}
+};
 
 export type MentionAutocompleteAction =
   | { type: "OPEN"; mentionSearch: string }
   | { type: "CLOSE" }
   | { type: "KEYBOARD_NAVIGATION"; arrowPosition: number };
 
-const mentionAutocompleteReducer = (state: IMentionAutocompleteState, action: MentionAutocompleteAction): IMentionAutocompleteState => {
+const mentionAutocompleteReducer = (state: MentionAutocompleteState, action: MentionAutocompleteAction): MentionAutocompleteState => {
   switch (action.type) {
     case "OPEN":
       return { ...state, showMentionsAutocomplete: true, mentionSearch: action.mentionSearch, arrowPosition: 0 };
@@ -24,7 +24,7 @@ const mentionAutocompleteReducer = (state: IMentionAutocompleteState, action: Me
   }
 };
 
-const initialState: IMentionAutocompleteState = { showMentionsAutocomplete: false, mentionSearch: "", arrowPosition: 0 };
+const initialState: MentionAutocompleteState = { showMentionsAutocomplete: false, mentionSearch: "", arrowPosition: 0 };
 
 const useMentionAutocompleteState = () => useReducer(mentionAutocompleteReducer, initialState);
 

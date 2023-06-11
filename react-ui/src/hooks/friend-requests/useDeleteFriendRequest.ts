@@ -1,14 +1,15 @@
-import { gql } from "@apollo/client";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-import useAuthMutation from "../auth/useAuthMutation";
+import { AUTH_USER_CACHE_ID } from "@/apollo.config";
+import { graphql } from "@/gql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
+import { Reference } from "@apollo/client";
 
-const DELETE_FRIEND_REQUEST = gql`
+const DELETE_FRIEND_REQUEST = graphql(`
   mutation deleteFriendRequest($friendId: Int!) {
     deleteFriendRequest(friendId: $friendId) {
       success
     }
   }
-`;
+`);
 
 const useDeleteFriendRequest = (friendId: number) => {
   return useAuthMutation(DELETE_FRIEND_REQUEST, {
@@ -18,7 +19,7 @@ const useDeleteFriendRequest = (friendId: number) => {
         id: AUTH_USER_CACHE_ID,
         fields: {
           friendRequests(existingFriendRequestRefs, { readField }) {
-            return existingFriendRequestRefs.filter((ref: any) => readField("id", ref) !== friendId);
+            return existingFriendRequestRefs.filter((ref: Reference) => readField("id", ref) !== friendId);
           },
         },
       });

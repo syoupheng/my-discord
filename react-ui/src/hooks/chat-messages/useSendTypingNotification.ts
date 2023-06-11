@@ -1,6 +1,6 @@
+import { graphql } from "@/gql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
 import { useParams } from "react-router-dom";
-import { graphql } from "../../gql";
-import useAuthMutation from "../auth/useAuthMutation";
 
 const SEND_TYPING_NOTIFICATION = graphql(`
   mutation SendTypingNotification($channelId: Int!) {

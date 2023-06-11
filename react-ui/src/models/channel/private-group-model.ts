@@ -1,10 +1,10 @@
-import { ChannelMember, PrivateGroup } from "../gql/graphql";
-import { ChannelModel, ChannelType } from "./channel-model.interface";
+import { ChannelMemberFragment, PrivateGroupFragment } from "@/gql/graphql";
+import { ChannelModel, ChannelType } from "@/models/channel/channel-model.interface";
 
 export class PrivateGroupModel implements ChannelModel {
-  private group: PrivateGroup;
+  private group: PrivateGroupFragment;
 
-  constructor(group: PrivateGroup) {
+  constructor(group: PrivateGroupFragment) {
     this.group = group;
   }
 
@@ -32,7 +32,7 @@ export class PrivateGroupModel implements ChannelModel {
     return true;
   }
 
-  get members(): ChannelMember[] {
+  get members(): readonly ChannelMemberFragment[] {
     return this.group.members;
   }
 

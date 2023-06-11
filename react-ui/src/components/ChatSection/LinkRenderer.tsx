@@ -1,8 +1,8 @@
+import CustomLink from "@/components/ChatSection/CustomLink";
+import MentionRenderer from "@/components/ChatSection/MentionRenderer";
 import { Fragment } from "react";
-import CustomLink from "./CustomLink";
-import MentionRenderer from "./MentionRenderer";
 
-interface Props {
+type Props = {
   content: string;
 }
 

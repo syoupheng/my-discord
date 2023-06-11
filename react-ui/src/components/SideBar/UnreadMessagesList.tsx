@@ -1,5 +1,5 @@
+import UnreadMessageNotificationItem from "@/components/SideBar/UnreadMessageNotificationItem";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import UnreadMessageNotificationItem from "./UnreadMessageNotificationItem";
 
 type Props = {
   countList: Array<[number, number]>;
@@ -7,7 +7,6 @@ type Props = {
 
 const UnreadMessagesList = ({ countList }: Props) => {
   const [listRef] = useAutoAnimate<HTMLDivElement>({ duration: 200 });
-
   return (
     <div ref={listRef}>
       {countList.map(([channelId, count]) => (

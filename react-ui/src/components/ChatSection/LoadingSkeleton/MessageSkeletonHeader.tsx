@@ -1,5 +1,5 @@
-import MessageLineSkeletonContainer from "./MessageLineSkeletonContainer";
-import MessageSkeletonLine from "./MessageSkeletonLine";
+import MessageLineSkeletonContainer from "@/components/ChatSection/LoadingSkeleton/MessageLineSkeletonContainer";
+import MessageSkeletonLine from "@/components/ChatSection/LoadingSkeleton/MessageSkeletonLine";
 
 const MessageSkeletonHeader = () => {
   return (

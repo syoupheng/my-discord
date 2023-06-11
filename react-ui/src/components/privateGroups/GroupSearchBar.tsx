@@ -1,6 +1,6 @@
 import { forwardRef, KeyboardEvent } from "react";
 
-interface Props {
+type Props = {
   selectedMembersIds: number[];
   pressDelete: (e: KeyboardEvent<HTMLInputElement>) => void;
   search: string;

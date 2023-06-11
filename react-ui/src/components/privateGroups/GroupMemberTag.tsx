@@ -1,8 +1,8 @@
-import { Friend } from "../../types/user";
-import CloseIcon from "../Icons/CloseIcon";
+import CloseIcon from "@/components/Icons/CloseIcon";
+import { FriendFragment } from "@/gql/graphql";
 
-interface Props {
-  friend: Friend;
+type Props = {
+  friend: FriendFragment;
   handleClick: (id: number) => void;
 }
 

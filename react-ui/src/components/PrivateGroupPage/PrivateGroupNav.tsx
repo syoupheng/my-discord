@@ -1,13 +1,13 @@
 import { MdPeopleAlt } from "react-icons/md";
-import AddGroupMemberBtn from "../ChatSection/AddGroupMemberBtn";
-import ChatNav from "../ChatSection/ChatNav";
-import DisplayMembersBtn from "./DisplayMembersBtn";
-import GroupName from "./GroupName";
-import { PrivateGroup } from "../../gql/graphql";
+import { PrivateGroupFragment } from "@/gql/graphql";
+import AddGroupMemberBtn from "@/components/ChatSection/AddGroupMemberBtn";
+import ChatNav from "@/components/ChatSection/ChatNav";
+import DisplayMembersBtn from "@/components/PrivateGroupPage/DisplayMembersBtn";
+import GroupName from "@/components/PrivateGroupPage/GroupName";
 
-interface Props {
-  group: PrivateGroup;
-}
+type Props = {
+  group: PrivateGroupFragment;
+};
 
 const PrivateGroupNav = ({ group }: Props) => {
   return (

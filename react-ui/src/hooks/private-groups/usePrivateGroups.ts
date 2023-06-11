@@ -1,30 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
-import { PrivateGroup } from "../../types/private-group";
-import useLogoutOnError from "../auth/useLogoutOnError";
+import { useQuery } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const GET_AUTH_USER_GROUPS = gql`
+export const GET_AUTH_USER_GROUPS = graphql(`
   query GetGroups {
     me {
       privateGroups {
-        id
-        createdAt
-        name
-        members {
-          id
-          username
-        }
+        ...PrivateGroup
       }
     }
   }
-`;
-
-interface AuthGroupsResponse {
-  me: { privateGroups: PrivateGroup[] };
-}
+`);
 
 const usePrivateGroups = () => {
-  const onError = useLogoutOnError();
-  return useQuery<AuthGroupsResponse>(GET_AUTH_USER_GROUPS, { fetchPolicy: "cache-only", onError });
+  const { data } = useQuery(GET_AUTH_USER_GROUPS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.privateGroups;
 };
 
 export default usePrivateGroups;

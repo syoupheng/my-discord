@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { editGroupNameInputSchema } from "../../types/private-group";
-import useEditGroupName from "./useEditGroupName";
-import { PrivateGroup } from "../../gql/graphql";
+import { PrivateGroupFragment } from "@/gql/graphql";
+import useEditGroupName from "@/hooks/private-groups/useEditGroupName";
+import { z } from "zod";
 
-const useGroupNameInput = ({ id, name }: PrivateGroup) => {
+export const editGroupNameInputSchema = z.object({
+  groupId: z.number().int().positive(),
+  name: z.string().min(1).max(25),
+});
+
+const useGroupNameInput = ({ id, name }: PrivateGroupFragment) => {
   const [nameInput, setNameInput] = useState(name);
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -18,7 +23,7 @@ const useGroupNameInput = ({ id, name }: PrivateGroup) => {
           optimisticResponse: {
             editGroupName: {
               id,
-              typename: "PrivateGroup",
+              __typename: "PrivateGroup",
               name: nameInput,
             },
           },

@@ -1,14 +1,14 @@
-import { PrivateChannel } from "../../types/channel";
-import { isPrivateConversation, isPrivateGroup } from "../../utils/channel";
-import PrivateConversationNav from "../PrivateConversationPage/PrivateConversationNav";
-import PrivateGroupNav from "../PrivateGroupPage/PrivateGroupNav";
+import PrivateConversationNav from "@/components/PrivateConversationPage/PrivateConversationNav";
+import PrivateGroupNav from "@/components/PrivateGroupPage/PrivateGroupNav";
+import { PrivateChannelFragment } from "@/types/channel";
+import { isPrivateConversation, isPrivateGroup } from "@/utils/channel";
 
-interface Props {
-  channel: PrivateChannel;
+type Props = {
+  channel: PrivateChannelFragment;
 }
 
 const PrivateChannelNav = ({ channel }: Props) => {
-  if (isPrivateConversation(channel)) return <PrivateConversationNav />;
+  if (isPrivateConversation(channel)) return <PrivateConversationNav conversation={channel} />;
   if (isPrivateGroup(channel)) return <PrivateGroupNav group={channel} />;
   return null;
 };

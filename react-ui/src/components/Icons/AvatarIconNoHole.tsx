@@ -1,7 +1,7 @@
-interface Props {
+type Props = {
   size?: number;
   bgColor?: string;
-}
+};
 
 const AvatarIconNoHole = ({ size = 32, bgColor = "#EF4444" }: Props) => {
   return (

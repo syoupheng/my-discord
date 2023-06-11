@@ -1,8 +1,8 @@
-import { UserStatus } from "../../types/user";
-import AvatarIconHole from "../Icons/AvatarIconHole";
-import UserStatusIcon from "./UserStatusIcon";
+import AvatarIconHole from "@/components/Icons/AvatarIconHole";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import { UserStatus } from "@/gql/graphql";
 
-interface Props {
+type Props = {
   className?: string;
   status?: UserStatus;
   avatarColor?: string;

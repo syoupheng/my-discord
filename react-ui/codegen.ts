@@ -12,6 +12,10 @@ const config: CodegenConfig = {
       plugins: [],
       config: {
         dedupeFragments: true,
+        enumsAsTypes: true,
+      },
+      presetConfig: {
+        fragmentMasking: false, // { unmaskFunctionName: "getFragmentData" },
       },
     },
   },

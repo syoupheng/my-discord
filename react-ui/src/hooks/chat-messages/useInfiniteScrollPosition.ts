@@ -1,8 +1,12 @@
+import { MessageFragment } from "@/gql/graphql";
+import { useMessageItemScrollContext } from "@/providers/MessageItemScrollProvider";
 import { MutableRefObject, useLayoutEffect } from "react";
-import { useMessageItemScrollContext } from "../../providers/MessageItemScrollProvider";
-import { Message } from "../../gql/graphql";
 
-const useInfiniteScrollPosition = (messages: Message[] | undefined, previousCursorRef: MutableRefObject<null>, cursor: string | undefined) => {
+const useInfiniteScrollPosition = (
+  messages: MessageFragment[] | undefined,
+  previousCursorRef: MutableRefObject<null>,
+  cursor: string | undefined
+) => {
   const { scrollToId } = useMessageItemScrollContext();
   useLayoutEffect(() => {
     if (!messages) return;

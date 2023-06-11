@@ -1,7 +1,7 @@
+import Tooltip from "@/components/shared/Tooltip";
+import useTooltip from "@/hooks/ui/useTooltip";
+import { TooltipDirection, Size } from "@/types/tooltip";
 import { PropsWithChildren } from "react";
-import useTooltip from "../../hooks/ui/useTooltip";
-import { Size, TooltipDirection } from "../../types/tooltip";
-import Tooltip from "./Tooltip";
 
 type Props = PropsWithChildren & {
   direction?: TooltipDirection;
@@ -13,7 +13,6 @@ type Props = PropsWithChildren & {
 
 const TooltipWrapper = ({ direction = "up", children, tooltipTxt, size = "md", className = "", gap = 6 }: Props) => {
   const { containerRef, handleHover, isShown, setIsShown, position } = useTooltip({ direction, gap });
-
   return (
     <>
       <div className={className} onMouseOver={handleHover} onMouseLeave={() => setIsShown(false)} ref={containerRef}>

@@ -1,30 +1,18 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import useHideConversation from "../../hooks/private-conversation/useHideConversation";
-import { DEFAULT_ROUTE } from "../../main";
-import { PrivateConversation } from "../../types/private-conversation";
-import { Friend, UserStatus } from "../../types/user";
-import UserAvatar from "../shared/UserAvatar";
-import ChannelSidebarItem from "./ChannelSidebarItem";
-import MessageItemLabel from "./MessageItemLabel";
+import ChannelSidebarItem from "@/components/ChannelSidebar/ChannelSidebarItem";
+import MessageItemLabel from "@/components/ChannelSidebar/MessageItemLabel";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { FriendFragment, PrivateConversationFragment } from "@/gql/graphql";
+import usePrivateConversationItem from "@/hooks/private-conversation/usePrivateConversationItem";
 
-interface Props {
-  conversation: PrivateConversation;
-  friends: Friend[];
+type Props = {
+  conversation: PrivateConversationFragment;
+  friends: FriendFragment[];
 }
 
 const PrivateConversationItem = ({ conversation, friends }: Props) => {
-  const { member, id } = conversation;
-  const friendStatus: UserStatus = friends.find((friend) => friend.id === member.id)?.status ?? "INVISIBLE";
-  const [hideConversation] = useHideConversation(id);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isActive = location.pathname === `/channels/@me/${id}`;
-  const handleClose = () => {
-    if (isActive) navigate(DEFAULT_ROUTE);
-    hideConversation();
-  };
+  const { handleClose, isActive, member, friendStatus } = usePrivateConversationItem(conversation, friends);
   return (
-    <ChannelSidebarItem url={`/${id}`} onClose={handleClose} isActive={isActive}>
+    <ChannelSidebarItem url={`/${conversation.id}`} onClose={handleClose} isActive={isActive}>
       <div className="flex items-center px-2">
         <UserAvatar avatarColor={member.avatarColor} status={friendStatus} className="mr-3 w-8 h-8 shrink-0" />
         <MessageItemLabel label={member.username} />

@@ -1,9 +1,8 @@
-import { MouseEventHandler, ReactNode } from "react";
-import TooltipWrapper from "../../shared/TooltipWrapper";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
+import { MouseEventHandler, PropsWithChildren } from "react";
 
-interface Props {
+type Props = PropsWithChildren & {
   label: string;
-  children: ReactNode;
   action: MouseEventHandler<HTMLDivElement>;
 }
 

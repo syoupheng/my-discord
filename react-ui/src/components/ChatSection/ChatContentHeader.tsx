@@ -1,5 +1,5 @@
-import { usePrivateChannelContext } from "../../providers/PrivateChannelProvider";
-import ChannelIcon from "../Icons/ChannelIcon";
+import ChannelIcon from "@/components/Icons/ChannelIcon";
+import { usePrivateChannelContext } from "@/providers/PrivateChannelProvider";
 
 const ChatContentHeader = () => {
   const channel = usePrivateChannelContext();

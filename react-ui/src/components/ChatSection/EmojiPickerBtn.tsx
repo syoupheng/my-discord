@@ -1,4 +1,4 @@
-import useRandomEmoji from "../../hooks/ui/useRandomEmoji";
+import useRandomEmoji from "@/hooks/ui/useRandomEmoji";
 
 const EmojiPickerBtn = () => {
   const { emojiPosition, generateRandomEmoji } = useRandomEmoji();

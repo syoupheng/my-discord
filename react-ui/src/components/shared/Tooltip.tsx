@@ -1,5 +1,5 @@
-import { Size, TooltipDirection, TPosition } from "../../types/tooltip";
-import Portal from "./Portal";
+import { Size, TooltipDirection, TPosition } from "@/types/tooltip";
+import { Portal } from "@headlessui/react";
 
 const sizeMaps: Record<Size, string> = {
   sm: "text-xs",
@@ -14,7 +14,7 @@ const directionMaps: Record<TooltipDirection, { transform: string; animation: st
   right: { transform: "translateY(-50%)", animation: "animate-tooltip-right" },
 };
 
-interface Props {
+type Props = {
   tooltipTxt: string;
   direction?: TooltipDirection;
   size?: Size;

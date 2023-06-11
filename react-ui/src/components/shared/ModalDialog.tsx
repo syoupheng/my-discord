@@ -1,8 +1,8 @@
+import ModalButton from "@/components/shared/buttons/ModalButton";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, ReactNode } from "react";
-import ModalButton from "./buttons/ModalButton";
 
-interface Props {
+type Props = {
   isOpen: boolean;
   setIsOpen: (state: boolean) => void;
   title: string;

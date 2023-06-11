@@ -1,4 +1,4 @@
-import { TooltipDirection, TPosition } from "../types/tooltip";
+import { TPosition, TooltipDirection } from "@/types/tooltip";
 
 export const getTooltipPositionFromDirection = (
   direction: TooltipDirection,

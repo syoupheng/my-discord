@@ -1,7 +1,7 @@
-import { UserStatus } from "../../types/user";
-import AvatarIconHole from "../Icons/AvatarIconHole";
-import AvatarIconNoHole from "../Icons/AvatarIconNoHole";
-import UserStatusIcon from "./UserStatusIcon";
+import AvatarIconHole from "@/components/Icons/AvatarIconHole";
+import AvatarIconNoHole from "@/components/Icons/AvatarIconNoHole";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import { UserStatus } from "@/gql/graphql";
 
 type Sizes = "sm" | "base";
 
@@ -24,7 +24,7 @@ const sizeMap = new Map<Sizes, { avatarSize: number; userStatusSize: number; pos
   ],
 ]);
 
-interface Props {
+type Props = {
   className?: string;
   status?: UserStatus | null;
   size?: Sizes;

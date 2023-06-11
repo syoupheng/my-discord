@@ -1,17 +1,14 @@
-import { gql } from "@apollo/client";
 import { useEffect } from "react";
-import { FriendRequest } from "../../types/user";
-import useAuthUser from "../auth/useAuthUser";
+import { graphql } from "@/gql";
+import useAuthUser from "@/hooks/auth/useAuthUser";
 
-const NEW_FRIEND_REQUEST_SUBSCRIPTION = gql`
+const NEW_FRIEND_REQUEST_SUBSCRIPTION = graphql(`
   subscription OnFriendRequestReceived($userId: Int!) {
     friendRequestReceived(userId: $userId) {
-      id
-      username
-      requestStatus
+      ...FriendRequest
     }
   }
-`;
+`);
 
 const useNewFriendRequestSub = () => {
   const { subscribeToMore, data } = useAuthUser();
@@ -19,7 +16,7 @@ const useNewFriendRequestSub = () => {
   useEffect(() => {
     let unsubscribe: () => void;
     if (data) {
-      unsubscribe = subscribeToMore<{ friendRequestReceived: FriendRequest }>({
+      unsubscribe = subscribeToMore({
         document: NEW_FRIEND_REQUEST_SUBSCRIPTION,
         variables: { userId: data.me.id },
         updateQuery: (prev, { subscriptionData }) => {

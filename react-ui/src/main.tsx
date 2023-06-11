@@ -1,24 +1,24 @@
 import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from "react-router-dom";
-import App from "./App";
-import "./index.css";
 import { ApolloProvider } from "@apollo/client";
-import FriendsTabProvider from "./providers/FriendsTabProvider";
-import { client } from "./apollo.config";
-import LoadingScreen from "./components/shared/LoadingScreen";
-import ChatScrollProvider from "./providers/ChatScrollProvider";
-import ErrorPage from "./pages/ErrorPage";
-import PublicRouteGuard from "./components/guards/PublicRouteGuard";
-import PrivateRouteGuard from "./components/guards/PrivateRouteGuard";
+import ErrorPage from "@/pages/ErrorPage";
+import App from "@/App";
+import PublicRouteGuard from "@/components/guards/PublicRouteGuard";
+import PrivateRouteGuard from "@/components/guards/PrivateRouteGuard";
+import FriendsTabProvider from "@/providers/FriendsTabProvider";
+import ChatScrollProvider from "@/providers/ChatScrollProvider";
+import LoadingScreen from "@/components/shared/LoadingScreen";
+import { client } from "@/apollo.config";
+import "@/index.css";
 
 // Route based code splitting
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const RegisterPage = lazy(() => import("./pages/RegisterPage"));
-const MainLayout = lazy(() => import("./components/layouts/MainLayout"));
-const MeSidebar = lazy(() => import("./components/layouts/MeSidebar"));
-const FriendsPage = lazy(() => import("./pages/FriendsPage"));
-const PrivateChannelPage = lazy(() => import("./pages/PrivateChannelPage"));
+const LoginPage = lazy(() => import("@/pages/LoginPage"));
+const RegisterPage = lazy(() => import("@/pages/RegisterPage"));
+const MainLayout = lazy(() => import("@/components/layouts/MainLayout"));
+const MeSidebar = lazy(() => import("@/components/layouts/MeSidebar"));
+const FriendsPage = lazy(() => import("@/pages/FriendsPage"));
+const PrivateChannelPage = lazy(() => import("@/pages/PrivateChannelPage"));
 
 export const DEFAULT_ROUTE = "/channels/@me";
 

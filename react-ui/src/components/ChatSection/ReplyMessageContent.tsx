@@ -1,10 +1,10 @@
-import useMessageContext from "../../hooks/chat-messages/useMessageContext";
-import { useMessageItemScrollContext } from "../../providers/MessageItemScrollProvider";
-import MessageContent from "./MessageContent";
+import MessageContent from "@/components/ChatSection/MessageContent";
+import useMessageContext from "@/hooks/chat-messages/useMessageContext";
+import { useMessageItemScrollContext } from "@/providers/MessageItemScrollProvider";
 
-interface Props {
+type Props = {
   content: string;
-}
+};
 
 const ReplyMessageContent = ({ content }: Props) => {
   const { id } = useMessageContext();

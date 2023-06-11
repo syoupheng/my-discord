@@ -1,7 +1,7 @@
+import { graphql } from "@/gql";
+import { PUBLIC_ROUTES } from "@/main";
 import { useApolloClient, useMutation } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
-import { PUBLIC_ROUTES } from "../../main";
-import { graphql } from "../../gql";
 
 const LOGOUT_USER = graphql(`
   mutation logoutUser {

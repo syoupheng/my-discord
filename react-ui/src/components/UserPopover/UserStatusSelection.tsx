@@ -1,11 +1,12 @@
 import { offset, shift, useFloating } from "@floating-ui/react-dom";
 import { useState } from "react";
 import { BiChevronRight } from "react-icons/bi";
-import useEditProfile from "../../hooks/user/useEditProfile";
-import UserStatusIcon from "../shared/UserStatusIcon";
-import { UserStatus } from "../../gql/graphql";
-import StatusSelectionItem from "./StatusSelectionItem";
-import { PopoverCloseFunction } from "../shared/MyPopover";
+import { UserStatus } from "@/gql/graphql";
+import { PopoverCloseFunction } from "@/components/shared/MyPopover";
+import useEditProfile from "@/hooks/user/useEditProfile";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import StatusSelectionItem from "@/components/UserPopover/StatusSelectionItem";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 
 type UserStatusMapValue = {
   label: string;
@@ -14,28 +15,28 @@ type UserStatusMapValue = {
 
 const userStatusMap = new Map<UserStatus, UserStatusMapValue>([
   [
-    UserStatus.Online,
+    "ONLINE",
     {
       label: "En ligne",
       description: "",
     },
   ],
   [
-    UserStatus.Inactive,
+    "INACTIVE",
     {
       label: "Inactif",
       description: "",
     },
   ],
   [
-    UserStatus.DoNotDisturb,
+    "DO_NOT_DISTURB",
     {
       label: "Ne pas déranger",
       description: "Tu ne recevras aucune notification sur le bureau.",
     },
   ],
   [
-    UserStatus.Invisible,
+    "INVISIBLE",
     {
       label: "Invisible",
       description: "Tu n'apparaîtras pas connecté, mais tu auras néanmoins accès à toutes les fonctionnalités de Discord.",
@@ -51,9 +52,21 @@ type Props = {
 const UserStatusSelection = ({ userStatus, closePopover }: Props) => {
   const [showSelect, setShowSelect] = useState(false);
   const [editProfile] = useEditProfile();
+  const { id, username, phoneNumber } = useAuthUserInfo();
 
   const selectUserStatus = (userStatus: UserStatus) => {
-    editProfile({ variables: { input: { status: userStatus } } });
+    editProfile({
+      variables: { input: { status: userStatus } },
+      optimisticResponse: {
+        editProfile: {
+          __typename: "AuthUser",
+          id,
+          username,
+          status: userStatus,
+          phoneNumber,
+        },
+      },
+    });
     setShowSelect(false);
   };
 

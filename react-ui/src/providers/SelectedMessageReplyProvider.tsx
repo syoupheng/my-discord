@@ -1,17 +1,13 @@
-import { createContext, ReactNode, RefObject, useRef, useState } from "react";
+import { createContext, PropsWithChildren, useState } from "react";
 
-interface TReplyMessageContext {
+type ReplyMessageContext = {
   replyMessageId: number | null;
   setReplyMessageId: (id: number | null) => void;
-}
+};
 
-export const SelectedMessageReplyContext = createContext<TReplyMessageContext | null>(null);
+export const SelectedMessageReplyContext = createContext<ReplyMessageContext | null>(null);
 
-interface Props {
-  children: ReactNode;
-}
-
-const SelectedMessageReplyProvider = ({ children }: Props) => {
+const SelectedMessageReplyProvider = ({ children }: PropsWithChildren) => {
   const [replyMessageId, setReplyMessageId] = useState<number | null>(null);
   return <SelectedMessageReplyContext.Provider value={{ replyMessageId, setReplyMessageId }}>{children}</SelectedMessageReplyContext.Provider>;
 };

@@ -1,10 +1,8 @@
-import { useApolloClient } from "@apollo/client";
+import { graphql } from "@/gql";
+import { MessageFragment } from "@/gql/graphql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
+import { GET_CHAT_MESSAGES } from "@/hooks/chat-messages/useChatMessages";
 import { useParams } from "react-router-dom";
-import { MESSAGE_INFO } from "../../fragments/messages";
-import { graphql, useFragment } from "../../gql";
-import { DeleteMessageMutation, Message, MessageInfoFragment } from "../../gql/graphql";
-import useAuthMutation from "../auth/useAuthMutation";
-import { GET_CHAT_MESSAGES } from "./useChatMessages";
 
 const DELETE_MESSAGE = graphql(`
   mutation DeleteMessage($messageId: Int!) {
@@ -26,7 +24,7 @@ const useDeleteMessage = (messageId: number, setModalOpen: (val: boolean) => voi
       // const cacheId = { query: GET_CHAT_MESSAGES, variables: { channelId: parseInt(channelId!) } };
       // const existing = client.readQuery(cacheId);
       // if (!existing) return;
-      // const existingMessages = useFragment(MESSAGE_INFO, existing.getMessages.messages);
+      // const existingMessages = existing.getMessages.messages;
       // client.writeQuery({
       //   ...cacheId,
       //   data: {
@@ -48,8 +46,8 @@ const useDeleteMessage = (messageId: number, setModalOpen: (val: boolean) => voi
       //   });
       cache.updateQuery({ query: GET_CHAT_MESSAGES, variables: { channelId: parseInt(channelId!) } }, (existing) => {
         if (!existing) return;
-        const existingMessages = useFragment(MESSAGE_INFO, existing.getMessages.messages);
-        const newMessages: MessageInfoFragment[] = [];
+        const existingMessages = existing.getMessages.messages;
+        const newMessages: MessageFragment[] = [];
         existingMessages.forEach((message) => {
           if (message.id !== messageId)
             newMessages.push(message.referencedMessage?.id === messageId ? { ...message, referencedMessage: null } : { ...message });

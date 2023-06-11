@@ -1,10 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-interface Props {
-  children: ReactNode;
-}
-
-const ChatNav = ({ children }: Props) => {
+const ChatNav = ({ children }: PropsWithChildren) => {
   return (
     <section className="basis-auto shrink-0 grow-0 relative flex items-center min-w-0 w-full h-12 px-2 cursor-default border-b border-tertiary">
       {children}
@@ -14,10 +10,10 @@ const ChatNav = ({ children }: Props) => {
 
 export default ChatNav;
 
-ChatNav.LeftSection = ({ children }: Props) => {
+ChatNav.LeftSection = ({ children }: PropsWithChildren) => {
   return <div className="relative flex-auto flex items-center min-w-0 overflow-hidden">{children}</div>;
 };
 
-ChatNav.RightSection = ({ children }: Props) => {
+ChatNav.RightSection = ({ children }: PropsWithChildren) => {
   return <div className="flex items-center basis-auto shrink-0 grow-0 min-w-0 text-h-secondary">{children}</div>;
 };

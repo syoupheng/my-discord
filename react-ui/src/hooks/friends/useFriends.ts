@@ -1,30 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
-import { Friend } from "../../types/user";
-import useLogoutOnError from "../auth/useLogoutOnError";
+import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client";
 
-export const GET_AUTH_USER_FRIENDS = gql`
+export const GET_AUTH_USER_FRIENDS = graphql(`
   query GetFriends {
     me {
       friends {
-        id
-        username
-        status
-        avatarColor
+        ...Friend
       }
     }
   }
-`;
-
-interface AuthFriendsResponse {
-  me: { friends: Friend[] };
-}
+`);
 
 const useFriends = () => {
-  const onError = useLogoutOnError();
-  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_FRIENDS, {
-    fetchPolicy: "cache-only",
-    onError,
-  });
+  const { data } = useQuery(GET_AUTH_USER_FRIENDS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.friends;
 };
 
 export default useFriends;

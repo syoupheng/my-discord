@@ -1,14 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import useAuthUser from "./useAuthUser";
-import { useFragment } from "../../gql";
-import { AUTH_USER_FRAGMENT } from "../../fragments/auth";
+import useAuthUser from "@/hooks/auth/useAuthUser";
 
 const useAuthUserCache = () => {
-  const navigate = useNavigate();
   const { data } = useAuthUser({ fetchPolicy: "cache-only" });
-  if (!data) navigate("/login");
-  const authUser = useFragment(AUTH_USER_FRAGMENT, data.me);
-  return authUser;
+  if (!data) throw new Error("This hook must be called in the authenticated part of the application !");
+  return data.me;
 };
 
 export default useAuthUserCache;

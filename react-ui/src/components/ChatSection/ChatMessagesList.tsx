@@ -1,24 +1,22 @@
+import MessageDivider from "@/components/ChatSection/MessageDivider";
+import MessageItem from "@/components/ChatSection/MessageItem";
+import NewMesaggesDivider from "@/components/ChatSection/NewMessagesDivider";
+import { MessageFragment, MessageNotificationFragment } from "@/gql/graphql";
+import useMessageReply from "@/hooks/chat-messages/useMessageReply";
+import { useMessageItemScrollContext } from "@/providers/MessageItemScrollProvider";
+import { formatToDayMonthYear, isMessageConsecutive } from "@/utils/dates";
 import { Fragment, RefObject } from "react";
-import { Message, MessageInfoFragment } from "../../gql/graphql";
-import useMessageReply from "../../hooks/chat-messages/useMessageReply";
-import { formatToDayMonthYear, isMessageConsecutive } from "../../utils/dates";
-import MessageDivider from "./MessageDivider";
-import MessageItem from "./MessageItem";
-import NewMesaggesDivider from "./NewMessagesDivider";
-import { useMessageItemScrollContext } from "../../providers/MessageItemScrollProvider";
 
-interface Props {
-  messages: readonly MessageInfoFragment[];
-  oldestUnreadMessage: Message | null;
+type Props = {
+  messages: MessageFragment[];
+  oldestUnreadMessage: MessageNotificationFragment | null;
   newMessagesRef: RefObject<HTMLDivElement>;
-  lastMessageRef: RefObject<HTMLDivElement>;
-  previousCursorRef: RefObject<string>;
-}
+};
 
-const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef, lastMessageRef, previousCursorRef }: Props) => {
-  const { replyMessageId } = useMessageReply()!;
-  const isOldestUnreadMessage = (msg: MessageInfoFragment) => !!oldestUnreadMessage && oldestUnreadMessage.id === msg.id;
-  const isNextDay = (prevMsg: MessageInfoFragment, nextMsg: MessageInfoFragment) => {
+const ChatMessagesList = ({ messages, oldestUnreadMessage, newMessagesRef }: Props) => {
+  const { replyMessageId } = useMessageReply();
+  const isOldestUnreadMessage = (msg: MessageFragment) => !!oldestUnreadMessage && oldestUnreadMessage.id === msg.id;
+  const isNextDay = (prevMsg: MessageFragment, nextMsg: MessageFragment) => {
     if (!nextMsg) return false;
     return formatToDayMonthYear(nextMsg.createdAt) !== formatToDayMonthYear(prevMsg.createdAt);
   };

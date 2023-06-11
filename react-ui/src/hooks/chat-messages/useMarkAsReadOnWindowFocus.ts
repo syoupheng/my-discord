@@ -1,15 +1,14 @@
+import useChatScrollContext from "@/hooks/chat-messages/useChatScrollContext";
+import useMarkMessagesAsRead from "@/hooks/chat-messages/useMarkMessagesAsRead";
+import useMessageNotifications from "@/hooks/chat-messages/useMessageNotifications";
+import useWindowFocus from "@/hooks/ui/useWindowFocus";
 import { useParams } from "react-router-dom";
-import useAuthUser from "../auth/useAuthUser";
-import useWindowFocus from "../ui/useWindowFocus";
-import useChatScrollContext from "./useChatScrollContext";
-import useMarkMessagesAsRead from "./useMarkMessagesAsRead";
 
 const useMarkAsReadOnWindowFocus = () => {
   const { channelId } = useParams();
   if (!channelId) return;
-  const { data } = useAuthUser();
-  const unreadMessagesIds =
-    data?.me.newMessagesNotifications.filter((message) => message.channelId === parseInt(channelId!)).map(({ id }) => id) ?? [];
+  const newMessagesNotifications = useMessageNotifications();
+  const unreadMessagesIds = newMessagesNotifications.filter((message) => message.channelId === parseInt(channelId!)).map(({ id }) => id) ?? [];
   const [markAsRead, { loading }] = useMarkMessagesAsRead(unreadMessagesIds);
   const chatScrollRef = useChatScrollContext();
 

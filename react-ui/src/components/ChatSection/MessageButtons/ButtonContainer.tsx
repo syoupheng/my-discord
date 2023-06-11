@@ -1,10 +1,10 @@
-import useIsMessageAuthor from "../../../hooks/chat-messages/useIsMessageAuthor";
-import DeleteMessageButton from "./DeleteMessageButton";
-import MessageRespondButton from "./MessageRespondButton";
+import DeleteMessageButton from "@/components/ChatSection/MessageButtons/DeleteMessageButton";
+import MessageRespondButton from "@/components/ChatSection/MessageButtons/MessageRespondButton";
+import useIsMessageAuthor from "@/hooks/chat-messages/useIsMessageAuthor";
 
-interface Props {
+type Props = {
   isConsecutive: boolean;
-}
+};
 
 const ButtonContainer = ({ isConsecutive }: Props) => {
   const isAuthor = useIsMessageAuthor();

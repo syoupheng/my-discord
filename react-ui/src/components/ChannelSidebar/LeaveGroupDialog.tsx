@@ -1,9 +1,9 @@
-import useLeaveGroup from "../../hooks/private-groups/useLeaveGroup";
-import { PrivateGroup } from "../../types/private-group";
-import ModalDialog from "../shared/ModalDialog";
+import ModalDialog from "@/components/shared/ModalDialog";
+import { PrivateGroupFragment } from "@/gql/graphql";
+import useLeaveGroup from "@/hooks/private-groups/useLeaveGroup";
 
-interface Props {
-  group: PrivateGroup;
+type Props = {
+  group: PrivateGroupFragment;
   modalOpen: boolean;
   onModalOpen: (val: boolean) => void;
 }

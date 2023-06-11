@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
-import NotificationCounter from "../shared/NotificationCounter";
-import TooltipWrapper from "../shared/TooltipWrapper";
 import clsx from "clsx";
+import NotificationCounter from "@/components/shared/NotificationCounter";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
 
 type HoverVariant = "blue" | "green";
 

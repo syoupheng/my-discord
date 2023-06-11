@@ -1,22 +1,22 @@
 import { ReactNode } from "react";
-import { UserStatus } from "../../types/user";
-import DoNotDisturbIcon from "../Icons/DoNotDisturbIcon";
-import InactiveIcon from "../Icons/InactiveIcon";
-import InvisibleIcon from "../Icons/InvisibleIcon";
-import OnlineIcon from "../Icons/OnlineIcon";
+import { UserStatus } from "@/gql/graphql";
+import OnlineIcon from "@/components/Icons/OnlineIcon";
+import InactiveIcon from "@/components/Icons/InactiveIcon";
+import DoNotDisturbIcon from "@/components/Icons/DoNotDisturbIcon";
+import InvisibleIcon from "@/components/Icons/InvisibleIcon";
 
 type HoverWhiteValues = "listitem" | "group" | null;
 
-interface Props {
+type Props = {
   status: UserStatus;
   size?: number;
   hoverWhite?: HoverWhiteValues;
-}
+};
 
-interface UserStatusMapValue {
+type UserStatusMapValue = {
   icon: ReactNode;
   color: string;
-}
+};
 
 const userStatusMap = new Map<UserStatus, UserStatusMapValue>([
   [

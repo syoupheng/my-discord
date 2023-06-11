@@ -1,6 +1,6 @@
+import Button from "@/components/shared/buttons/Button";
+import { DEFAULT_ROUTE } from "@/main";
 import { Link } from "react-router-dom";
-import Button from "../components/shared/buttons/Button";
-import { DEFAULT_ROUTE } from "../main";
 
 const ErrorPage = () => {
   return (

@@ -1,48 +1,37 @@
-import { gql } from "@apollo/client";
+import { AUTH_USER_CACHE_ID } from "@/apollo.config";
+import { graphql } from "@/gql";
+import { ShowConversationMutation } from "@/gql/graphql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
+import { Reference, gql } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-import { ConversationMember } from "../../types/private-conversation";
-import useAuthMutation from "../auth/useAuthMutation";
 
-const SHOW_CONVERSATION = gql`
+const SHOW_CONVERSATION = graphql(`
   mutation showConversation($friendId: Int!) {
     showConversation(friendId: $friendId) {
-      id
-      createdAt
-      member {
-        id
-        username
-      }
+      ...PrivateConversation
     }
   }
-`;
+`);
 
-interface MutationResponse {
-  showConversation: {
-    id: number;
-    createdAt: Date;
-    member: ConversationMember;
-  };
-}
-
-interface TParams {
+type Params = {
   friendId: number;
   redirect?: boolean;
 }
 
-const useShowConversation = ({ friendId, redirect = false }: TParams) => {
+const useShowConversation = ({ friendId, redirect = false }: Params) => {
   const navigate = useNavigate();
-  return useAuthMutation<MutationResponse>(SHOW_CONVERSATION, {
+  return useAuthMutation(SHOW_CONVERSATION, {
     variables: { friendId },
     onCompleted: ({ showConversation: conversation }) => {
       if (redirect) navigate(`/channels/@me/${conversation.id}`);
     },
-    update(cache, { data }) {
+    update(cache, { data }: { data?: ShowConversationMutation | null }) {
+      if (!data) return;
       cache.modify({
         id: AUTH_USER_CACHE_ID,
         fields: {
           privateConversations(existingConversationRefs = [], { readField }) {
-            const { showConversation: newData } = data as MutationResponse;
+            const { showConversation: newData } = data;
             const newConversationRef = cache.writeFragment({
               data: newData,
               fragment: gql`
@@ -57,7 +46,7 @@ const useShowConversation = ({ friendId, redirect = false }: TParams) => {
               `,
             });
 
-            if (existingConversationRefs.some((ref: any) => readField("id", ref) === newData)) return existingConversationRefs;
+            if (existingConversationRefs.some((ref: Reference) => readField("id", ref) === newData)) return existingConversationRefs;
 
             return [newConversationRef, ...existingConversationRefs];
           },

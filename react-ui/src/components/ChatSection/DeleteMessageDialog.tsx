@@ -1,8 +1,8 @@
-import useDeleteMessage from "../../hooks/chat-messages/useDeleteMessage";
-import useMessageContext from "../../hooks/chat-messages/useMessageContext";
-import ModalDialog from "../shared/ModalDialog";
+import ModalDialog from "@/components/shared/ModalDialog";
+import useDeleteMessage from "@/hooks/chat-messages/useDeleteMessage";
+import useMessageContext from "@/hooks/chat-messages/useMessageContext";
 
-interface Props {
+type Props = {
   isOpen: boolean;
   setIsOpen: (val: boolean) => void;
 }

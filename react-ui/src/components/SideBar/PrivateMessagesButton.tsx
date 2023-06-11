@@ -1,8 +1,8 @@
+import SidebarItem from "@/components/SideBar/SidebarItem";
+import useCountFriendRequests from "@/hooks/friend-requests/useCountFriendRequests";
+import { DEFAULT_ROUTE } from "@/main";
 import { FaDiscord } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import useCountFriendRequests from "../../hooks/friend-requests/useCountFriendRequests";
-import { DEFAULT_ROUTE } from "../../main";
-import SidebarItem from "./SidebarItem";
 
 const PrivateMessagesButton = () => {
   const navigate = useNavigate();

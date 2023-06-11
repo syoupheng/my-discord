@@ -1,23 +1,18 @@
-import useAuthUser from "../../hooks/auth/useAuthUser";
-import PrivateConversationItem from "./PrivateConversationItem";
-import PrivateGroupItem from "./PrivateGroupItem";
+import PrivateConversationItem from "@/components/ChannelSidebar/PrivateConversationItem";
+import PrivateGroupItem from "@/components/ChannelSidebar/PrivateGroupItem";
+import useMessageRoomList from "@/hooks/private-channel/useMessageRoomList";
+import { isPrivateConversation, isPrivateGroup } from "@/utils/channel";
 
 const MessageRoomList = () => {
-  const { data } = useAuthUser();
-  if (!data) return null;
-  const { privateConversations, privateGroups, friends } = data.me;
-  const items = [...privateConversations, ...privateGroups].sort(
-    (item1, item2) => new Date(item2.createdAt).getTime() - new Date(item1.createdAt).getTime()
-  );
-
+  const { messageRooms, friends } = useMessageRoomList();
   return (
     <>
-      {items.map((item) =>
-        item.__typename === "PrivateConversation" ? (
-          <PrivateConversationItem key={`conversation:${item.id}`} conversation={item} friends={friends} />
-        ) : (
-          <PrivateGroupItem key={`group:${item.id}`} group={item} />
-        )
+      {messageRooms.map((item) =>
+        isPrivateConversation(item) ? (
+          <PrivateConversationItem key={item.id} conversation={item} friends={friends} />
+        ) : isPrivateGroup(item) ? (
+          <PrivateGroupItem key={item.id} group={item} />
+        ) : null
       )}
     </>
   );

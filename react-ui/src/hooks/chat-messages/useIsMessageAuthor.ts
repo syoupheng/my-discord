@@ -1,11 +1,10 @@
-import useAuthUser from "../auth/useAuthUser";
-import useMessageContext from "./useMessageContext";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
+import useMessageContext from "@/hooks/chat-messages/useMessageContext";
 
 const useIsMessageAuthor = () => {
   const message = useMessageContext();
-  const { data } = useAuthUser();
-  if (!data) return false;
-  return message.author.id === data.me.id;
+  const { id } = useAuthUserInfo();
+  return message.author.id === id;
 };
 
 export default useIsMessageAuthor;

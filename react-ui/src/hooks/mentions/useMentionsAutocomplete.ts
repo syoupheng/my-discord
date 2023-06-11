@@ -1,10 +1,8 @@
-import { Transforms } from "slate";
-import { ReactEditor } from "slate-react";
-import useMentionAutocompleteState from "./useMentionsAutocompleteState";
-import { usePrivateChannelContext } from "../../providers/PrivateChannelProvider";
-import useChannelMembers from "../private-channel/useChannelMembers";
+import useMentionAutocompleteState from "@/hooks/mentions/useMentionsAutocompleteState";
+import { usePrivateChannelContext } from "@/providers/PrivateChannelProvider";
+import { Editor, Transforms } from "slate";
 
-const useMentionAutocomplete = (editor: ReactEditor) => {
+const useMentionAutocomplete = (editor: Editor) => {
   const channel = usePrivateChannelContext();
   const [mentionAutocompleteState, dispatchMentionAutocomplete] = useMentionAutocompleteState();
   const { arrowPosition, mentionSearch } = mentionAutocompleteState;
@@ -22,7 +20,7 @@ const useMentionAutocomplete = (editor: ReactEditor) => {
     });
 
     const { username, id } = mentions[arrowPosition];
-    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${id}`, children: [{ text: "" }] } as any);
+    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${id}`, children: [{ text: "" }] });
     Transforms.move(editor, { distance: 1, unit: "offset" });
     Transforms.insertText(editor, " ");
   };
@@ -38,6 +36,7 @@ const useMentionAutocomplete = (editor: ReactEditor) => {
         dispatchMentionAutocomplete({ type: "KEYBOARD_NAVIGATION", arrowPosition: arrowPosition === mentions.length - 1 ? 0 : arrowPosition + 1 });
         break;
       case "Enter":
+        if (e.shiftKey) break;
         e.preventDefault();
         insertMention();
     }

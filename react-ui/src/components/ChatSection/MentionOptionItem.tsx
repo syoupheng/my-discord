@@ -1,12 +1,11 @@
+import UserAvatar from "@/components/shared/UserAvatar";
+import { AuthUserFragment, ChannelMemberFragment } from "@/gql/graphql";
 import { Transforms } from "slate";
 import { ReactEditor, useSlate } from "slate-react";
-import UserAvatar from "../shared/UserAvatar";
-import { AuthUser } from "../../gql/graphql";
-import { ConversationMember } from "../../types/private-conversation";
 
-interface Props {
-  mention: ConversationMember;
-  authUser: AuthUser;
+type Props = {
+  mention: ChannelMemberFragment;
+  authUser: AuthUserFragment;
   mentionSearch: string;
   active: boolean;
 }
@@ -24,7 +23,7 @@ const MentionOptionItem = ({ mention, authUser, mentionSearch, active }: Props) 
       },
     });
 
-    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${id}`, children: [{ text: "" }] } as any);
+    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${id}`, children: [{ text: "" }] });
     Transforms.move(editor, { distance: 1, unit: "offset" });
     Transforms.insertText(editor, " ");
     ReactEditor.focus(editor);

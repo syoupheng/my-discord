@@ -1,11 +1,20 @@
-import useAuthUserCache from "../auth/useAuthUserCache";
-import { useFragment } from "../../gql";
-import { FRIEND_REQUEST_FRAGMENT } from "../../fragments/auth";
+import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client";
+
+export const GET_AUTH_USER_FRIEND_REQUESTS = graphql(`
+  query GetAuthUserFriendRequest {
+    me {
+      friendRequests {
+        ...FriendRequest
+      }
+    }
+  }
+`);
 
 const useFriendRequests = () => {
-  const { friendRequests: friendRequestsFragment } = useAuthUserCache();
-  const friendRequests = useFragment(FRIEND_REQUEST_FRAGMENT, friendRequestsFragment);
-  return friendRequests;
+  const { data } = useQuery(GET_AUTH_USER_FRIEND_REQUESTS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.friendRequests;
 };
 
 export default useFriendRequests;

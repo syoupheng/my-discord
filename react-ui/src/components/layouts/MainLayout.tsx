@@ -1,8 +1,8 @@
+import LogoutButton from "@/components/SideBar/LogoutButton";
+import PrivateMessagesButton from "@/components/SideBar/PrivateMessagesButton";
+import Sidebar from "@/components/SideBar/Sidebar";
+import UnreadMessageNotifications from "@/components/SideBar/UnreadMessagesNotifications";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../SideBar/Sidebar";
-import LogoutButton from "../SideBar/LogoutButton";
-import PrivateMessagesButton from "../SideBar/PrivateMessagesButton";
-import UnreadMessageNotifications from "../SideBar/UnreadMessagesNotifications";
 
 const MainLayout = () => {
   return (

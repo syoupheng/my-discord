@@ -1,12 +1,12 @@
+import useSafeContext from "@/hooks/shared/useSafeContext";
+import { ChannelModel } from "@/models/channel/channel-model.interface";
 import { PropsWithChildren, createContext } from "react";
-import useSafeContext from "../hooks/shared/useSafeContext";
-import { ChannelModel } from "../models/channel-model.interface";
 
 const privateChannelContext = createContext<ChannelModel | null>(null);
 
-interface Props extends PropsWithChildren {
+type Props = PropsWithChildren & {
   channel: ChannelModel;
-}
+};
 
 const PrivateChannelProvider = ({ children, channel }: Props) => {
   return <privateChannelContext.Provider value={channel}>{children}</privateChannelContext.Provider>;

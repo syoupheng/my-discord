@@ -1,23 +1,23 @@
 import { RefObject, useState } from "react";
-import { Message } from "../../gql/graphql";
-import useMarkMessagesAsRead from "../../hooks/chat-messages/useMarkMessagesAsRead";
-import { formatOldestNewMessageDate, getMillisecondsDiff } from "../../utils/dates";
-import MarkAsReadIcon from "../Icons/MarkAsReadIcon";
+import { MessageNotificationFragment } from "@/gql/graphql";
+import useMarkMessagesAsRead from "@/hooks/chat-messages/useMarkMessagesAsRead";
+import { formatOldestNewMessageDate } from "@/utils/dates";
+import MarkAsReadIcon from "@/components/Icons/MarkAsReadIcon";
 
-interface Props {
+type Props = {
   newMessagesRef: RefObject<HTMLDivElement>;
-  unreadMessages: Message[];
-}
+  unreadMessages: MessageNotificationFragment[];
+  oldestUnreadMessage: MessageNotificationFragment | null;
+};
 
-const NewMessagesBar = ({ newMessagesRef, unreadMessages }: Props) => {
+const NewMessagesBar = ({ newMessagesRef, unreadMessages, oldestUnreadMessage }: Props) => {
   const numUnreadMessages = unreadMessages.length;
   const [markAsRead, { loading }] = useMarkMessagesAsRead(unreadMessages.map(({ id }) => id));
   const scrollToNewMessages = () => {
     if (newMessagesRef.current) newMessagesRef.current.scrollIntoView({ behavior: "smooth" });
   };
   const [clicked, setClicked] = useState(false);
-  if (numUnreadMessages === 0) return null;
-  const oldestUnreadMessage = unreadMessages.reduce((prev, current) => (getMillisecondsDiff(prev.createdAt, current.createdAt) > 0 ? current : prev));
+  if (numUnreadMessages === 0 || !oldestUnreadMessage) return null;
   return (
     <div
       onClick={() => setClicked(true)}

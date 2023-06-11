@@ -1,7 +1,7 @@
-import { graphql } from "../gql";
+import { graphql } from "@/gql";
 
 export const MESSAGE_INFO = graphql(`
-  fragment MessageInfo on Message {
+  fragment Message on Message {
     id
     type
     createdAt
@@ -9,20 +9,20 @@ export const MESSAGE_INFO = graphql(`
     content
     channelId
     author {
-      ...ChannelMemberFields
+      ...ChannelMember
     }
     referencedMessage {
       id
       content
       author {
-        ...ChannelMemberFields
+        ...ChannelMember
       }
       mentions {
-        ...ChannelMemberFields
+        ...ChannelMember
       }
     }
     mentions {
-      ...ChannelMemberFields
+      ...ChannelMember
     }
   }
 `);

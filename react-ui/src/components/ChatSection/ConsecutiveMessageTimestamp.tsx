@@ -1,8 +1,8 @@
-import { formatTimestamp } from "../../utils/dates";
+import { formatTimestamp } from "@/utils/dates";
 
-interface Props {
+type Props = {
   timestamp: string;
-}
+};
 
 const ConsecutiveMessageTimestamp = ({ timestamp }: Props) => {
   return (

@@ -1,18 +1,14 @@
-import { ReactNode } from "react";
-import useAuthUser from "../../hooks/auth/useAuthUser";
-import { ConversationMember } from "../../types/private-conversation";
-import { UserStatus } from "../../types/user";
-import UserAvatar from "../shared/UserAvatar";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { ChannelMemberFragment, UserStatus } from "@/gql/graphql";
+import useAuthUserCache from "@/hooks/auth/useAuthUserCache";
 
-interface Props {
-  member: ConversationMember;
+type Props = {
+  member: ChannelMemberFragment;
 }
 
 const GroupMemberItem = ({ member }: Props) => {
-  const { data } = useAuthUser();
-  if (!data) return null;
   let userStatus: UserStatus | null = null;
-  const { id: authUserId, status: authUserStatus, friends } = data.me;
+  const { id: authUserId, status: authUserStatus, friends } = useAuthUserCache();
   const friend = friends.find(({ id }) => member.id === id);
   if (friend) {
     userStatus = friend.status !== "INVISIBLE" ? friend.status : null;

@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
+import { MentionElement as TMentionElement} from "@/types/slate";
+import { PropsWithChildren } from "react";
 
-interface Props {
+type Props = PropsWithChildren & {
   attributes: any;
-  children: ReactNode;
-  element: any;
-}
+  element: TMentionElement;
+};
 
 const MentionElement = ({ attributes, children, element }: Props) => {
   return (

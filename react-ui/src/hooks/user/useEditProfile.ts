@@ -1,17 +1,16 @@
-import { gql } from "@apollo/client";
-import useAuthMutation from "../auth/useAuthMutation";
+import { graphql } from "@/gql";
+import useAuthMutation from "@/hooks/auth/useAuthMutation";
 
-const EDIT_PROFILE = gql`
+const EDIT_PROFILE = graphql(`
   mutation editProfile($input: EditProfileInput!) {
     editProfile(editProfileInput: $input) {
       id
       username
       status
       phoneNumber
-      email
     }
   }
-`;
+`);
 
 const useEditProfile = () => {
   return useAuthMutation(EDIT_PROFILE);

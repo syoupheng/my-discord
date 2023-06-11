@@ -1,5 +1,5 @@
-import UserAvatar from "../shared/UserAvatar";
-import { UserStatus } from "../../gql/graphql";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { UserStatus } from "@/gql/graphql";
 
 type Props = {
   avatarColor: string;

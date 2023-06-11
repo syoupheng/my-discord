@@ -1,13 +1,13 @@
-import { createContext, ReactNode } from "react";
-import { Message, ReferencedMessage } from "../gql/graphql";
+import { MessageFragment } from "@/gql/graphql";
+import { ReferencedMessageFragment } from "@/types/channel";
+import { createContext, PropsWithChildren } from "react";
 
-type MessageContextValue = Message | ReferencedMessage;
+type MessageContextValue = MessageFragment | NonNullable<ReferencedMessageFragment>;
 export const MessageItemContext = createContext<MessageContextValue | null>(null);
 
-interface Props {
-  children: ReactNode;
+type Props = PropsWithChildren & {
   message: MessageContextValue;
-}
+};
 
 const MessageItemProvider = ({ children, message }: Props) => {
   return <MessageItemContext.Provider value={message}>{children}</MessageItemContext.Provider>;

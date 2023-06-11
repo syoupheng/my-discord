@@ -1,4 +1,4 @@
-import Button, { ButtonProps } from "./Button";
+import Button, { ButtonProps } from "@/components/shared/buttons/Button";
 
 const ModalButton = ({ children, ...props }: ButtonProps) => {
   return (

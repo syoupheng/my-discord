@@ -1,5 +1,5 @@
-import { UserStatus } from "../../types/user";
-import UserStatusIcon from "../shared/UserStatusIcon";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import { UserStatus } from "@/gql/graphql";
 
 type Props = {
   onSelect: () => void;

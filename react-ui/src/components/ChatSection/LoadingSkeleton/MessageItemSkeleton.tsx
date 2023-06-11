@@ -1,7 +1,8 @@
+import MessageLineSkeletonContainer from "@/components/ChatSection/LoadingSkeleton/MessageLineSkeletonContainer";
+import MessageSkeletonHeader from "@/components/ChatSection/LoadingSkeleton/MessageSkeletonHeader";
+import MessageSkeletonLine from "@/components/ChatSection/LoadingSkeleton/MessageSkeletonLine";
 import { useRef } from "react";
-import MessageLineSkeletonContainer from "./MessageLineSkeletonContainer";
-import MessageSkeletonHeader from "./MessageSkeletonHeader";
-import MessageSkeletonLine from "./MessageSkeletonLine";
+
 
 const MessageItemSkeleton = () => {
   const numLines = useRef(Math.floor(Math.random() * 3) + 1);

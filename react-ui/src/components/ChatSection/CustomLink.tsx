@@ -1,4 +1,4 @@
-interface LinkProps {
+type LinkProps = {
   href: string;
 }
 

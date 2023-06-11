@@ -1,5 +1,5 @@
+import MessageItemSkeleton from "@/components/ChatSection/LoadingSkeleton/MessageItemSkeleton";
 import { forwardRef } from "react";
-import MessageItemSkeleton from "./MessageItemSkeleton";
 
 const LoadingMessagesSkeleton = forwardRef<HTMLDivElement>((_, ref) => {
   return (
