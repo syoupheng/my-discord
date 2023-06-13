@@ -1,3 +1,4 @@
+import Spinner from "@/components/shared/Spinner";
 import TooltipWrapper from "@/components/shared/TooltipWrapper";
 import { ReactNode } from "react";
 
@@ -14,9 +15,10 @@ type Props = {
   description?: string;
   hoverColor?: THoverColor;
   action?: any;
+  isLoading?: boolean
 };
 
-const FriendActionBtn = ({ icon, description = "", hoverColor = "normal", action }: Props) => {
+const FriendActionBtn = ({ icon, description = "", hoverColor = "normal", action, isLoading = false }: Props) => {
   return (
     <button
       onClick={(e) => {
@@ -30,7 +32,11 @@ const FriendActionBtn = ({ icon, description = "", hoverColor = "normal", action
         size="sm"
         className={`h-9 w-9 rounded-full text-h-secondary bg-secondary flex items-center justify-center relative mp-btn group-hover:bg-tertiary ${hoverColorMap[hoverColor]}`}
       >
-        {icon}
+        {isLoading ? (
+          <div className="opacity-50">
+            <Spinner white size="sm" />
+          </div>
+        ) : icon}
       </TooltipWrapper>
     </button>
   );

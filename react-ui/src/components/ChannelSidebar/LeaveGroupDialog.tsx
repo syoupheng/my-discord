@@ -9,7 +9,7 @@ type Props = {
 }
 
 const LeaveGroupDialog = ({ group, modalOpen, onModalOpen }: Props) => {
-  const [leaveGroup] = useLeaveGroup();
+  const [leaveGroup, { loading }] = useLeaveGroup();
 
   return (
     <ModalDialog
@@ -24,6 +24,7 @@ const LeaveGroupDialog = ({ group, modalOpen, onModalOpen }: Props) => {
       }
       confirmBtnText="Quitter le groupe"
       onConfirm={() => leaveGroup({ variables: { groupId: group.id } })}
+      isLoading={loading}
     />
   );
 };

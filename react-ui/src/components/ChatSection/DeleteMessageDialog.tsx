@@ -9,7 +9,7 @@ type Props = {
 
 const DeleteMessageDialog = ({ isOpen, setIsOpen }: Props) => {
   const message = useMessageContext();
-  const [deleteMessage] = useDeleteMessage(message.id, setIsOpen);
+  const [deleteMessage, { loading }] = useDeleteMessage(message.id, setIsOpen);
 
   return (
     <ModalDialog
@@ -19,6 +19,7 @@ const DeleteMessageDialog = ({ isOpen, setIsOpen }: Props) => {
       content={"Tu es sûr(e) de vouloir supprimer ce message ?"}
       confirmBtnText="Supprimer"
       onConfirm={deleteMessage}
+      isLoading={loading}
     />
   );
 };

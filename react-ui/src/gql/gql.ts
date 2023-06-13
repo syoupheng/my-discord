@@ -43,7 +43,7 @@ const documents = {
     "\n  query GetAuthUserFriendRequest {\n    me {\n      friendRequests {\n        ...FriendRequest\n      }\n    }\n  }\n": types.GetAuthUserFriendRequestDocument,
     "\n  mutation ignoreFriendRequest($friendId: Int!) {\n    ignoreFriendRequest(friendId: $friendId) {\n      success\n    }\n  }\n": types.IgnoreFriendRequestDocument,
     "\n  subscription OnFriendRequestReceived($userId: Int!) {\n    friendRequestReceived(userId: $userId) {\n      ...FriendRequest\n    }\n  }\n": types.OnFriendRequestReceivedDocument,
-    "\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      id\n      username\n      status\n    }\n  }\n": types.AddNewFriendDocument,
+    "\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      ...Friend\n    }\n  }\n": types.AddNewFriendDocument,
     "\n  mutation deleteFriend($friendId: Int!) {\n    deleteFriend(friendId: $friendId) {\n      success\n    }\n  }\n": types.DeleteFriendDocument,
     "\n  subscription OnFriendProfileChanged($userId: Int!) {\n    friendProfileChanged(userId: $userId) {\n      id\n      username\n      status\n    }\n  }\n": types.OnFriendProfileChangedDocument,
     "\n  subscription OnFriendRequestConfirmed($userId: Int!) {\n    friendRequestConfirmed(userId: $userId) {\n      newFriend {\n        ...Friend\n      }\n      newConversation {\n        ...PrivateConversation\n      }\n    }\n  }\n": types.OnFriendRequestConfirmedDocument,
@@ -198,7 +198,7 @@ export function graphql(source: "\n  subscription OnFriendRequestReceived($userI
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      id\n      username\n      status\n    }\n  }\n"): (typeof documents)["\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      id\n      username\n      status\n    }\n  }\n"];
+export function graphql(source: "\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      ...Friend\n    }\n  }\n"): (typeof documents)["\n  mutation addNewFriend($friendId: Int!) {\n    addFriend(friendId: $friendId) {\n      ...Friend\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

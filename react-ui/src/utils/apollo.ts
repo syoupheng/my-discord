@@ -9,6 +9,8 @@ import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
 //   return -1;
 // };
 
+export const ERROR_MESSAGE = "Oups ! On dirait qu'il y a eu soucis...Réessaie un peu plus tard !";
+
 export const messagesMerger = (
   exisiting: { cursor: string; messages: Record<number, Reference> },
   incoming: { cursor: string; messages: Reference[] },

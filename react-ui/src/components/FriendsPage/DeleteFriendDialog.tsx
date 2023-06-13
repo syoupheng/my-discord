@@ -9,10 +9,10 @@ type Props = {
 }
 
 const DeleteFriendDialog = ({ friend, isOpen, setIsOpen }: Props) => {
-  const [deleteFriend] = useDeleteFriend(friend.id);
+  const [deleteFriend, { loading }] = useDeleteFriend(friend.id);
 
   const handleDelete = () => {
-    setIsOpen(false);
+    // setIsOpen(false);
     deleteFriend();
   };
 
@@ -28,6 +28,7 @@ const DeleteFriendDialog = ({ friend, isOpen, setIsOpen }: Props) => {
       }
       onConfirm={handleDelete}
       confirmBtnText="Retirer l'ami"
+      isLoading={loading}
     />
   );
 };

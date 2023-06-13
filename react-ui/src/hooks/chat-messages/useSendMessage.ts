@@ -2,6 +2,8 @@ import { graphql } from "@/gql";
 import useAuthMutation from "@/hooks/auth/useAuthMutation";
 import { GET_CHAT_MESSAGES } from "@/hooks/chat-messages/useChatMessages";
 import useChatScrollContext from "@/hooks/chat-messages/useChatScrollContext";
+import { ERROR_MESSAGE } from "@/utils/apollo";
+import { toast } from "react-hot-toast";
 
 const SEND_MESSAGE = graphql(`
   mutation sendMessage($input: SendMessageInput!) {
@@ -14,6 +16,7 @@ const SEND_MESSAGE = graphql(`
 const useSendMessage = (channelId: number) => {
   const chatScrollRef = useChatScrollContext();
   return useAuthMutation(SEND_MESSAGE, {
+    onError: () => toast.error(ERROR_MESSAGE),
     update(cache, { data }) {
       cache.updateQuery({ query: GET_CHAT_MESSAGES, variables: { channelId } }, (existing) => {
         const existingMessages = existing ? existing?.getMessages.messages : [];

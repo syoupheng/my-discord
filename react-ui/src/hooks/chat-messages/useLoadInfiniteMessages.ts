@@ -3,9 +3,9 @@ import useChatMessages, { MESSAGES_LIMIT } from "@/hooks/chat-messages/useChatMe
 import { MutableRefObject } from "react";
 
 const useLoadInfiniteMessages = (channelId: string, previousCursorRef: MutableRefObject<null>) => {
-  const { data, loading, fetchMore } = useChatMessages(parseInt(channelId));
+  const { data, loading, fetchMore, error } = useChatMessages(parseInt(channelId));
   const { scrollContainerRef, infiniteScrollDivRef } = useChatInfiniteScroll(() => {
-    if (loading || !data?.getMessages.cursor) return;
+    if (loading || !data?.getMessages.cursor || error) return;
     fetchMore({
       variables: { cursor: data?.getMessages.cursor, limit: MESSAGES_LIMIT },
       updateQuery: (previousResults, { fetchMoreResult }) => {
@@ -17,10 +17,10 @@ const useLoadInfiniteMessages = (channelId: string, previousCursorRef: MutableRe
             messages: [...newMessages, ...previousResults.getMessages.messages],
           },
         };
-      },
+      }
     });
   });
-  return { messagesData: data, loadingMessages: loading, scrollContainerRef, infiniteScrollDivRef };
+  return { messagesData: data, loadingMessages: loading, scrollContainerRef, infiniteScrollDivRef, loadMessagesError: error };
 };
 
 export default useLoadInfiniteMessages;

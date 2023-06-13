@@ -127,7 +127,7 @@ module.exports = {
         },
         "my-pulse": {
           "0%, 100%": { opacity: 0.2 },
-          "50%": { opacity: 0.45 },
+          "50%": { opacity: 0.5 },
         },
         clicked: {
           "0%, 100%": { "padding-top": "0" },
@@ -144,7 +144,7 @@ module.exports = {
         "spin-45": "spin-45 0.1s linear",
         "fade-in": "fade-in 0.1s ease-out",
         "slide-in": "slide-in 0.5s ease-in-out",
-        "my-pulse": "my-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "my-pulse": "my-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         clicked: "clicked 0.1s ease-in-out",
       },
       backgroundImage: {

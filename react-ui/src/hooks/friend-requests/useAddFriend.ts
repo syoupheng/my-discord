@@ -4,6 +4,7 @@ import { graphql } from "@/gql";
 import { SendFriendRequestMutation } from "@/gql/graphql";
 import useAuthMutation from "@/hooks/auth/useAuthMutation";
 import { Reference } from "@apollo/client";
+import { useRef } from "react";
 
 const ADD_FRIEND = graphql(`
   mutation sendFriendRequest($input: FriendTag!) {
@@ -16,7 +17,13 @@ const ADD_FRIEND = graphql(`
 `);
 
 const useAddFriend = () => {
-  return useAuthMutation(ADD_FRIEND, {
+  const abortController = useRef(new AbortController());
+  const result = useAuthMutation(ADD_FRIEND, {
+    context: {
+      fetchOptions: {
+        signal: abortController.current.signal
+      }
+    },
     update(cache, { data }: { data?: SendFriendRequestMutation | null }) {
       if (!data) return;
       cache.modify({
@@ -37,6 +44,8 @@ const useAddFriend = () => {
       });
     },
   });
+
+  return { result, abortController };
 };
 
 export default useAddFriend;

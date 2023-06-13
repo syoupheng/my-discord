@@ -1,5 +1,6 @@
 import useAddFriendForm from "@/hooks/friend-requests/useAddFriendForm";
 import Button from "../shared/buttons/Button";
+import LoadingDotsIcon from "@/components/Icons/LoadingDotsIcon";
 
 const emptyImage = {
   imageUrl: "/no_friends.svg",
@@ -9,7 +10,7 @@ const emptyImage = {
 };
 
 const AddFriendSection = () => {
-  const { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused } = useAddFriendForm();
+  const { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused, loading } = useAddFriendForm();
   const { imageUrl, text, height, width } = emptyImage;
 
   let borderCorlor = "border-input-border";
@@ -46,8 +47,12 @@ const AddFriendSection = () => {
                 onBlur={() => setIsFocused(false)}
               />
             </div>
-            <Button disabled={friendTag === ""} className="text-btw-sm-xs font-medium">
-              Envoyer une demande d'ami
+            <Button disabled={friendTag === "" || loading} className="text-btw-sm-xs font-medium" style={{ minWidth: "204px", minHeight: "34px" }}>
+              {loading ? (
+                <div className="pointer-events-none animate-pulse">
+                  <LoadingDotsIcon />
+                </div>
+              ) : "Envoyer une demande d'ami"}
             </Button>
           </div>
           {success ? (

@@ -39,6 +39,7 @@ export class FriendRequestsService {
           recipientId,
           id: senderId,
           username: senderName,
+          avatarColor: sender.avatarColor,
           requestStatus: FriendRequestStatus.RECEIVED,
         },
       });

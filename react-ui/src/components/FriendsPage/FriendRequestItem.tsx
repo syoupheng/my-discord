@@ -13,9 +13,9 @@ type Props = {
 };
 
 const FriendRequestItem = ({ friendRequest }: Props) => {
-  const [ignoreRequest] = useIgnoreFriendRequest(friendRequest.id);
-  const [deleteRequest] = useDeleteFriendRequest(friendRequest.id);
-  const [confirmRequest] = useConfirmFriend();
+  const [ignoreRequest, { loading: ignoring }] = useIgnoreFriendRequest(friendRequest.id);
+  const [deleteRequest, { loading: deleting }] = useDeleteFriendRequest(friendRequest.id);
+  const [confirmRequest, { loading: confirming }] = useConfirmFriend();
 
   return (
     <FriendItemContainer>
@@ -28,8 +28,15 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
               icon={<ValidateIcon size={20} />}
               description="Accepter"
               hoverColor="green"
+              isLoading={confirming}
             />
-            <FriendActionBtn action={ignoreRequest} icon={<CancelIcon />} description="Ignorer" hoverColor="red" />
+            <FriendActionBtn
+              action={ignoreRequest}
+              icon={<CancelIcon />}
+              description="Ignorer"
+              hoverColor="red"
+              isLoading={ignoring}
+            />
           </>
         ) : (
           <FriendActionBtn
@@ -37,6 +44,7 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
             icon={<CancelIcon />}
             description="Annuler"
             hoverColor="red"
+            isLoading={deleting}
           />
         )}
       </div>

@@ -2,6 +2,9 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { z } from "zod";
 import { ApolloError } from "@apollo/client";
 import useAddFriend from "@/hooks/friend-requests/useAddFriend";
+import useRequestTimeout from "@/hooks/shared/useRequestTimeout";
+import { toast } from "react-hot-toast";
+import { ERROR_MESSAGE } from "@/utils/apollo";
 
 const useAddFriendForm = () => {
   const [friendTag, setFriendTag] = useState("");
@@ -9,7 +12,12 @@ const useAddFriendForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const [sendFriendRequest, { reset }] = useAddFriend();
+  const { result: [sendFriendRequest, { reset, loading }], abortController } = useAddFriend();
+
+  useRequestTimeout({ isLoading: loading, onTimeout: () => {
+    abortController.current.abort();
+    toast.error(ERROR_MESSAGE);
+  }, timeout: 2000});
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -51,7 +59,7 @@ const useAddFriendForm = () => {
       if (err instanceof ApolloError) setError(err.message);
     }
   };
-  return { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused };
+  return { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused, loading };
 };
 
 export default useAddFriendForm;

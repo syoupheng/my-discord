@@ -1,3 +1,4 @@
+import Spinner from "@/components/shared/Spinner";
 import ModalButton from "@/components/shared/buttons/ModalButton";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, ReactNode } from "react";
@@ -9,9 +10,10 @@ type Props = {
   content: ReactNode;
   onConfirm: any;
   confirmBtnText: string;
+  isLoading?: boolean
 }
 
-const ModalDialog = ({ isOpen, setIsOpen, title, content, onConfirm, confirmBtnText }: Props) => {
+const ModalDialog = ({ isOpen, setIsOpen, title, content, onConfirm, confirmBtnText, isLoading = false }: Props) => {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog onClose={() => setIsOpen(false)} className="relative z-50">
@@ -46,8 +48,8 @@ const ModalDialog = ({ isOpen, setIsOpen, title, content, onConfirm, confirmBtnT
                 <ModalButton variant="transparent" onClick={() => setIsOpen(false)}>
                   Annuler
                 </ModalButton>
-                <ModalButton variant="red" onClick={onConfirm}>
-                  {confirmBtnText}
+                <ModalButton disabled={isLoading} variant="red" onClick={onConfirm}>
+                  {isLoading ? <Spinner white size="sm" /> : confirmBtnText}
                 </ModalButton>
               </div>
             </Dialog.Panel>

@@ -8,20 +8,27 @@ import useInfiniteScrollPosition from "@/hooks/chat-messages/useInfiniteScrollPo
 import useLoadInfiniteMessages from "@/hooks/chat-messages/useLoadInfiniteMessages";
 import useMarkAsReadOnWindowFocus from "@/hooks/chat-messages/useMarkAsReadOnWindowFocus";
 import useScrollChatBottom from "@/hooks/chat-messages/useScrollChatBottom";
+import useRequestTimeout from "@/hooks/shared/useRequestTimeout";
 import useSafeParams from "@/hooks/shared/useSafeParams";
+import ErrorPage from "@/pages/ErrorPage";
 import SelectedMessageReplyProvider from "@/providers/SelectedMessageReplyProvider";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 const ChatContent = () => {
   const { channelId } = useSafeParams(["channelId"]);
   const previousCursorRef = useRef(null);
-  const { messagesData, loadingMessages, infiniteScrollDivRef, scrollContainerRef } = useLoadInfiniteMessages(channelId, previousCursorRef);
+  const { messagesData, loadingMessages, infiniteScrollDivRef, scrollContainerRef, loadMessagesError } = useLoadInfiniteMessages(channelId, previousCursorRef);
   useInfiniteScrollPosition(messagesData?.getMessages.messages, previousCursorRef, messagesData?.getMessages.cursor);
   const { unreadMessages, oldestUnreadMessage } = useChatUnreadMessages(channelId);
   const bottomMessageListRef = useScrollChatBottom(messagesData, unreadMessages);
   const { messages } = messagesData?.getMessages ?? { messages: [] };
   useMarkAsReadOnWindowFocus();
   const newMessagesRef = useRef<HTMLDivElement>(null);
+  const [requestTimedout, setRequestTimedout] = useState(false);
+  useRequestTimeout({ isLoading: loadingMessages, onTimeout: () => {
+    setRequestTimedout(true);
+  }});
+  if (loadMessagesError || requestTimedout) return <ErrorPage />;
   return (
     <SelectedMessageReplyProvider>
       <main className="relative flex flex-col min-w-0 min-h-0 flex-auto">

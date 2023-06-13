@@ -9,9 +9,7 @@ import { FRIEND_FRAGMENT } from "@/fragments/auth";
 const CONFIRM_FRIEND = graphql(`
   mutation addNewFriend($friendId: Int!) {
     addFriend(friendId: $friendId) {
-      id
-      username
-      status
+      ...Friend
     }
   }
 `);
