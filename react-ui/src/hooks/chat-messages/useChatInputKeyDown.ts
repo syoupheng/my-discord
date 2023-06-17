@@ -48,7 +48,7 @@ const useChatInputKeyDown = ({ channelId, editor, showMentionsAutocomplete, ment
                   editedAt: new Date().toISOString(),
                   referencedMessage: null,
                   ...input,
-                  author: authUser,
+                  author: { ...authUser, __typename: "ChannelMember" },
                   mentions,
                 } as Omit<MessageFragment, "id"> & { id: number | string },
               },

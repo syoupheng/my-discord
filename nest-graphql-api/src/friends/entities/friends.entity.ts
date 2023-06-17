@@ -8,6 +8,8 @@ export class Friend implements BaseUser {
 
   username: string;
 
+  discriminator: string;
+
   createdAt: Date;
 
   avatarColor: string;

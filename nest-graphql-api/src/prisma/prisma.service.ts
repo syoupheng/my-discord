@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, INestApplication, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 type DbErrorType = 'conflict' | 'not-found';
 

@@ -1,10 +1,10 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from '../prisma/repositories/users.repository';
 import { MessageRepository } from '../prisma/repositories/message.repository';
 import { SendMessageInput } from './dto/send-message.input';
 import { Message } from './entities/message.entity';
 import { MessageType } from './enums/message-type.enum';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ChannelRepository } from '../prisma/repositories/channel.repository';
 import { ReferencedMessage } from './entities/referenced-message.entity';
 import { ChannelMember } from 'src/users/entities/channel-member.entity';
@@ -13,6 +13,7 @@ import { PUB_SUB } from '../pubsub/pubsub.module';
 import { PubSub } from 'graphql-subscriptions';
 import { ChatGptService } from '../chat-gpt/chat-gpt.service';
 import { MembersInChannel } from 'src/types';
+import { FriendsRepository } from '../prisma/repositories/friends.repository';
 
 @Injectable()
 export class MessagesService {
@@ -21,6 +22,8 @@ export class MessagesService {
     private usersRepository: UsersRepository,
     private channelRepository: ChannelRepository,
     private chatGptService: ChatGptService,
+    private friendsRepository: FriendsRepository,
+    // @ts-expect-error need to upgrade nestjs ?
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
@@ -33,9 +36,17 @@ export class MessagesService {
   }
 
   async send(payload: SendMessageInput, authorId: number): Promise<Message> {
+    const channel = await this.channelRepository.findById(payload.channelId);
+    if (!channel) throw new NotFoundException("Ce channel n'existe pas !");
     const membersInChannels = await this.channelRepository.findMembersByChannelId(payload.channelId);
-    if (!membersInChannels.some(({ memberId }) => memberId === authorId)) throw new UnauthorizedException('Tu ne fais pas partie de ce channel !');
+    if (!membersInChannels.some(({ memberId }) => memberId === authorId)) throw new ForbiddenException('Tu ne fais pas partie de ce channel !');
     const membersInChannelsIds = membersInChannels.map((member) => member.memberId);
+    if (channel.type === 'PRIVATE_CONVERSATION') {
+      const friendId = membersInChannelsIds.find((id) => id !== authorId);
+      if (!friendId) throw new ForbiddenException("Tu n'est pas ami avec cet utilisateur ! ");
+      const isFriend = await this.friendsRepository.findFriendRelation(friendId, authorId);
+      if (!isFriend) throw new ForbiddenException("Tu n'est pas ami avec cet utilisateur ! ");
+    }
     const mentionsIds = [...new Set(this.getMentionsIdsFromContent(payload.content).filter((mentionId) => membersInChannelsIds.includes(mentionId)))];
     try {
       const newMessage = await this.messageRepository.create({
@@ -95,6 +106,7 @@ export class MessagesService {
       return mentionsOnMessage.map(({ mentionId, mention }) => ({
         id: mentionId,
         username: mention.username,
+        discriminator: mention.discriminator,
         createdAt: mention.createdAt,
         avatarColor: mention.avatarColor,
       }));

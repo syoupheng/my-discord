@@ -20,6 +20,7 @@ export type AuthUser = BaseUser & {
   __typename?: 'AuthUser';
   avatarColor: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  discriminator: Scalars['String'];
   email: Scalars['String'];
   friendRequests: Array<FriendRequest>;
   friends: Array<Friend>;
@@ -42,6 +43,7 @@ export type BaseMessage = {
 export type BaseUser = {
   avatarColor: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  discriminator: Scalars['String'];
   id: Scalars['Int'];
   username: Scalars['String'];
 };
@@ -50,6 +52,7 @@ export type ChannelMember = BaseUser & {
   __typename?: 'ChannelMember';
   avatarColor: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  discriminator: Scalars['String'];
   id: Scalars['Int'];
   username: Scalars['String'];
 };
@@ -71,6 +74,7 @@ export type Friend = BaseUser & {
   __typename?: 'Friend';
   avatarColor: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  discriminator: Scalars['String'];
   id: Scalars['Int'];
   status: UserStatus;
   username: Scalars['String'];
@@ -80,6 +84,7 @@ export type FriendRequest = BaseUser & {
   __typename?: 'FriendRequest';
   avatarColor: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  discriminator: Scalars['String'];
   id: Scalars['Int'];
   requestStatus: FriendRequestStatus;
   username: Scalars['String'];
@@ -96,7 +101,7 @@ export type FriendRequestStatus =
   | 'SENT';
 
 export type FriendTag = {
-  id: Scalars['Int'];
+  discriminator: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -304,6 +309,7 @@ export type Subscription = {
   friendRequestReceived: FriendRequest;
   messageDeleted: Message;
   messageReceived: Message;
+  modifiedPrivateGroup: PrivateGroup;
   userTyping: TypingNotification;
 };
 
@@ -343,6 +349,11 @@ export type SubscriptionMessageReceivedArgs = {
 };
 
 
+export type SubscriptionModifiedPrivateGroupArgs = {
+  userId: Scalars['Int'];
+};
+
+
 export type SubscriptionUserTypingArgs = {
   userTypingInput: UserTypingInput;
 };
@@ -370,33 +381,33 @@ export type UserTypingInput = {
   userId: Scalars['Int'];
 };
 
-export type ChannelMemberFragment = { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string };
+export type ChannelMemberFragment = { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string };
 
-export type FriendFragment = { __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string };
+export type FriendFragment = { __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string };
 
-export type FriendRequestFragment = { __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string };
+export type FriendRequestFragment = { __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string };
 
-export type PrivateConversationFragment = { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } };
+export type PrivateConversationFragment = { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } };
 
-export type PrivateGroupFragment = { __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> };
+export type PrivateGroupFragment = { __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> };
 
 export type MessageNotificationFragment = { __typename?: 'Message', id: number, channelId: number, createdAt: any };
 
-export type AuthUserInfoFragment = { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string };
+export type AuthUserInfoFragment = { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string };
 
-export type AuthUserFragment = { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> };
+export type AuthUserFragment = { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> };
 
-export type MessageFragment = { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> };
+export type MessageFragment = { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> };
 
 export type GetAuthUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthUserQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
+export type GetAuthUserQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
 
 export type GetAuthUserInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthUserInfoQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string } };
+export type GetAuthUserInfoQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string } };
 
 export type IsUserAuthenticatedQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -408,7 +419,7 @@ export type LoginUserMutationVariables = Exact<{
 }>;
 
 
-export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
+export type LoginUserMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
 
 export type LogoutUserMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -420,7 +431,7 @@ export type RegisterUserMutationVariables = Exact<{
 }>;
 
 
-export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'AuthUser', id: number, username: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
+export type RegisterUserMutation = { __typename?: 'Mutation', register: { __typename?: 'AuthUser', id: number, username: string, discriminator: string, createdAt: any, status: UserStatus, phoneNumber?: string | null, avatarColor: string, friends: Array<{ __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }>, friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string }>, privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } }>, privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }>, newMessagesNotifications: Array<{ __typename?: 'Message', id: number, channelId: number, createdAt: any }> } };
 
 export type GetMessagesQueryVariables = Exact<{
   channelId: Scalars['Int'];
@@ -429,7 +440,7 @@ export type GetMessagesQueryVariables = Exact<{
 }>;
 
 
-export type GetMessagesQuery = { __typename?: 'Query', getMessages: { __typename?: 'MessagesResponse', cursor?: any | null, messages: Array<{ __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }> } };
+export type GetMessagesQuery = { __typename?: 'Query', getMessages: { __typename?: 'MessagesResponse', cursor?: any | null, messages: Array<{ __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }> } };
 
 export type DeleteMessageMutationVariables = Exact<{
   messageId: Scalars['Int'];
@@ -462,14 +473,14 @@ export type OnMessageReceivedSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnMessageReceivedSubscription = { __typename?: 'Subscription', messageReceived: { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } };
+export type OnMessageReceivedSubscription = { __typename?: 'Subscription', messageReceived: { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } };
 
 export type SendMessageMutationVariables = Exact<{
   input: SendMessageInput;
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: number, type: MessageType, createdAt: any, editedAt?: any | null, content: string, channelId: number, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, referencedMessage?: { __typename?: 'ReferencedMessage', id: number, content: string, author: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } | null, mentions: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } };
 
 export type SendTypingNotificationMutationVariables = Exact<{
   channelId: Scalars['Int'];
@@ -490,7 +501,7 @@ export type SendFriendRequestMutationVariables = Exact<{
 }>;
 
 
-export type SendFriendRequestMutation = { __typename?: 'Mutation', sendFriendRequest: { __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus } };
+export type SendFriendRequestMutation = { __typename?: 'Mutation', sendFriendRequest: { __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string } };
 
 export type DeleteFriendRequestMutationVariables = Exact<{
   friendId: Scalars['Int'];
@@ -509,7 +520,7 @@ export type OnFriendRequestDeletedSubscription = { __typename?: 'Subscription', 
 export type GetAuthUserFriendRequestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAuthUserFriendRequestQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string }> } };
+export type GetAuthUserFriendRequestQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', friendRequests: Array<{ __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string }> } };
 
 export type IgnoreFriendRequestMutationVariables = Exact<{
   friendId: Scalars['Int'];
@@ -523,14 +534,14 @@ export type OnFriendRequestReceivedSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnFriendRequestReceivedSubscription = { __typename?: 'Subscription', friendRequestReceived: { __typename?: 'FriendRequest', id: number, username: string, requestStatus: FriendRequestStatus, avatarColor: string } };
+export type OnFriendRequestReceivedSubscription = { __typename?: 'Subscription', friendRequestReceived: { __typename?: 'FriendRequest', id: number, username: string, discriminator: string, requestStatus: FriendRequestStatus, avatarColor: string } };
 
 export type AddNewFriendMutationVariables = Exact<{
   friendId: Scalars['Int'];
 }>;
 
 
-export type AddNewFriendMutation = { __typename?: 'Mutation', addFriend: { __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string } };
+export type AddNewFriendMutation = { __typename?: 'Mutation', addFriend: { __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string } };
 
 export type DeleteFriendMutationVariables = Exact<{
   friendId: Scalars['Int'];
@@ -551,7 +562,7 @@ export type OnFriendRequestConfirmedSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnFriendRequestConfirmedSubscription = { __typename?: 'Subscription', friendRequestConfirmed: { __typename?: 'FriendRequestConfirmedPayload', newFriend: { __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }, newConversation: { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } } } };
+export type OnFriendRequestConfirmedSubscription = { __typename?: 'Subscription', friendRequestConfirmed: { __typename?: 'FriendRequestConfirmedPayload', newFriend: { __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }, newConversation: { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } } } };
 
 export type OnFriendDeletedSubscriptionVariables = Exact<{
   userId: Scalars['Int'];
@@ -563,7 +574,7 @@ export type OnFriendDeletedSubscription = { __typename?: 'Subscription', friendD
 export type GetFriendsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFriendsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', friends: Array<{ __typename?: 'Friend', id: number, username: string, status: UserStatus, avatarColor: string }> } };
+export type GetFriendsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', friends: Array<{ __typename?: 'Friend', id: number, username: string, discriminator: string, status: UserStatus, avatarColor: string }> } };
 
 export type HideConversationMutationVariables = Exact<{
   conversationId: Scalars['Int'];
@@ -575,14 +586,14 @@ export type HideConversationMutation = { __typename?: 'Mutation', hideConversati
 export type GetConversationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetConversationsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } }> } };
+export type GetConversationsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateConversations: Array<{ __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } }> } };
 
 export type ShowConversationMutationVariables = Exact<{
   friendId: Scalars['Int'];
 }>;
 
 
-export type ShowConversationMutation = { __typename?: 'Mutation', showConversation: { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string } } };
+export type ShowConversationMutation = { __typename?: 'Mutation', showConversation: { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string } } };
 
 export type NewConversationFragment = { __typename?: 'PrivateConversation', id: number, createdAt: any, member: { __typename?: 'ChannelMember', id: number, username: string } };
 
@@ -599,7 +610,7 @@ export type CreateGroupMutationVariables = Exact<{
 }>;
 
 
-export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> } };
+export type CreateGroupMutation = { __typename?: 'Mutation', createGroup: { __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } };
 
 export type EditGroupNameMutationVariables = Exact<{
   input: EditNameInput;
@@ -618,7 +629,14 @@ export type LeaveGroupMutation = { __typename?: 'Mutation', leaveGroup: { __type
 export type GetGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGroupsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, createdAt: any, avatarColor: string }> }> } };
+export type GetGroupsQuery = { __typename?: 'Query', me: { __typename?: 'AuthUser', privateGroups: Array<{ __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> }> } };
+
+export type OnModifyPrivateGroupSubscriptionVariables = Exact<{
+  userId: Scalars['Int'];
+}>;
+
+
+export type OnModifyPrivateGroupSubscription = { __typename?: 'Subscription', modifiedPrivateGroup: { __typename?: 'PrivateGroup', id: number, createdAt: any, name?: string | null, avatarColor: string, members: Array<{ __typename?: 'ChannelMember', id: number, username: string, discriminator: string, createdAt: any, avatarColor: string }> } };
 
 export type EditProfileMutationVariables = Exact<{
   input: EditProfileInput;
@@ -627,10 +645,10 @@ export type EditProfileMutationVariables = Exact<{
 
 export type EditProfileMutation = { __typename?: 'Mutation', editProfile: { __typename?: 'AuthUser', id: number, username: string, status: UserStatus, phoneNumber?: string | null } };
 
-export const AuthUserInfoFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUserInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<AuthUserInfoFragment, unknown>;
-export const FriendFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Friend"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Friend"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<FriendFragment, unknown>;
-export const FriendRequestFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FriendRequest"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FriendRequest"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"requestStatus"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<FriendRequestFragment, unknown>;
-export const ChannelMemberFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChannelMember"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ChannelMember"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<ChannelMemberFragment, unknown>;
+export const AuthUserInfoFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AuthUserInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AuthUser"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<AuthUserInfoFragment, unknown>;
+export const FriendFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"Friend"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Friend"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<FriendFragment, unknown>;
+export const FriendRequestFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"FriendRequest"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"FriendRequest"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"requestStatus"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<FriendRequestFragment, unknown>;
+export const ChannelMemberFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ChannelMember"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ChannelMember"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"discriminator"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}}]}}]} as unknown as DocumentNode<ChannelMemberFragment, unknown>;
 export const PrivateConversationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PrivateConversation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PrivateConversation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"member"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ChannelMember"}}]}}]}}]} as unknown as DocumentNode<PrivateConversationFragment, unknown>;
 export const PrivateGroupFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PrivateGroup"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"PrivateGroup"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"avatarColor"}},{"kind":"Field","name":{"kind":"Name","value":"members"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ChannelMember"}}]}}]}}]} as unknown as DocumentNode<PrivateGroupFragment, unknown>;
 export const MessageNotificationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MessageNotification"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Message"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"channelId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<MessageNotificationFragment, unknown>;
@@ -652,7 +670,7 @@ export const OnMessageReceivedDocument = {"kind":"Document", "definitions":[{"ki
 export const SendMessageDocument = {"kind":"Document", "definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendMessage"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SendMessageInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sendMessageInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"Message"}}]}}]}},...MessageFragmentDoc.definitions,...ChannelMemberFragmentDoc.definitions]} as unknown as DocumentNode<SendMessageMutation, SendMessageMutationVariables>;
 export const SendTypingNotificationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SendTypingNotification"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"typingMessage"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"channelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}}}]}]}}]} as unknown as DocumentNode<SendTypingNotificationMutation, SendTypingNotificationMutationVariables>;
 export const OnUserTypingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnUserTyping"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserTypingInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userTyping"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userTypingInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userId"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"channelId"}}]}}]}}]} as unknown as DocumentNode<OnUserTypingSubscription, OnUserTypingSubscriptionVariables>;
-export const SendFriendRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendFriendRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FriendTag"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendFriendRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"friendTag"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"requestStatus"}}]}}]}}]} as unknown as DocumentNode<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
+export const SendFriendRequestDocument = {"kind":"Document", "definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"sendFriendRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"FriendTag"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sendFriendRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"friendTag"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FriendRequest"}}]}}]}},...FriendRequestFragmentDoc.definitions]} as unknown as DocumentNode<SendFriendRequestMutation, SendFriendRequestMutationVariables>;
 export const DeleteFriendRequestDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deleteFriendRequest"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"friendId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteFriendRequest"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"friendId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"friendId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"success"}}]}}]}}]} as unknown as DocumentNode<DeleteFriendRequestMutation, DeleteFriendRequestMutationVariables>;
 export const OnFriendRequestDeletedDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnFriendRequestDeleted"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"friendRequestDeleted"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}]}]}}]} as unknown as DocumentNode<OnFriendRequestDeletedSubscription, OnFriendRequestDeletedSubscriptionVariables>;
 export const GetAuthUserFriendRequestDocument = {"kind":"Document", "definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAuthUserFriendRequest"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"friendRequests"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"FriendRequest"}}]}}]}}]}},...FriendRequestFragmentDoc.definitions]} as unknown as DocumentNode<GetAuthUserFriendRequestQuery, GetAuthUserFriendRequestQueryVariables>;
@@ -672,4 +690,5 @@ export const CreateGroupDocument = {"kind":"Document", "definitions":[{"kind":"O
 export const EditGroupNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"editGroupName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditNameInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editGroupName"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editNameInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<EditGroupNameMutation, EditGroupNameMutationVariables>;
 export const LeaveGroupDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"leaveGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"leaveGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"groupId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"groupId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<LeaveGroupMutation, LeaveGroupMutationVariables>;
 export const GetGroupsDocument = {"kind":"Document", "definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"privateGroups"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PrivateGroup"}}]}}]}}]}},...PrivateGroupFragmentDoc.definitions,...ChannelMemberFragmentDoc.definitions]} as unknown as DocumentNode<GetGroupsQuery, GetGroupsQueryVariables>;
+export const OnModifyPrivateGroupDocument = {"kind":"Document", "definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"onModifyPrivateGroup"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modifiedPrivateGroup"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"userId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PrivateGroup"}}]}}]}},...PrivateGroupFragmentDoc.definitions,...ChannelMemberFragmentDoc.definitions]} as unknown as DocumentNode<OnModifyPrivateGroupSubscription, OnModifyPrivateGroupSubscriptionVariables>;
 export const EditProfileDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"editProfile"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"EditProfileInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"editProfile"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editProfileInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}}]}}]}}]} as unknown as DocumentNode<EditProfileMutation, EditProfileMutationVariables>;

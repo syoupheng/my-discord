@@ -8,6 +8,8 @@ export class FriendRequest implements BaseUser {
 
   username: string;
 
+  discriminator: string;
+
   createdAt: Date;
 
   avatarColor: string;

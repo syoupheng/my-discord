@@ -12,7 +12,11 @@ import { Public } from '../auth/decorators/public.decorator';
 
 @Resolver(() => Friend)
 export class FriendsResolver {
-  constructor(private readonly friendsService: FriendsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(
+    private readonly friendsService: FriendsService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   @Mutation(() => Friend)
   async addFriend(@Args('friendId', { type: () => Int }) friendId: number, @CurrentUser() user: AuthUser) {

@@ -3,26 +3,42 @@ import { FRIEND_REQUEST_FRAGMENT } from "@/fragments/auth";
 import { graphql } from "@/gql";
 import { SendFriendRequestMutation } from "@/gql/graphql";
 import useAuthMutation from "@/hooks/auth/useAuthMutation";
-import { Reference } from "@apollo/client";
+import { Reference, useApolloClient } from "@apollo/client";
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ADD_FRIEND = graphql(`
   mutation sendFriendRequest($input: FriendTag!) {
     sendFriendRequest(friendTag: $input) {
-      id
-      username
-      requestStatus
+      ...FriendRequest
     }
   }
 `);
 
-const useAddFriend = () => {
+type Params = {
+  onCompleted: (...args: any[]) => any;
+  onError: (...args: any[]) => any;
+};
+
+const useAddFriend = ({ onCompleted, onError }: Params) => {
+  const client = useApolloClient();
+  const navigate = useNavigate();
   const abortController = useRef(new AbortController());
   const result = useAuthMutation(ADD_FRIEND, {
+    onCompleted,
+    onError: (error) => {
+      if ("graphQLErrors" in error) {
+        if (error.graphQLErrors.some((err) => err.extensions.code === "UNAUTHENTICATED")) {
+          client.resetStore();
+          navigate("/login");
+        }
+      }
+      onError(error.message);
+    },
     context: {
       fetchOptions: {
-        signal: abortController.current.signal
-      }
+        signal: abortController.current.signal,
+      },
     },
     update(cache, { data }: { data?: SendFriendRequestMutation | null }) {
       if (!data) return;

@@ -17,7 +17,10 @@ import { useRef, useState } from "react";
 const ChatContent = () => {
   const { channelId } = useSafeParams(["channelId"]);
   const previousCursorRef = useRef(null);
-  const { messagesData, loadingMessages, infiniteScrollDivRef, scrollContainerRef, loadMessagesError } = useLoadInfiniteMessages(channelId, previousCursorRef);
+  const { messagesData, loadingMessages, infiniteScrollDivRef, scrollContainerRef, loadMessagesError } = useLoadInfiniteMessages(
+    channelId,
+    previousCursorRef
+  );
   useInfiniteScrollPosition(messagesData?.getMessages.messages, previousCursorRef, messagesData?.getMessages.cursor);
   const { unreadMessages, oldestUnreadMessage } = useChatUnreadMessages(channelId);
   const bottomMessageListRef = useScrollChatBottom(messagesData, unreadMessages);
@@ -25,9 +28,12 @@ const ChatContent = () => {
   useMarkAsReadOnWindowFocus();
   const newMessagesRef = useRef<HTMLDivElement>(null);
   const [requestTimedout, setRequestTimedout] = useState(false);
-  useRequestTimeout({ isLoading: loadingMessages, onTimeout: () => {
-    setRequestTimedout(true);
-  }});
+  useRequestTimeout({
+    isLoading: loadingMessages,
+    onTimeout: () => {
+      setRequestTimedout(true);
+    },
+  });
   if (loadMessagesError || requestTimedout) return <ErrorPage />;
   return (
     <SelectedMessageReplyProvider>
@@ -37,9 +43,9 @@ const ChatContent = () => {
             <NewMessagesBar newMessagesRef={newMessagesRef} unreadMessages={unreadMessages} oldestUnreadMessage={oldestUnreadMessage} />
           )}
           <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
-            {loadingMessages && messages.length === 0 && <LoadingMessagesSkeleton />}
+            <LoadingMessagesSkeleton className="absolute inset-0" show={loadingMessages && messages.length === 0} />
             {messagesData && (
-              <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative">
+              <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative animate-fade-in-slow">
                 {!messagesData.getMessages.cursor ? <ChatContentHeader /> : <LoadingMessagesSkeleton ref={infiniteScrollDivRef} />}
                 <ChatMessagesList messages={messages} oldestUnreadMessage={oldestUnreadMessage} newMessagesRef={newMessagesRef} />
               </ol>

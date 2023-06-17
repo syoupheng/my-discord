@@ -1,6 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { z } from "zod";
-import { ApolloError } from "@apollo/client";
 import useAddFriend from "@/hooks/friend-requests/useAddFriend";
 import useRequestTimeout from "@/hooks/shared/useRequestTimeout";
 import { toast } from "react-hot-toast";
@@ -12,12 +11,25 @@ const useAddFriendForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  const { result: [sendFriendRequest, { reset, loading }], abortController } = useAddFriend();
+  const {
+    result: [sendFriendRequest, { reset, loading }],
+    abortController,
+  } = useAddFriend({
+    onCompleted: () => {
+      setSuccess(friendTag);
+      setFriendTag("");
+    },
+    onError: setError,
+  });
 
-  useRequestTimeout({ isLoading: loading, onTimeout: () => {
-    abortController.current.abort();
-    toast.error(ERROR_MESSAGE);
-  }, timeout: 2000});
+  useRequestTimeout({
+    isLoading: loading,
+    onTimeout: () => {
+      abortController.current.abort();
+      toast.error(ERROR_MESSAGE);
+    },
+    timeout: 20000,
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -27,11 +39,11 @@ const useAddFriendForm = () => {
   };
 
   const friendTagSchema = z.object({
-    id: z.number().int().positive(),
+    discriminator: z.string().length(4).regex(/^\d+$/),
     username: z.string().min(1),
   });
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const splitTag = friendTag.split("#");
     if (splitTag.length !== 2) {
@@ -39,25 +51,15 @@ const useAddFriendForm = () => {
       return;
     }
 
-    const [username, id] = splitTag;
-    if (parseInt(id).toString() !== id) {
-      setError("Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes.");
-      return;
-    }
-    const payload = { id: parseInt(id), username };
+    const [username, discriminator] = splitTag;
+    const payload = { discriminator, username };
     try {
       friendTagSchema.parse(payload);
     } catch (err) {
       setError("Mhm, ça n'a pas bien marché. Vérifie bien que la casse, l'orthographe, les espaces et les chiffres sont correctes.");
       return;
     }
-    try {
-      await sendFriendRequest({ variables: { input: payload } });
-      setFriendTag("");
-      setSuccess(friendTag);
-    } catch (err: unknown) {
-      if (err instanceof ApolloError) setError(err.message);
-    }
+    sendFriendRequest({ variables: { input: payload } });
   };
   return { handleSubmit, handleChange, setIsFocused, error, success, friendTag, isFocused, loading };
 };

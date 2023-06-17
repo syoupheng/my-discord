@@ -1,12 +1,12 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { Field, InputType } from '@nestjs/graphql';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @InputType()
 export class FriendTag {
-  @IsInt()
+  @IsString()
   @IsNotEmpty()
-  @Field(() => Int)
-  id: number;
+  @Field()
+  discriminator: string;
 
   @IsString()
   @IsNotEmpty()

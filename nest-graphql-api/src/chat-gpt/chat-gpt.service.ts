@@ -41,7 +41,7 @@ export class ChatGptService {
     }));
     chatGptMessages.unshift({
       role: 'system',
-      content: `You are ${chatGptUser.member.chatGptRole}. Do not mention the fact that you are AI language model.`,
+      content: `Behave as if you were ${chatGptUser.member.chatGptRole}. Do not mention the fact that you are AI language model.`,
     });
     return chatGptMessages;
   }

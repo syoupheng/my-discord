@@ -3,6 +3,7 @@ import ButtonContainer from "@/components/ChatSection/MessageButtons/ButtonConta
 import MessageContent from "@/components/ChatSection/MessageContent";
 import ReplySnippet from "@/components/ChatSection/ReplySnippet";
 import AvatarIconNoHole from "@/components/Icons/AvatarIconNoHole";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
 import { MessageFragment } from "@/gql/graphql";
 import useIsMentioned from "@/hooks/chat-messages/useIsMentioned";
 import MessageItemProvider from "@/providers/MessageItemProvider";
@@ -43,16 +44,22 @@ const MessageItem = forwardRef<HTMLDivElement, Props>(({ msg, isConsecutive = fa
               <ConsecutiveMessageTimestamp timestamp={createdAt} />
             ) : (
               <>
-                <div
+                <TooltipWrapper
+                  tooltipTxt={`${author.username}#${author.discriminator}`}
+                  showOnClick
                   className="absolute pointer-events-auto left-4 overflow-hidden cursor-pointer select-none"
                   style={{ marginTop: "calc(4px - 0.125rem)" }}
                 >
                   <AvatarIconNoHole bgColor={author.avatarColor} size={40} />
-                </div>
+                </TooltipWrapper>
                 <h3 className="overflow-hidden block relative leading-[1.375rem] min-h-[1.375rem] text-muted" style={{ whiteSpace: "break-spaces" }}>
-                  <span className="mr-[0.25rem] text-btw-base-sm font-medium leading-[1.375rem] overflow-hidden relative align-baseline text-white hover:underline cursor-pointer">
+                  <TooltipWrapper
+                    tooltipTxt={`${author.username}#${author.discriminator}`}
+                    showOnClick
+                    className="inline mr-[0.25rem] text-btw-base-sm font-medium leading-[1.375rem] overflow-hidden relative align-baseline text-white hover:underline cursor-pointer"
+                  >
                     {author.username}
-                  </span>
+                  </TooltipWrapper>
                   <span className="text-xs leading-[1.375rem] align-baseline ml-[0.25rem] inline-block h-5 cursor-default pointer-events-none font-normal">
                     <time dateTime={createdAt}>{formatMessageDate(createdAt)}</time>
                   </span>

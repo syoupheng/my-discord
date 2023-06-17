@@ -36,6 +36,7 @@ export class FriendRequestRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             createdAt: true,
             avatarColor: true,
           },
@@ -44,6 +45,7 @@ export class FriendRequestRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             createdAt: true,
             avatarColor: true,
           },

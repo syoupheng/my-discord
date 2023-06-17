@@ -52,7 +52,9 @@ const AddFriendSection = () => {
                 <div className="pointer-events-none animate-pulse">
                   <LoadingDotsIcon />
                 </div>
-              ) : "Envoyer une demande d'ami"}
+              ) : (
+                "Envoyer une demande d'ami"
+              )}
             </Button>
           </div>
           {success ? (

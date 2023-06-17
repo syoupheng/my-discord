@@ -12,7 +12,11 @@ import { Public } from '../auth/decorators/public.decorator';
 
 @Resolver(() => FriendRequest)
 export class FriendRequestsResolver {
-  constructor(private readonly friendRequestsService: FriendRequestsService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(
+    private readonly friendRequestsService: FriendRequestsService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   @Mutation(() => FriendRequest)
   sendFriendRequest(@Args('friendTag') friendTag: FriendTag, @CurrentUser() user: AuthUser): Promise<FriendRequest> {

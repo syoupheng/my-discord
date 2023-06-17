@@ -4,7 +4,7 @@ import { FriendFragment, FriendRequestFragment, FriendRequestStatus, UserStatus 
 type Props = {
   friend?: FriendFragment;
   friendRequest?: FriendRequestFragment;
-}
+};
 
 const userStatusMap: Record<UserStatus, { desc: string }> = {
   ONLINE: {
@@ -33,7 +33,7 @@ const FriendItemTag = ({ friend, friendRequest }: Props) => {
       <div className="flex flex-col overflow-hidden">
         <div className="flex overflow-hidden grow items-end justify-start leading-[1.1]">
           <span className="whitespace-nowrap overflow-hidden font-semibold block flex-initial text-white">{(friend ?? friendRequest)?.username}</span>
-          <span className="text-h-secondary invisible text-sm leading-4 group-hover:visible">#{(friend ?? friendRequest)?.id}</span>
+          <span className="text-h-secondary invisible text-sm leading-4 group-hover:visible">#{(friend ?? friendRequest)?.discriminator}</span>
         </div>
         <div className="text-h-secondary">
           <div className="whitespace-nowrap overflow-hidden text-btw-sm-xs font-medium">

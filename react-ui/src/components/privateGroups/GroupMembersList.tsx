@@ -4,14 +4,13 @@ import UserAvatar from "@/components/shared/UserAvatar";
 import { FriendFragment } from "@/gql/graphql";
 import { forwardRef } from "react";
 
-
 type Props = {
   filterFriends: FriendFragment[];
   handleClick: (id: number) => void;
   hoveredIndex?: number;
   handleHover: (idx: number) => void;
   isSelected: (id: number) => boolean;
-}
+};
 
 const GroupMembersList = forwardRef<HTMLDivElement, Props>(
   ({ filterFriends, handleClick, hoveredIndex = 0, handleHover, isSelected }, friendListRef) => {
@@ -27,7 +26,7 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0">
-        {filterFriends.map(({ status, username, id, avatarColor }, idx) => (
+        {filterFriends.map(({ status, username, id, avatarColor, discriminator }, idx) => (
           <div onClick={() => handleClick(id)} key={id} className="cursor-pointer py-[1px] mr-1 ml-3" onMouseOver={() => handleHover(idx)}>
             <div
               className={`${
@@ -43,7 +42,7 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
                   } opacity-50 flex justify-start items-center overflow-hidden leading-[1.1] text-sm font-medium`}
                 >
                   <span className="block overflow-hidden text-ellipsis whitespace-nowrap flex-initial">{username}</span>
-                  <span>#{id}</span>
+                  <span>#{discriminator}</span>
                 </div>
               </div>
               <span className="flex shrink-0 grow-0 basis-auto items-center relative max-w-full">

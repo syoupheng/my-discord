@@ -143,6 +143,7 @@ module.exports = {
         "tooltip-left": "tooltip-left 0.15s ease-in-out",
         "spin-45": "spin-45 0.1s linear",
         "fade-in": "fade-in 0.1s ease-out",
+        "fade-in-slow": "fade-in 0.3s ease-in-out",
         "slide-in": "slide-in 0.5s ease-in-out",
         "my-pulse": "my-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         clicked: "clicked 0.1s ease-in-out",

@@ -1,5 +1,5 @@
+import Portal from "@/components/shared/Portal";
 import { Size, TooltipDirection, TPosition } from "@/types/tooltip";
-import { Portal } from "@headlessui/react";
 
 const sizeMaps: Record<Size, string> = {
   sm: "text-xs",
@@ -19,7 +19,7 @@ type Props = {
   direction?: TooltipDirection;
   size?: Size;
   position: TPosition;
-}
+};
 
 const Tooltip = ({ tooltipTxt, direction = "up", size = "md", position }: Props) => {
   return (
@@ -32,6 +32,7 @@ const Tooltip = ({ tooltipTxt, direction = "up", size = "md", position }: Props)
           left: position.left,
           top: position.top,
           transform: directionMaps[direction].transform,
+          zIndex: 9999,
         }}
       >
         {tooltipTxt}

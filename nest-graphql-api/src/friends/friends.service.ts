@@ -16,6 +16,7 @@ export class FriendsService {
     private friendRequestRepository: FriendRequestRepository,
     private privateConversationsRepository: PrivateConversationsRepository,
     private prisma: PrismaService,
+    // @ts-expect-error need to upgrade nestjs ?
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
@@ -23,21 +24,21 @@ export class FriendsService {
     const friend = await this.friendsRepository.findUsersFriendById({ userId: authUserId, friendId });
     if (!friend) throw new NotFoundException("Vous n'êtes pas amis avec cet utilisateur !");
     const { isFriendsWith, hasFriends } = friend;
-    const { id, username, status, createdAt, avatarColor } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
-    return { id, username, createdAt, avatarColor, status: UserStatus[status] };
+    const { id, username, status, createdAt, avatarColor, discriminator } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
+    return { id, username, discriminator, createdAt, avatarColor, status: UserStatus[status] };
   }
 
   async findAll(authUserId: number): Promise<Friend[]> {
     const rawFriends = await this.friendsRepository.findAllFriends(authUserId);
     const friends = rawFriends.map(({ hasFriends, isFriendsWith }) => {
-      const { id, username, status, createdAt, avatarColor } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
-      return { id, username, createdAt, avatarColor, status: UserStatus[status] };
+      const { id, username, discriminator, status, createdAt, avatarColor } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
+      return { id, username, discriminator, createdAt, avatarColor, status: UserStatus[status] };
     });
     return friends;
   }
 
   async add(friendId: number, authUser: AuthUser) {
-    const { id: authUserId, username, status } = authUser;
+    const { id: authUserId, username, status, discriminator, avatarColor } = authUser;
     const uniqueInput = {
       senderId: friendId,
       recipientId: authUserId,
@@ -66,7 +67,7 @@ export class FriendsService {
     this.pubSub.publish('friendRequestConfirmed', {
       friendRequestConfirmed: {
         senderId: newFriend.id,
-        newFriend: { id: authUserId, username, status },
+        newFriend: { id: authUserId, username, discriminator, status, avatarColor },
         newConversation: { ...newConversation, memberId: authUserId },
       },
     });

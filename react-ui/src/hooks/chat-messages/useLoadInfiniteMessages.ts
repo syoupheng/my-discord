@@ -17,7 +17,7 @@ const useLoadInfiniteMessages = (channelId: string, previousCursorRef: MutableRe
             messages: [...newMessages, ...previousResults.getMessages.messages],
           },
         };
-      }
+      },
     });
   });
   return { messagesData: data, loadingMessages: loading, scrollContainerRef, infiniteScrollDivRef, loadMessagesError: error };

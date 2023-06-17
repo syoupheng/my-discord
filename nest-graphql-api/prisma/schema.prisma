@@ -12,7 +12,8 @@ datasource db {
 
 model User {
   id                       Int                        @id @default(autoincrement())
-  username                 String                     @unique
+  username                 String
+  discriminator            String
   email                    String                     @unique
   status                   UserStatus                 @default(INVISIBLE)
   password                 String
@@ -29,6 +30,7 @@ model User {
   chatGptRole              String?
   avatarColor              String                     @default("#ef4444")
 
+  @@unique(fields: [username, discriminator], name: "userIdentifier")
   @@map("users")
 }
 

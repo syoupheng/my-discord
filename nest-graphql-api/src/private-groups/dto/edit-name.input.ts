@@ -9,7 +9,7 @@ export class EditNameInput {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(40)
+  @MaxLength(50)
   @Field()
   name: string;
 }

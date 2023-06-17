@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -23,6 +23,7 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
     if (user && (await argon.verify(user?.password, password))) {
       const { password, status, ...result } = user;
+      console.log({ result });
       return { status: UserStatus[status], ...result };
     }
     return null;
@@ -33,6 +34,7 @@ export class AuthService {
       username: user.username,
       sub: user.id,
     });
+    console.log({ token });
     return { user, token };
   }
 

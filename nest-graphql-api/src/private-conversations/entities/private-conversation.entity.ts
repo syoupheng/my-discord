@@ -9,7 +9,7 @@ export class PrivateConversation {
   @Field(() => ChannelMember)
   member?: ChannelMember;
 
-  memberId?: number;
+  memberId: number;
 
   @Field()
   createdAt: Date;

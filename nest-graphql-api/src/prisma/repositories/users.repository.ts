@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
+import { FriendTag } from 'src/friend-requests/dto/friend-tag.input';
 
 @Injectable()
 export class UsersRepository {
@@ -10,12 +11,16 @@ export class UsersRepository {
     return this.prisma.user.findUnique({ where: { id: userId } });
   }
 
+  findByTag({ username, discriminator }: FriendTag) {
+    return this.prisma.user.findUnique({ where: { userIdentifier: { username, discriminator } } });
+  }
+
   findManyByIds(ids: number[]) {
     return this.prisma.user.findMany({
       where: {
         id: { in: ids },
       },
-      select: { id: true, username: true, createdAt: true, avatarColor: true },
+      select: { id: true, username: true, discriminator: true, createdAt: true, avatarColor: true },
     });
   }
 

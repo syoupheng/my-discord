@@ -5,10 +5,10 @@ import useNewFriendRequestSub from "@/hooks/friend-requests/useNewFriendRequestS
 import useFriendChangeSub from "@/hooks/friends/useFriendChangeSub";
 import useFriendConfirmedSub from "@/hooks/friends/useFriendConfirmedSub";
 import useFriendDeletedSub from "@/hooks/friends/useFriendDeletedSub";
+import useUpdatedGroupSubscription from "@/hooks/private-groups/useUpdatedGroupSubscription";
 import useDynamicFavicon from "@/hooks/ui/useDynamicFavicon";
 import useInactiveUser from "@/hooks/user/useInactiveUser";
 import { PropsWithChildren } from "react";
-
 
 const PrivateApp = ({ children }: PropsWithChildren) => {
   useNewFriendRequestSub();
@@ -20,6 +20,7 @@ const PrivateApp = ({ children }: PropsWithChildren) => {
   useMessageReceivedSubscription();
   useMessageDeletedSubscription();
   useInactiveUser();
+  useUpdatedGroupSubscription();
 
   useDynamicFavicon();
 

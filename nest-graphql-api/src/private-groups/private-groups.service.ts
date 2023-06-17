@@ -1,12 +1,14 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FriendsService } from '../friends/friends.service';
 import { PrivateGroup } from './entities/private-group.entity';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { EditNameInput } from './dto/edit-name.input';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
 import { ChannelMember } from '../users/entities/channel-member.entity';
 import { AvatarService } from '../avatar/avatar.service';
+import { PUB_SUB } from '../pubsub/pubsub.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class PrivateGroupsService {
@@ -14,6 +16,8 @@ export class PrivateGroupsService {
     private friendsService: FriendsService,
     private privateGroupsRepository: PrivateGroupsRepository,
     private avatarService: AvatarService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 
   async findAll(userId: number): Promise<PrivateGroup[]> {
@@ -45,7 +49,13 @@ export class PrivateGroupsService {
     });
 
     const groupName = groupMembers.map(({ username }) => username).join(', ');
-    return this.privateGroupsRepository.create({ name: groupName, members: groupMembers, avatarColor: this.avatarService.getColor() });
+    const newGroup = await this.privateGroupsRepository.create({
+      name: groupName,
+      members: groupMembers,
+      avatarColor: this.avatarService.getColor(),
+    });
+    this.pubSub.publish('modifiedPrivateGroup', { newPrivateGroup: { payload: newGroup, membersIds: [...new Set(membersIds)] } });
+    return newGroup;
   }
 
   async editName(editNameInput: EditNameInput, userId: number): Promise<PrivateGroup> {
@@ -67,19 +77,26 @@ export class PrivateGroupsService {
       return { memberId };
     });
 
-    return this.privateGroupsRepository.update(groupId, {
+    const updatedGroup = await this.privateGroupsRepository.update(groupId, {
       members: {
         createMany: { data: newGroupMembers },
       },
     });
+    this.pubSub.publish('modifiedPrivateGroup', { newPrivateGroup: { payload: updatedGroup, membersIds: uniqueIds } });
+    return updatedGroup;
   }
 
   async leave(groupId: number, userId: number): Promise<PrivateGroup> {
     try {
-      const membersInPrivateGroups = await this.privateGroupsRepository.deleteMember(groupId, userId);
-      const numMembers = await this.privateGroupsRepository.countMembersByGroupId(groupId);
-      if (numMembers === 0) await this.privateGroupsRepository.delete(groupId);
-      return membersInPrivateGroups.channel;
+      const channel = await this.privateGroupsRepository.findById(groupId);
+      if (!channel) throw new NotFoundException("Ce groupe privé n'existe pas");
+      const { members, ...privateGroup } = channel;
+      await this.privateGroupsRepository.deleteMember(groupId, userId);
+      this.pubSub.publish('modifiedPrivateGroup', {
+        newPrivateGroup: { payload: privateGroup, membersIds: members.map((member) => member.memberId).filter((memberId) => memberId !== userId) },
+      });
+      if (members.length - 1 === 0) await this.privateGroupsRepository.delete(groupId);
+      return privateGroup;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
         throw new BadRequestException('Vous ne faites pas partie de ce groupe !');

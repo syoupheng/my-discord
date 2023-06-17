@@ -1,12 +1,13 @@
 import ReplyMessageContent from "@/components/ChatSection/ReplyMessageContent";
 import AvatarIconNoHole from "@/components/Icons/AvatarIconNoHole";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
 import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 import MessageItemProvider from "@/providers/MessageItemProvider";
 import { ReferencedMessageFragment } from "@/types/channel";
 
 type Props = {
   referencedMessage: ReferencedMessageFragment;
-}
+};
 
 const ReplySnippet = ({ referencedMessage }: Props) => {
   const { id: authUserId } = useAuthUserInfo();
@@ -17,10 +18,14 @@ const ReplySnippet = ({ referencedMessage }: Props) => {
       <div className="basis-auto shrink-0 grow-0 select-none mr-1">
         <AvatarIconNoHole bgColor={author.avatarColor} size={16} />
       </div>
-      <span className="shrink-0 mr-1 opacity-[0.64] text-white font-medium inline relative overflow-hidden hover:underline cursor-pointer">
+      <TooltipWrapper
+        tooltipTxt={`${author.username}#${author.discriminator}`}
+        showOnClick
+        className="shrink-0 mr-1 opacity-[0.64] text-white font-medium inline relative overflow-hidden hover:underline cursor-pointer"
+      >
         {author.id !== authUserId && "@"}
         {author.username}
-      </span>
+      </TooltipWrapper>
       <MessageItemProvider message={referencedMessage}>
         <ReplyMessageContent content={content} />
       </MessageItemProvider>

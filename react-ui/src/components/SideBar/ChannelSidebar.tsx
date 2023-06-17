@@ -8,7 +8,9 @@ const ChannelSidebar = ({ children }: PropsWithChildren) => {
     <>
       <Sidebar className="bg-secondary w-[240px] overflow-y-auto">
         {children}
-        <UserInfo />
+        <div className="fixed bottom-0" style={{ width: "240px" }}>
+          <UserInfo />
+        </div>
       </Sidebar>
       <Outlet />
     </>

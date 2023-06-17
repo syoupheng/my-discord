@@ -44,7 +44,7 @@ export class PrivateGroupsRepository {
       include: {
         members: {
           include: {
-            member: { select: { id: true, username: true, createdAt: true, avatarColor: true } },
+            member: { select: { id: true, username: true, discriminator: true, createdAt: true, avatarColor: true } },
           },
         },
       },
@@ -79,7 +79,6 @@ export class PrivateGroupsRepository {
   deleteMember(groupId: number, memberId: number) {
     return this.prisma.membersInChannels.delete({
       where: { channelId_memberId: { channelId: groupId, memberId } },
-      include: { channel: true },
     });
   }
 

@@ -7,6 +7,8 @@ export class ChannelMember implements BaseUser {
 
   username: string;
 
+  discriminator: string;
+
   createdAt: Date;
 
   chatGptRole?: string | null;

@@ -1,6 +1,7 @@
 import AddGroupMemberBtn from "@/components/ChatSection/AddGroupMemberBtn";
 import ChatNav from "@/components/ChatSection/ChatNav";
 import ArobasIcon from "@/components/Icons/ArobasIcon";
+import TooltipWrapper from "@/components/shared/TooltipWrapper";
 import UserStatusIcon from "@/components/shared/UserStatusIcon";
 import { PrivateConversationFragment, UserStatus } from "@/gql/graphql";
 import useFriends from "@/hooks/friends/useFriends";
@@ -19,11 +20,15 @@ const PrivateConversationNav = ({ conversation }: Props) => {
         <div className="mx-2 h-6 w-auto basis-auto grow-0 shrink-0 text-channels-default">
           <ArobasIcon />
         </div>
-        <div className="mr-2 shrink-0 grow-0 basis-auto">
+        <TooltipWrapper
+          direction="down"
+          tooltipTxt={`${conversation.member.username}#${conversation.member.discriminator}`}
+          className="mr-2 shrink-0 grow-0 basis-auto"
+        >
           <h1 className="cursor-pointer whitespace-nowrap overflow-hidden flex justify-start items-center text-white font-medium text-[17px] leading-[22px]">
             {conversation?.member.username}
           </h1>
-        </div>
+        </TooltipWrapper>
         <div className="basis-auto shrink-0 grow-0 mr-2 flex items-center">
           <UserStatusIcon status={userStatus} size={10} />
         </div>

@@ -13,7 +13,7 @@ type Props = {
   closePopover: () => void;
   currentMembersIds?: (number | undefined)[];
   groupId?: number | null;
-}
+};
 
 const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null }: Props) => {
   const friends = useFriends();
@@ -23,7 +23,9 @@ const AddNewGroupPopup = ({ closePopover, currentMembersIds = [], groupId = null
   const friendsToAdd = friends.filter(({ id }) => !currentMembersIds.includes(id));
 
   const [search, setSearch] = useState("");
-  const searchedFriends = friendsToAdd.filter((friend) => [friend.username.toLowerCase(), friend.id].join("#").includes(search.toLowerCase()));
+  const searchedFriends = friendsToAdd.filter((friend) =>
+    [friend.username.toLowerCase(), friend.discriminator].join("#").includes(search.toLowerCase())
+  );
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 

@@ -16,7 +16,7 @@ const SEND_MESSAGE = graphql(`
 const useSendMessage = (channelId: number) => {
   const chatScrollRef = useChatScrollContext();
   return useAuthMutation(SEND_MESSAGE, {
-    onError: () => toast.error(ERROR_MESSAGE),
+    onError: (err) => toast.error(err.message ?? ERROR_MESSAGE),
     update(cache, { data }) {
       cache.updateQuery({ query: GET_CHAT_MESSAGES, variables: { channelId } }, (existing) => {
         const existingMessages = existing ? existing?.getMessages.messages : [];

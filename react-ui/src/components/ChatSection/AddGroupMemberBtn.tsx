@@ -1,12 +1,15 @@
 import AddMemberIcon from "@/components/Icons/AddMemberIcon";
-import AddNewGroupPopup from "@/components/privateGroups/AddNewGroupPopup";
 import MyPopover from "@/components/shared/MyPopover";
+import PopoverLoadingFallback from "@/components/shared/PopoverLoadingFallback";
 import TooltipWrapper from "@/components/shared/TooltipWrapper";
+import { Suspense, lazy } from "react";
 
 type Props = {
   currentMembersIds: (number | undefined)[];
   groupId?: number | null;
-}
+};
+
+const AddNewGroupPopup = lazy(() => import("@/components/privateGroups/AddNewGroupPopup"));
 
 const AddGroupMemberBtn = ({ currentMembersIds, groupId = null }: Props) => {
   return (
@@ -16,9 +19,13 @@ const AddGroupMemberBtn = ({ currentMembersIds, groupId = null }: Props) => {
           <AddMemberIcon />
         </MyPopover.Button>
       </TooltipWrapper>
-        <MyPopover.Panel className="z-40 bg-primary border border-gray-800 w-[440px] rounded-md drop-shadow-lg animate-fade-in">
-          {(close) => <AddNewGroupPopup closePopover={close} currentMembersIds={currentMembersIds} groupId={groupId} />}
-        </MyPopover.Panel>
+      <MyPopover.Panel className="z-40 bg-primary border border-gray-800 w-[440px] rounded-md drop-shadow-lg animate-fade-in">
+        {(close) => (
+          <Suspense fallback={<PopoverLoadingFallback style={{ height: "400px" }} />}>
+            <AddNewGroupPopup closePopover={close} currentMembersIds={currentMembersIds} groupId={groupId} />
+          </Suspense>
+        )}
+      </MyPopover.Panel>
     </MyPopover>
   );
 };

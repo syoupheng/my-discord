@@ -10,11 +10,12 @@ export class PrivateConversationsService {
 
   async findAll(userId: number): Promise<PrivateConversation[]> {
     const rawConversations = await this.privateConversationsRepository.findAllByUserId(userId);
-    return rawConversations.map(({ id, members, createdAt }) => ({
-      id,
-      createdAt,
-      memberId: members.find(({ memberId }) => userId !== memberId)?.memberId,
-    }));
+    const result: PrivateConversation[] = [];
+    rawConversations.forEach(({ id, members, createdAt }) => {
+      const memberId = members.find(({ memberId }) => userId !== memberId)?.memberId;
+      if (memberId) result.push({ id, createdAt, memberId });
+    });
+    return result;
   }
 
   async findConversationMembersByIds(ids: number[]): Promise<ChannelMember[]> {
@@ -26,7 +27,7 @@ export class PrivateConversationsService {
     return ids.map((id) => members.find((member) => member.id === id) ?? Error(`Conversation member ${id} not found`));
   }
 
-  async findById(conversationId: number): Promise<PrivateConversation> {
+  async findById(conversationId: number) {
     const conversation = await this.privateConversationsRepository.findById(conversationId);
     if (!conversation) throw new NotFoundException("Cette conversation n'existe pas !");
     return conversation;

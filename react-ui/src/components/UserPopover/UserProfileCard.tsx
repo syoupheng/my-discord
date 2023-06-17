@@ -8,12 +8,12 @@ type Props = {
   avatarColor: string;
   status: UserStatus;
   username: string;
-  id: number;
+  discriminator: string;
   createdAt: string;
   closePopover: PopoverCloseFunction;
 };
 
-const UserProfileCard = ({ avatarColor, status, username, id, createdAt, closePopover }: Props) => {
+const UserProfileCard = ({ avatarColor, status, username, discriminator, createdAt, closePopover }: Props) => {
   return (
     <div>
       <div className="h-14 mb-8 min-w-[335px] rounded-t-md relative" style={{ backgroundColor: avatarColor }}>
@@ -22,10 +22,10 @@ const UserProfileCard = ({ avatarColor, status, username, id, createdAt, closePo
         </div>
       </div>
       <div className="p-4">
-        <div className="bg-tertiary rounded-md px-3">
-          <div className="text-xl font-bold py-3">
-            <span className="text-white">{username}</span>
-            <span className="text-h-secondary">#{id}</span>
+        <div className="bg-tertiary rounded-md px-3 overflow-hidden">
+          <div className="text-xl font-bold py-3 overflow-hidden whitespace-nowrap text-ellipsis text-white">
+            <span>{username}</span>
+            <span className="text-h-secondary">#{discriminator}</span>
           </div>
           <div className="border-t border-grey-border pt-2">
             <div className="my-1">

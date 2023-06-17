@@ -5,6 +5,7 @@
 type AuthUser implements BaseUser {
   avatarColor: String!
   createdAt: DateTime!
+  discriminator: String!
   email: String!
   friendRequests: [FriendRequest!]!
   friends: [Friend!]!
@@ -27,6 +28,7 @@ interface BaseMessage {
 interface BaseUser {
   avatarColor: String!
   createdAt: DateTime!
+  discriminator: String!
   id: Int!
   username: String!
 }
@@ -34,6 +36,7 @@ interface BaseUser {
 type ChannelMember implements BaseUser {
   avatarColor: String!
   createdAt: DateTime!
+  discriminator: String!
   id: Int!
   username: String!
 }
@@ -59,6 +62,7 @@ input EditProfileInput {
 type Friend implements BaseUser {
   avatarColor: String!
   createdAt: DateTime!
+  discriminator: String!
   id: Int!
   status: UserStatus!
   username: String!
@@ -67,6 +71,7 @@ type Friend implements BaseUser {
 type FriendRequest implements BaseUser {
   avatarColor: String!
   createdAt: DateTime!
+  discriminator: String!
   id: Int!
   requestStatus: FriendRequestStatus!
   username: String!
@@ -83,7 +88,7 @@ enum FriendRequestStatus {
 }
 
 input FriendTag {
-  id: Int!
+  discriminator: String!
   username: String!
 }
 
@@ -186,6 +191,7 @@ type Subscription {
   friendRequestReceived(userId: Int!): FriendRequest!
   messageDeleted(userId: Int!): Message!
   messageReceived(userId: Int!): Message!
+  modifiedPrivateGroup(userId: Int!): PrivateGroup!
   userTyping(userTypingInput: UserTypingInput!): TypingNotification!
 }
 

@@ -1,11 +1,20 @@
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import { onError } from "@apollo/client/link/error";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { ApolloClient, HttpLink, InMemoryCache, split } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache, from, split } from "@apollo/client";
+import { toast } from "react-hot-toast";
 
 const httpLink = new HttpLink({ uri: import.meta.env.VITE_API_URL, credentials: "include" });
 
 const wsLink = new GraphQLWsLink(createClient({ url: import.meta.env.VITE_SUBSCRIPTION_URL }));
+
+const errorLink = onError(({ networkError }) => {
+  if (networkError) {
+    toast.error("Problème de connexion...", { id: "network-error" });
+    throw new Error("Network error...");
+  }
+});
 
 const splitLink = split(
   ({ query }) => {
@@ -17,7 +26,7 @@ const splitLink = split(
 );
 
 export const client = new ApolloClient({
-  link: splitLink,
+  link: from([errorLink, splitLink]),
   cache: new InMemoryCache({
     typePolicies: {
       AuthUser: {

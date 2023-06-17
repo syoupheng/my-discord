@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { PrivateGroupFragment } from "@/gql/graphql";
 import useEditGroupName from "@/hooks/private-groups/useEditGroupName";
-import { z } from "zod";
+import { ZodError, z } from "zod";
+import { toast } from "react-hot-toast";
+import { ERROR_MESSAGE } from "@/utils/apollo";
 
 export const editGroupNameInputSchema = z.object({
   groupId: z.number().int().positive(),
-  name: z.string().min(1).max(25),
+  name: z.string().min(1).max(50),
 });
 
 const useGroupNameInput = ({ id, name }: PrivateGroupFragment) => {
@@ -30,6 +32,8 @@ const useGroupNameInput = ({ id, name }: PrivateGroupFragment) => {
         });
     } catch (err) {
       console.error(err);
+      if (err instanceof ZodError) toast.error(err.errors[0] ? err.errors[0].message : ERROR_MESSAGE);
+      setNameInput(name);
     }
     setIsFocused(false);
   };

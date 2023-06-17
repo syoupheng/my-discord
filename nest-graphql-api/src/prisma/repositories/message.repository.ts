@@ -31,7 +31,7 @@ export class MessageRepository {
       where: { messageId: { in: ids } },
       include: {
         mention: {
-          select: { id: true, username: true, createdAt: true, avatarColor: true },
+          select: { id: true, username: true, discriminator: true, createdAt: true, avatarColor: true },
         },
       },
     });

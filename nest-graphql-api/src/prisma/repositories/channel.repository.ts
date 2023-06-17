@@ -5,6 +5,10 @@ import { PrismaService } from '../prisma.service';
 export class ChannelRepository {
   constructor(private prisma: PrismaService) {}
 
+  findById(channelId: number) {
+    return this.prisma.channel.findUnique({ where: { id: channelId } });
+  }
+
   findMembersByChannelId(channelId: number) {
     return this.prisma.membersInChannels.findMany({
       where: {

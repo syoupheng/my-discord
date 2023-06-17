@@ -13,4 +13,7 @@ export abstract class BaseUser {
 
   @Field()
   avatarColor: string;
+
+  @Field()
+  discriminator: string;
 }

@@ -22,6 +22,7 @@ export class MessagesResolver {
   constructor(
     private readonly messagesService: MessagesService,
     private messagesNotificationsService: MessagesNotificationsService,
+    // @ts-expect-error need to upgrade nestjs ?
     @Inject(PUB_SUB) private pubSub: PubSub,
   ) {}
 

@@ -1,7 +1,10 @@
 import AddIcon from "@/components/Icons/AddIcon";
-import AddNewGroupPopup from "@/components/privateGroups/AddNewGroupPopup";
 import MyPopover from "@/components/shared/MyPopover";
+import PopoverLoadingFallback from "@/components/shared/PopoverLoadingFallback";
 import TooltipWrapper from "@/components/shared/TooltipWrapper";
+import { Suspense, lazy } from "react";
+
+const AddNewGroupPopup = lazy(() => import("@/components/privateGroups/AddNewGroupPopup"));
 
 const MessageRoomListHeader = () => {
   return (
@@ -21,7 +24,11 @@ const MessageRoomListHeader = () => {
         </MyPopover.Button>
       </TooltipWrapper>
       <MyPopover.Panel className="z-40 bg-primary border border-gray-800 w-[440px] rounded-md drop-shadow-lg animate-fade-in">
-        {(close) => <AddNewGroupPopup closePopover={close} />}
+        {(close) => (
+          <Suspense fallback={<PopoverLoadingFallback style={{ height: "400px" }} />}>
+            <AddNewGroupPopup closePopover={close} />
+          </Suspense>
+        )}
       </MyPopover.Panel>
     </MyPopover>
   );

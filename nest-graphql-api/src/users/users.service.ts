@@ -1,6 +1,5 @@
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Prisma, User as PrismaUser } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { EditProfileInput } from './dto/edit-profile.input';
 import { UserStatus } from './enums/user-status.enum';
 import * as argon from 'argon2';
@@ -14,12 +13,14 @@ import { PrivateConversationsRepository } from '../prisma/repositories/private-c
 import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
 import { AvatarService } from '../avatar/avatar.service';
 import { ChannelMember } from './entities/channel-member.entity';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UsersService {
   constructor(
     private prisma: PrismaService,
     private usersRepository: UsersRepository,
+    // @ts-expect-error need to upgrade nestjs ?
     @Inject(PUB_SUB) private pubSub: PubSub,
     private friendsService: FriendsService,
     private privateConversationRepository: PrivateConversationsRepository,
@@ -27,15 +28,28 @@ export class UsersService {
     private avatarService: AvatarService,
   ) {}
 
-  async create(userCreateInput: Prisma.UserCreateInput): Promise<AuthUser> {
-    try {
-      const newUser = await this.usersRepository.create(userCreateInput);
-      const { password, status, ...result } = newUser;
-      return { ...result, status: UserStatus[status] };
-    } catch (err) {
-      this.prisma.throwDBError(err, { message: "Ce nom d'utilisateur ou email existe déjà !", errorType: 'conflict' });
-      throw err;
+  async create(userCreateInput: Omit<Prisma.UserCreateInput, 'discriminator'>): Promise<AuthUser> {
+    const MAX_RETRIES = 10;
+    let retries = 0;
+    while (retries < MAX_RETRIES) {
+      try {
+        const newUser = await this.usersRepository.create({ ...userCreateInput, discriminator: this.generateDiscriminator() });
+        const { password, status, ...result } = newUser;
+        return { ...result, status: UserStatus[status] };
+      } catch (err) {
+        if (!(err instanceof PrismaClientKnownRequestError) || err.code !== 'P2002') throw err;
+        const errorHasTargetFields = !!err.meta && 'target' in err.meta && Array.isArray(err.meta.target);
+        if (!errorHasTargetFields) throw err;
+        const errorFields = err.meta!.target as unknown[];
+        if (errorFields.includes('email')) throw new ConflictException('Cet email est déjà pris !');
+        if (errorFields.length === 2 && errorFields.includes('username') && errorFields.includes('discriminator')) {
+          retries++;
+          continue;
+        }
+        throw err;
+      }
     }
+    throw new InternalServerErrorException();
   }
 
   async findOneById(id: number) {
@@ -55,9 +69,9 @@ export class UsersService {
       if ('password' in input && input.password) input.password = await argon.hash(input.password);
       const { status: prismaStatus, password, ...userData } = await this.usersRepository.update(userId, input);
       const editedProfile = { ...userData, status: UserStatus[prismaStatus] };
-      const { id, username, status } = editedProfile;
+      const { id, username, status, discriminator } = editedProfile;
       const friends = await this.friendsService.findAll(userId);
-      this.pubSub.publish('friendProfileChanged', { friendProfileChanged: { id, username, status, friends } });
+      this.pubSub.publish('friendProfileChanged', { friendProfileChanged: { id, username, discriminator, status, friends } });
       return editedProfile;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError) {
@@ -76,7 +90,7 @@ export class UsersService {
         },
       },
     });
-    if (!chatGptUsers.length) return;
+    if (chatGptUsers.length < 2) return;
     const futureFriends = chatGptUsers.slice(0, Math.floor(chatGptUsers.length / 2));
     if (futureFriends.length) {
       await this.prisma.friendsWith
@@ -110,7 +124,7 @@ export class UsersService {
     for (let i = 0; i < numMembers; i++) {
       const randomIndex = Math.floor(Math.random() * remainingUsers.length);
       const randomUser = remainingUsers.splice(randomIndex, 1)[0];
-      selectedMembers.push(randomUser);
+      if (randomUser) selectedMembers.push(randomUser);
     }
     await this.privateGroupRepository
       .create({
@@ -119,5 +133,14 @@ export class UsersService {
         avatarColor: this.avatarService.getColor(),
       })
       .catch((err) => console.error(err));
+  }
+
+  generateDiscriminator() {
+    const DISCRIMINATOR_LENGTH = 4;
+    const numbersArray: string[] = [];
+    for (let i = 0; i < DISCRIMINATOR_LENGTH; i++) {
+      numbersArray.push(String(Math.floor(Math.random() * 10)));
+    }
+    return numbersArray.join('');
   }
 }

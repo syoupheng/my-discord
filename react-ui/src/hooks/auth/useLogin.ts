@@ -16,6 +16,9 @@ const useLogin = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
   return useMutation(LOGIN_USER, {
+    onError: (err) => {
+      console.error(err.message);
+    },
     onCompleted: (data) => {
       client.writeQuery({ query: GET_AUTH_USER, data: { me: data.login } });
       navigate(DEFAULT_ROUTE);

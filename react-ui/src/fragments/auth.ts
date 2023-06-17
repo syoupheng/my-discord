@@ -4,6 +4,7 @@ export const CHANNEL_MEMBER_FIELDS = graphql(`
   fragment ChannelMember on ChannelMember {
     id
     username
+    discriminator
     createdAt
     avatarColor
   }
@@ -13,6 +14,7 @@ export const FRIEND_FRAGMENT = graphql(`
   fragment Friend on Friend {
     id
     username
+    discriminator
     status
     avatarColor
   }
@@ -22,6 +24,7 @@ export const FRIEND_REQUEST_FRAGMENT = graphql(`
   fragment FriendRequest on FriendRequest {
     id
     username
+    discriminator
     requestStatus
     avatarColor
   }
@@ -61,6 +64,7 @@ export const AUTH_USER_INFO_FRAGMENT = graphql(`
   fragment AuthUserInfo on AuthUser {
     id
     username
+    discriminator
     createdAt
     status
     phoneNumber

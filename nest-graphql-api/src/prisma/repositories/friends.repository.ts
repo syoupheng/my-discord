@@ -34,6 +34,7 @@ export class FriendsRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             status: true,
             createdAt: true,
             avatarColor: true,
@@ -43,6 +44,7 @@ export class FriendsRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             status: true,
             createdAt: true,
             avatarColor: true,
@@ -63,6 +65,7 @@ export class FriendsRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             status: true,
             createdAt: true,
             avatarColor: true,
@@ -72,6 +75,7 @@ export class FriendsRepository {
           select: {
             id: true,
             username: true,
+            discriminator: true,
             status: true,
             createdAt: true,
             avatarColor: true,
