@@ -1,11 +1,11 @@
 import { Reference, useSubscription } from "@apollo/client";
-import useAuthUserCache from "@/hooks/auth/useAuthUserCache";
 import { useParams } from "react-router-dom";
 import { AUTH_USER_CACHE_ID } from "@/apollo.config";
 import { MESSAGE_NOTIFICATION_FRAGMENT } from "@/fragments/auth";
 import { graphql } from "@/gql";
 import useChatScrollContext from "@/hooks/chat-messages/useChatScrollContext";
 import { GET_CHAT_MESSAGES } from "@/hooks/chat-messages/useChatMessages";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 
 const MESSAGE_RECEIVED_SUBSCRIPTION = graphql(`
   subscription OnMessageReceived($userId: Int!) {
@@ -18,7 +18,7 @@ const MESSAGE_RECEIVED_SUBSCRIPTION = graphql(`
 const useMessageReceivedSubscription = () => {
   const { channelId } = useParams();
   const chatScrollRef = useChatScrollContext();
-  const authUserData = useAuthUserCache();
+  const authUserData = useAuthUserInfo();
   return useSubscription(MESSAGE_RECEIVED_SUBSCRIPTION, {
     variables: { userId: authUserData.id },
     onSubscriptionData: ({ client, subscriptionData }) => {
@@ -52,7 +52,6 @@ const useMessageReceivedSubscription = () => {
         id: AUTH_USER_CACHE_ID,
         fields: {
           newMessagesNotifications(existingUnreadMessagesRefs = [], { readField }) {
-            console.log({ existingUnreadMessagesRefs });
             const newNotification = client.cache.writeFragment({
               fragment: MESSAGE_NOTIFICATION_FRAGMENT,
               data: { __typename: "Message", id: newMessage.id, channelId: newMessage.channelId, createdAt: newMessage.createdAt },
@@ -64,27 +63,6 @@ const useMessageReceivedSubscription = () => {
           },
         },
       });
-      // client.writeQuery({
-      //   ...authUserCacheId,
-      //   data: {
-      //     me: {
-      //       ...existingAuthUser.me,
-      //       newMessagesNotifications: [
-      //         ...existingUnreadMessages,
-      //         { id: newMessage.id, channelId: newMessage.channelId, createdAt: newMessage.createdAt },
-      //       ],
-      //     },
-      //   },
-      // });
-      // client.cache.updateQuery(authUserCacheId, (existingData) => ({
-      //   me: {
-      //     ...existingData?.me!,
-      //     newMessagesNotifications: [
-      //       ...existingUnreadMessages,
-      //       { id: newMessage.id, channelId: newMessage.channelId, createdAt: newMessage.createdAt },
-      //     ],
-      //   },
-      // }));
 
       if (authUserData.status !== "DO_NOT_DISTURB") {
         const discordSoundNotification = new Audio("/discord-notification.mp3");

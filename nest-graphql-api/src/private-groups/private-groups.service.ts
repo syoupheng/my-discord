@@ -60,8 +60,12 @@ export class PrivateGroupsService {
 
   async editName(editNameInput: EditNameInput, userId: number): Promise<PrivateGroup> {
     const { groupId, name } = editNameInput;
-    await this.canEdit(groupId, userId);
-    return this.privateGroupsRepository.update(groupId, { name });
+    const membersIds = await this.canEdit(groupId, userId);
+    const updatedGroup = await this.privateGroupsRepository.update(groupId, { name });
+    this.pubSub.publish('modifiedPrivateGroup', {
+      newPrivateGroup: { payload: updatedGroup, membersIds: membersIds.filter((id) => userId !== id) },
+    });
+    return updatedGroup;
   }
 
   async addMember(groupId: number, membersIds: number[], userId: number): Promise<PrivateGroup> {

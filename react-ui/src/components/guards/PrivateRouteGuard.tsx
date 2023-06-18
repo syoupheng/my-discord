@@ -5,11 +5,11 @@ import useIsAuth from "@/hooks/auth/useIsAuth";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRouteGuard = () => {
-  const { data, loading } = useAuthUser();
+  const { data, loading, subscribeToMore } = useAuthUser();
   useIsAuth();
   if (loading) return <LoadingScreen />;
   return data ? (
-    <PrivateApp>
+    <PrivateApp authUserId={data.me.id} subscribeToMore={subscribeToMore}>
       <Outlet />
     </PrivateApp>
   ) : (

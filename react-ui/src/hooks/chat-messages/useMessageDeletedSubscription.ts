@@ -1,6 +1,5 @@
 import { useSubscription } from "@apollo/client";
 import { graphql } from "@/gql";
-import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 import { MessageFragment } from "@/gql/graphql";
 import { GET_CHAT_MESSAGES } from "@/hooks/chat-messages/useChatMessages";
 
@@ -13,10 +12,9 @@ const MESSAGE_DELETED_SUBSCRIPTION = graphql(`
   }
 `);
 
-const useMessageDeletedSubscription = () => {
-  const authUser = useAuthUserInfo();
+const useMessageDeletedSubscription = (authUserId: number) => {
   return useSubscription(MESSAGE_DELETED_SUBSCRIPTION, {
-    variables: { userId: authUser.id },
+    variables: { userId: authUserId },
     onSubscriptionData: ({ client, subscriptionData: { data } }) => {
       if (!data) return;
       const { channelId, id: messageId } = data.messageDeleted;

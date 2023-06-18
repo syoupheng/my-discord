@@ -45,6 +45,7 @@ export class PrivateGroupsResolver {
 
   @ResolveField('members', () => [ChannelMember])
   getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders): Promise<ChannelMember[]> {
+    loaders.groupMembersLoader.clear(privateGroup.id);
     return loaders.groupMembersLoader.load(privateGroup.id);
   }
 

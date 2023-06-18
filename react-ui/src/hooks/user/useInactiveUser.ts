@@ -1,17 +1,16 @@
 import { useEffect, useRef } from "react";
 import { UserStatus } from "@/gql/graphql";
-import useAuthUser from "@/hooks/auth/useAuthUser";
 import useEditProfile from "@/hooks/user/useEditProfile";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 
 const IDLE_TIME = 300_000;
 
 const useInactiveUser = () => {
-  const { data } = useAuthUser();
+  const authUser = useAuthUserInfo();
   const [changeUserStatus, { loading }] = useEditProfile();
   const previousStatusRef = useRef<UserStatus | null>(null);
   useEffect(() => {
-    if (!data) return;
-    const { status } = data.me;
+    const { status } = authUser;
 
     const onUserIdle = () => {
       if (!["INACTIVE", "INVISIBLE"].includes(status)) {
@@ -42,7 +41,7 @@ const useInactiveUser = () => {
       document.removeEventListener("click", onUserActive);
       window.removeEventListener("focus", onUserActive);
     };
-  }, [data, loading]);
+  }, [authUser, loading]);
 };
 
 export default useInactiveUser;

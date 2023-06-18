@@ -1,5 +1,4 @@
 import { useSubscription } from "@apollo/client";
-import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 import { graphql } from "@/gql";
 
 const FRIEND_PROFILE_CHANGE_SUBSCRIPTION = graphql(`
@@ -12,9 +11,8 @@ const FRIEND_PROFILE_CHANGE_SUBSCRIPTION = graphql(`
   }
 `);
 
-const useFriendChangeSub = () => {
-  const authUser = useAuthUserInfo();
-  return useSubscription(FRIEND_PROFILE_CHANGE_SUBSCRIPTION, { variables: { userId: authUser.id } });
+const useFriendChangeSub = (authUserId: number) => {
+  return useSubscription(FRIEND_PROFILE_CHANGE_SUBSCRIPTION, { variables: { userId: authUserId } });
 };
 
 export default useFriendChangeSub;

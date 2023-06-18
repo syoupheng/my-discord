@@ -1,6 +1,6 @@
+import { AuthUserSubscriptionParams } from "@/components/PrivateApp";
 import { graphql } from "@/gql";
 import { AuthUserFragment } from "@/gql/graphql";
-import useAuthUser from "@/hooks/auth/useAuthUser";
 import { useEffect } from "react";
 
 const UPDATED_GROUP_SUBSCRIPTION = graphql(`
@@ -11,32 +11,35 @@ const UPDATED_GROUP_SUBSCRIPTION = graphql(`
   }
 `);
 
-const useAddedToGroupSubscription = () => {
-  const { subscribeToMore, data } = useAuthUser();
-
+const useUpdatedGroupSubscription = ({ authUserId, subscribeToMore }: AuthUserSubscriptionParams) => {
   useEffect(() => {
     let unsubscribe: () => void;
-    if (data) {
-      unsubscribe = subscribeToMore({
-        document: UPDATED_GROUP_SUBSCRIPTION,
-        variables: { userId: data.me.id },
-        updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) return prev;
-          const newPrivateGroup = subscriptionData.data.modifiedPrivateGroup;
-          const newData: AuthUserFragment = {
-            ...prev.me,
-            privateGroups: prev.me.privateGroups.some((group) => group.id === newPrivateGroup.id)
-              ? prev.me.privateGroups
-              : [newPrivateGroup, ...prev.me.privateGroups],
-          };
+    unsubscribe = subscribeToMore({
+      document: UPDATED_GROUP_SUBSCRIPTION,
+      variables: { userId: authUserId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newPrivateGroup = subscriptionData.data.modifiedPrivateGroup;
+        let newPrivateGroups = [...prev.me.privateGroups];
+        const privateGroupToModifyIndex = newPrivateGroups.findIndex((group) => group.id === newPrivateGroup.id);
+        console.log({ privateGroupToModifyIndex });
+        if (privateGroupToModifyIndex === -1) {
+          newPrivateGroups = [newPrivateGroup, ...prev.me.privateGroups];
+        } else {
+          console.log({ newPrivateGroup });
+          newPrivateGroups[privateGroupToModifyIndex] = newPrivateGroup;
+        }
+        const newData: AuthUserFragment = {
+          ...prev.me,
+          privateGroups: newPrivateGroups,
+        };
 
-          return { me: newData };
-        },
-      });
-    }
+        return { me: newData };
+      },
+    });
 
     return () => !!unsubscribe && unsubscribe();
   }, []);
 };
 
-export default useAddedToGroupSubscription;
+export default useUpdatedGroupSubscription;
