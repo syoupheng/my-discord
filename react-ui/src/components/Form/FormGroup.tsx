@@ -1,10 +1,6 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-interface Props {
-  children: ReactNode;
-}
-
-const FormGroup = ({ children }: Props) => {
+const FormGroup = ({ children }: PropsWithChildren) => {
   return <div className="flex flex-col mb-5">{children}</div>;
 };
 

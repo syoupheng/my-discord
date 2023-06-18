@@ -11,23 +11,26 @@ datasource db {
 }
 
 model User {
-  id                         Int                      @id @default(autoincrement())
-  username                   String                   @unique
-  email                      String                   @unique
-  status                     UserStatus               @default(INVISIBLE)
-  password                   String
-  phoneNumber                String?
-  createdAt                  DateTime                 @default(now())
-  friendRequestsSent         FriendRequest[]          @relation("friendRequestsSent")
-  friendRequestsReceived     FriendRequest[]          @relation("friendRequestsReceived")
-  isFriendsWith              FriendsWith[]            @relation("hasFriends")
-  hasFriends                 FriendsWith[]            @relation("isFriendsWith")
-  privateGroups              MembersInPrivateGroups[]
-  hasConversationWithFriend1 PrivateConversation[]    @relation("hasConversationWithFriend1")
-  hasConversationWithFriend2 PrivateConversation[]    @relation("hasConversationWithFriend2")
-  conversationMessages       ConversationMessage[]
-  groupMessages              GroupMessage[]
+  id                       Int                        @id @default(autoincrement())
+  username                 String
+  discriminator            String
+  email                    String                     @unique
+  status                   UserStatus                 @default(INVISIBLE)
+  password                 String
+  phoneNumber              String?
+  createdAt                DateTime                   @default(now())
+  friendRequestsSent       FriendRequest[]            @relation("friendRequestsSent")
+  friendRequestsReceived   FriendRequest[]            @relation("friendRequestsReceived")
+  isFriendsWith            FriendsWith[]              @relation("hasFriends")
+  hasFriends               FriendsWith[]              @relation("isFriendsWith")
+  channels                 MembersInChannels[]
+  messages                 Message[]
+  mentionedBy              MentionsOnMessages[]
+  newMessagesNotifications NewMessagesNotifications[]
+  chatGptRole              String?
+  avatarColor              String                     @default("#ef4444")
 
+  @@unique(fields: [username, discriminator], name: "userIdentifier")
   @@map("users")
 }
 
@@ -55,72 +58,68 @@ model FriendsWith {
   @@map("friends_with")
 }
 
-model PrivateGroup {
-  id        Int                      @id @default(autoincrement())
-  name      String
-  createdAt DateTime                 @default(now())
-  members   MembersInPrivateGroups[]
-  messages  GroupMessage[]
+model Channel {
+  id          Int                 @id @default(autoincrement())
+  name        String?
+  createdAt   DateTime            @default(now())
+  members     MembersInChannels[]
+  messages    Message[]
+  type        ChannelType         @default(PRIVATE_CONVERSATION)
+  avatarColor String              @default("#45c46d")
 
-  @@map("private_group")
+  @@map("channels")
 }
 
-model MembersInPrivateGroups {
-  privateGroup   PrivateGroup @relation(fields: [privateGroupId], references: [id])
-  privateGroupId Int
-  member         User         @relation(fields: [memberId], references: [id])
-  memberId       Int
-  joinedIn       DateTime     @default(now())
+model MembersInChannels {
+  channel   Channel  @relation(fields: [channelId], references: [id])
+  channelId Int
+  member    User     @relation(fields: [memberId], references: [id])
+  memberId  Int
+  joinedIn  DateTime @default(now())
+  hidden    Boolean  @default(false)
 
-  @@id([privateGroupId, memberId])
-  @@map("members_in_private_groups")
+  @@id([channelId, memberId])
+  @@map("members_in_channels")
 }
 
-model GroupMessage {
-  id             Int            @id @default(autoincrement())
-  createdAt      DateTime       @default(now())
-  editedAt       DateTime?
-  content        String
-  author         User           @relation(fields: [authorId], references: [id])
-  authorId       Int
-  privateGroup   PrivateGroup   @relation(fields: [privateGroupId], references: [id])
-  privateGroupId Int
-  respondsToId   Int?
-  respondsTo     GroupMessage?  @relation("responseToGroupMessage", fields: [respondsToId], references: [id])
-  responses      GroupMessage[] @relation("responseToGroupMessage")
+model Message {
+  id           Int                        @id @default(autoincrement())
+  createdAt    DateTime                   @unique @default(now())
+  editedAt     DateTime?                  @updatedAt
+  content      String
+  author       User                       @relation(fields: [authorId], references: [id])
+  authorId     Int
+  channel      Channel                    @relation(fields: [channelId], references: [id])
+  channelId    Int
+  respondsToId Int?
+  respondsTo   Message?                   @relation("responseToMessage", fields: [respondsToId], references: [id])
+  responses    Message[]                  @relation("responseToMessage")
+  type         MessageType
+  mentions     MentionsOnMessages[]
+  pinned       Boolean                    @default(false)
+  notifiedTo   NewMessagesNotifications[]
 
-  @@map("group_message")
+  @@map("messages")
 }
 
-model PrivateConversation {
-  id          Int                   @unique @default(autoincrement())
-  createdAt   DateTime              @default(now())
-  friend1     User                  @relation(name: "hasConversationWithFriend1", fields: [friend_1_id], references: [id])
-  friend_1_id Int
-  friend2     User                  @relation(name: "hasConversationWithFriend2", fields: [friend_2_id], references: [id])
-  friend_2_id Int
-  display1    Boolean               @default(true)
-  display2    Boolean               @default(true)
-  messages    ConversationMessage[]
+model MentionsOnMessages {
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId Int
+  mention   User    @relation(fields: [mentionId], references: [id])
+  mentionId Int
 
-  @@id([friend_1_id, friend_2_id])
-  @@map("private_conversation")
+  @@id([messageId, mentionId])
+  @@map("mentions_on_messages")
 }
 
-model ConversationMessage {
-  id                    Int                   @id @default(autoincrement())
-  createdAt             DateTime              @default(now())
-  editedAt              DateTime?
-  content               String
-  author                User                  @relation(fields: [authorId], references: [id])
-  authorId              Int
-  privateConversation   PrivateConversation   @relation(fields: [privateConversationId], references: [id])
-  privateConversationId Int
-  respondsToId          Int?
-  respondsTo            ConversationMessage?  @relation("responseToPrivateMessage", fields: [respondsToId], references: [id])
-  responses             ConversationMessage[] @relation("responseToPrivateMessage")
+model NewMessagesNotifications {
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId Int
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
 
-  @@map("conversation_message")
+  @@id([messageId, userId])
+  @@map("new_messages_notifications")
 }
 
 enum UserStatus {
@@ -133,4 +132,16 @@ enum UserStatus {
 enum FriendStatus {
   FRIENDS
   BLOCKED
+}
+
+enum ChannelType {
+  PRIVATE_CONVERSATION
+  PRIVATE_GROUP
+}
+
+enum MessageType {
+  NORMAL
+  NAME_CHANGE_NOTIFICATION
+  ARRIVAL_NOTIFICATION
+  LEAVE_NOTIFICATION
 }

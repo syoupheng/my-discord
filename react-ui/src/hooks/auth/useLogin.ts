@@ -1,24 +1,28 @@
-import { gql, useMutation } from "@apollo/client";
+import { graphql } from "@/gql";
+import { GET_AUTH_USER } from "@/hooks/auth/useAuthUser";
+import { DEFAULT_ROUTE } from "@/main";
+import { useApolloClient, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { AUTH_USER_FIELDS } from "../../fragments/auth";
-import { DEFAULT_ROUTE } from "../../main";
-import { LoginInput } from "../../types/auth";
-import { User } from "../../types/user";
 
-const LOGIN_USER = gql`
-  ${AUTH_USER_FIELDS}
+const LOGIN_USER = graphql(`
   mutation LoginUser($input: LoginUserInput!) {
     login(loginUserInput: $input) {
-      ...AuthUserFields
+      ...AuthUser
     }
   }
-`;
+`);
 
 const useLogin = () => {
   const navigate = useNavigate();
-
-  return useMutation<User, { input: LoginInput }>(LOGIN_USER, {
-    onCompleted: () => navigate(DEFAULT_ROUTE),
+  const client = useApolloClient();
+  return useMutation(LOGIN_USER, {
+    onError: (err) => {
+      console.error(err.message);
+    },
+    onCompleted: (data) => {
+      client.writeQuery({ query: GET_AUTH_USER, data: { me: data.login } });
+      navigate(DEFAULT_ROUTE);
+    },
   });
 };
 

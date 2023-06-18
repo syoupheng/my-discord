@@ -1,20 +1,16 @@
-import useNewFriendRequestSub from "../../hooks/friend-requests/useNewFriendRequestSub";
-import { FriendRequest } from "../../types/user";
-import EmptyFriends from "./EmptyFriends";
-import FriendRequestItem from "./FriendRequestItem";
+import FriendRequestItem from "@/components/FriendsPage/FriendRequestItem";
+import { FriendRequestFragment } from "@/gql/graphql";
 
-interface Props {
-  friendRequests: FriendRequest[];
-}
+type Props = {
+  friendRequests: FriendRequestFragment[];
+};
 
 const FriendRequestsList = ({ friendRequests }: Props) => {
   return (
     <>
-      {friendRequests.length > 0 ? (
-        friendRequests.map((friendRequest) => <FriendRequestItem key={friendRequest.id} friendRequest={friendRequest} />)
-      ) : (
-        <EmptyFriends search />
-      )}
+      {friendRequests.map((friendRequest) => (
+        <FriendRequestItem key={friendRequest.id} friendRequest={friendRequest} />
+      ))}
     </>
   );
 };

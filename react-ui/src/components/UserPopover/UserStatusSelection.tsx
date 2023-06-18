@@ -1,14 +1,17 @@
 import { offset, shift, useFloating } from "@floating-ui/react-dom";
 import { useState } from "react";
 import { BiChevronRight } from "react-icons/bi";
-import useEditProfile from "../../hooks/user/useEditProfile";
-import { User, UserStatus } from "../../types/user";
-import UserStatusIcon from "../shared/UserStatusIcon";
+import { UserStatus } from "@/gql/graphql";
+import { PopoverCloseFunction } from "@/components/shared/MyPopover";
+import useEditProfile from "@/hooks/user/useEditProfile";
+import UserStatusIcon from "@/components/shared/UserStatusIcon";
+import StatusSelectionItem from "@/components/UserPopover/StatusSelectionItem";
+import useAuthUserInfo from "@/hooks/auth/useAuthUserInfo";
 
-interface UserStatusMapValue {
+type UserStatusMapValue = {
   label: string;
   description: string;
-}
+};
 
 const userStatusMap = new Map<UserStatus, UserStatusMapValue>([
   [
@@ -41,17 +44,29 @@ const userStatusMap = new Map<UserStatus, UserStatusMapValue>([
   ],
 ]);
 
-interface Props {
-  authUser: User;
-  onClose: () => void;
-}
+type Props = {
+  userStatus: UserStatus;
+  closePopover: PopoverCloseFunction;
+};
 
-const UserStatusSelection = ({ authUser, onClose }: Props) => {
+const UserStatusSelection = ({ userStatus, closePopover }: Props) => {
   const [showSelect, setShowSelect] = useState(false);
   const [editProfile] = useEditProfile();
+  const { id, username, phoneNumber } = useAuthUserInfo();
 
   const selectUserStatus = (userStatus: UserStatus) => {
-    editProfile({ variables: { input: { status: userStatus } } });
+    editProfile({
+      variables: { input: { status: userStatus } },
+      optimisticResponse: {
+        editProfile: {
+          __typename: "AuthUser",
+          id,
+          username,
+          status: userStatus,
+          phoneNumber,
+        },
+      },
+    });
     setShowSelect(false);
   };
 
@@ -72,9 +87,9 @@ const UserStatusSelection = ({ authUser, onClose }: Props) => {
       >
         <div className="flex items-center">
           <div className="mr-3">
-            <UserStatusIcon status={authUser?.status} size={13} hoverWhite="group" />
+            <UserStatusIcon status={userStatus} size={13} hoverWhite="group" />
           </div>
-          <div className="text-btw-sm-xs">{userStatusMap.get(authUser?.status)?.label}</div>
+          <div className="text-btw-sm-xs">{userStatusMap.get(userStatus)?.label}</div>
         </div>
         <BiChevronRight size={20} />
         {showSelect && (
@@ -91,19 +106,16 @@ const UserStatusSelection = ({ authUser, onClose }: Props) => {
             <div className="bg-tertiary rounded-sm p-2 z-50 shadow-2xl">
               <ul className="w-72">
                 {[...userStatusMap].map(([userStatus, { label, description }]) => (
-                  <li
-                    onClick={() => {
+                  <StatusSelectionItem
+                    key={userStatus}
+                    onSelect={() => {
                       selectUserStatus(userStatus);
-                      onClose();
+                      closePopover();
                     }}
-                    className="first:border-b first:border-grey-border p-2 text-h-secondary hover:text-white hover:bg-blue first:mt-0 last:mb-0 my-1 cursor-pointer rounded-sm grid grid-cols-12 group/listitem"
-                  >
-                    <div className="col-span-1 my-auto">
-                      <UserStatusIcon status={userStatus} size={10} hoverWhite="listitem" />
-                    </div>
-                    <div className="text-btw-sm-xs col-span-11">{label}</div>
-                    {description !== "" && <p className="text-xxs mt-1 col-start-2 col-end-12">{description}</p>}
-                  </li>
+                    userStatus={userStatus}
+                    label={label}
+                    description={description}
+                  />
                 ))}
               </ul>
             </div>

@@ -1,22 +1,19 @@
-import { Friend } from "../../types/user";
-import FriendListItem from "./FriendListItem";
-import EmptyFriends from "./EmptyFriends";
-import usePrivateConversations from "../../hooks/private-conversation/usePrivateConversations";
+import FriendListItem from "@/components/FriendsPage/FriendListItem";
+import { FriendFragment } from "@/gql/graphql";
+import usePrivateConversations from "@/hooks/private-conversation/usePrivateConversations";
 
-interface Props {
-  friends: Friend[];
+type Props = {
+  friends: FriendFragment[];
 }
 
 const FriendsList = ({ friends }: Props) => {
-  const { data } = usePrivateConversations();
-  if (!data) return null;
+  const conversations = usePrivateConversations();
   return (
     <>
-      {friends.length > 0 ? (
-        friends.map((friend) => <FriendListItem key={friend.id} friend={friend} conversations={data.me.privateConversations} />)
-      ) : (
-        <EmptyFriends search />
-      )}
+      {friends.map((friend) => {
+        const conversation = conversations.find(({ member }) => member.id === friend.id);
+        return <FriendListItem key={friend.id} friend={friend} conversation={conversation} />;
+      })}
     </>
   );
 };

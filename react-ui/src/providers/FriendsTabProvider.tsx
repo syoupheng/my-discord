@@ -1,17 +1,23 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, PropsWithChildren, useState } from "react";
 
-export type FriendsTabValues = "ALL" | "ONLINE" | "PENDING" | "BLOCKED" | "ADD_FRIEND";
+export const FRIENDS_TAB_VALUE = {
+  ALL: "ALL",
+  ONLINE: "ONLINE",
+  PENDING: "PENDING",
+  // BLOCKED: "BLOCKED",
+  ADD_FRIEND: "ADD_FRIEND",
+} as const;
 
-type TFriendsTabContext = [FriendsTabValues, (tab: FriendsTabValues) => void];
+type ObjectValues<T> = T[keyof T];
 
-export const FriendsTabContext = createContext<TFriendsTabContext | []>([]);
+export type FriendsTabValue = ObjectValues<typeof FRIENDS_TAB_VALUE>;
 
-interface Props {
-  children: ReactNode;
-}
+type TFriendsTabContext = [FriendsTabValue, (tab: FriendsTabValue) => void];
 
-const FriendsTabProvider = ({ children }: Props) => {
-  const [selectedTab, setSelectedTab] = useState<FriendsTabValues>("ONLINE");
+export const FriendsTabContext = createContext<TFriendsTabContext | null>(null);
+
+const FriendsTabProvider = ({ children }: PropsWithChildren) => {
+  const [selectedTab, setSelectedTab] = useState<FriendsTabValue>("ONLINE");
   return <FriendsTabContext.Provider value={[selectedTab, setSelectedTab]}>{children}</FriendsTabContext.Provider>;
 };
 

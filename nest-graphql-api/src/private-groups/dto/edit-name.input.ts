@@ -4,12 +4,12 @@ import { IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 @InputType()
 export class EditNameInput {
   @IsInt()
-  @Field((type) => Int)
+  @Field(() => Int)
   groupId: number;
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(40)
+  @MaxLength(50)
   @Field()
   name: string;
 }

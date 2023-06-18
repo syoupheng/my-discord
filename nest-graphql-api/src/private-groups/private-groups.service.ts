@@ -1,60 +1,39 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { FriendsService } from '../friends/friends.service';
-import { ConversationMember } from '../private-conversations/entities/conversation-member.entity';
-import { PrismaService } from '../prisma/prisma.service';
 import { PrivateGroup } from './entities/private-group.entity';
 import { AuthUser } from '../auth/entities/auth-user.entity';
 import { EditNameInput } from './dto/edit-name.input';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrivateGroupsRepository } from '../prisma/repositories/private-groups.repository';
+import { ChannelMember } from '../users/entities/channel-member.entity';
+import { AvatarService } from '../avatar/avatar.service';
+import { PUB_SUB } from '../pubsub/pubsub.module';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class PrivateGroupsService {
-  constructor(private prisma: PrismaService, private friendsService: FriendsService) {}
+  constructor(
+    private friendsService: FriendsService,
+    private privateGroupsRepository: PrivateGroupsRepository,
+    private avatarService: AvatarService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   async findAll(userId: number): Promise<PrivateGroup[]> {
-    const items = await this.prisma.membersInPrivateGroups.findMany({
-      where: { memberId: userId },
-      include: {
-        privateGroup: {
-          select: { id: true, name: true, createdAt: true },
-        },
-      },
-    });
-
-    return items.map(({ privateGroup }) => {
-      const { id, name, createdAt } = privateGroup;
-      return { id, name, createdAt };
-    });
+    const items = await this.privateGroupsRepository.findManyByMemberId(userId);
+    return items.map(({ channel }) => channel);
   }
 
-  async findGroupMembersByIds(ids: number[]) {
-    const groups = await this.prisma.privateGroup.findMany({
-      where: { id: { in: ids } },
-      include: {
-        members: {
-          include: {
-            member: true,
-          },
-        },
-      },
-    });
-
-    const membersMap = new Map<number, ConversationMember[]>(
-      groups.map((group) => [
-        group.id,
-        group.members.map(({ member }) => {
-          const { id, username } = member;
-          return { id, username };
-        }),
-      ]),
-    );
-
+  async findGroupMembersByIds(groupsIds: number[]) {
+    const groups = await this.privateGroupsRepository.findMembersByGroupIds(groupsIds);
+    const membersMap = new Map<number, ChannelMember[]>(groups.map((group) => [group.id, group.members.map(({ member }) => member)]));
     return membersMap;
   }
 
-  async findGroupMembersByBatch(groupsIds: number[]): Promise<Array<ConversationMember[]>> {
+  async findGroupMembersByBatch(groupsIds: number[]): Promise<Array<ChannelMember[] | Error>> {
     const membersMap = await this.findGroupMembersByIds(groupsIds);
-    return groupsIds.map((groupId) => membersMap.get(groupId));
+    return groupsIds.map((groupId) => membersMap.get(groupId) ?? Error(`Group ${groupId} not found`));
   }
 
   async create(membersIds: number[], authUser: AuthUser): Promise<PrivateGroup> {
@@ -63,31 +42,30 @@ export class PrivateGroupsService {
       throw new BadRequestException('Un nouveau groupe ne peut avoir que 10 membres au maximum et 1 au minimum !');
     const friends = await this.friendsService.findAll(authUser.id);
     const groupMembers = uniqueIds.map((memberId) => {
-      if (memberId === authUser.id) return { id: authUser.id, username: authUser.username };
+      if (memberId === authUser.id) return authUser;
       const member = friends.find((friend) => friend.id === memberId);
       if (!member) throw new ForbiddenException('Un ou plusieurs des utilisateurs ne font pas partie de tes amis !');
-      return { id: memberId, username: member.username };
+      return member;
     });
 
     const groupName = groupMembers.map(({ username }) => username).join(', ');
-    return this.prisma.privateGroup.create({
-      data: {
-        name: groupName,
-        members: {
-          createMany: { data: groupMembers.map((member) => ({ memberId: member.id })) },
-        },
-      },
-      select: { id: true, name: true, createdAt: true },
+    const newGroup = await this.privateGroupsRepository.create({
+      name: groupName,
+      members: groupMembers,
+      avatarColor: this.avatarService.getColor(),
     });
+    this.pubSub.publish('modifiedPrivateGroup', { newPrivateGroup: { payload: newGroup, membersIds: [...new Set(membersIds)] } });
+    return newGroup;
   }
 
-  async editName(editNameInput: EditNameInput, userId: number) {
+  async editName(editNameInput: EditNameInput, userId: number): Promise<PrivateGroup> {
     const { groupId, name } = editNameInput;
-    await this.canEdit(groupId, userId);
-    return this.prisma.privateGroup.update({
-      where: { id: groupId },
-      data: { name },
+    const membersIds = await this.canEdit(groupId, userId);
+    const updatedGroup = await this.privateGroupsRepository.update(groupId, { name });
+    this.pubSub.publish('modifiedPrivateGroup', {
+      newPrivateGroup: { payload: updatedGroup, membersIds: membersIds.filter((id) => userId !== id) },
     });
+    return updatedGroup;
   }
 
   async addMember(groupId: number, membersIds: number[], userId: number): Promise<PrivateGroup> {
@@ -103,26 +81,26 @@ export class PrivateGroupsService {
       return { memberId };
     });
 
-    return this.prisma.privateGroup.update({
-      where: { id: groupId },
-      data: {
-        members: {
-          createMany: { data: newGroupMembers },
-        },
+    const updatedGroup = await this.privateGroupsRepository.update(groupId, {
+      members: {
+        createMany: { data: newGroupMembers },
       },
     });
+    this.pubSub.publish('modifiedPrivateGroup', { newPrivateGroup: { payload: updatedGroup, membersIds: uniqueIds } });
+    return updatedGroup;
   }
 
   async leave(groupId: number, userId: number): Promise<PrivateGroup> {
     try {
-      const membersInPrivateGroups = await this.prisma.membersInPrivateGroups.delete({
-        where: { privateGroupId_memberId: { privateGroupId: groupId, memberId: userId } },
-        include: { privateGroup: true },
+      const channel = await this.privateGroupsRepository.findById(groupId);
+      if (!channel) throw new NotFoundException("Ce groupe privé n'existe pas");
+      const { members, ...privateGroup } = channel;
+      await this.privateGroupsRepository.deleteMember(groupId, userId);
+      this.pubSub.publish('modifiedPrivateGroup', {
+        newPrivateGroup: { payload: privateGroup, membersIds: members.map((member) => member.memberId).filter((memberId) => memberId !== userId) },
       });
-
-      const numMembers = await this.prisma.membersInPrivateGroups.count({ where: { privateGroupId: groupId } });
-      if (numMembers === 0) await this.prisma.privateGroup.delete({ where: { id: groupId } });
-      return membersInPrivateGroups.privateGroup;
+      if (members.length - 1 === 0) await this.privateGroupsRepository.delete(groupId);
+      return privateGroup;
     } catch (err) {
       if (err instanceof PrismaClientKnownRequestError && err.code === 'P2025')
         throw new BadRequestException('Vous ne faites pas partie de ce groupe !');
@@ -131,12 +109,7 @@ export class PrivateGroupsService {
   }
 
   async canEdit(groupId: number, userId: number) {
-    const group = await this.prisma.privateGroup.findUnique({
-      where: { id: groupId },
-      include: {
-        members: { select: { memberId: true } },
-      },
-    });
+    const group = await this.privateGroupsRepository.findById(groupId);
     if (!group) throw new NotFoundException("Ce groupe n'existe pas !");
     const membersIds = group.members.map((member) => member.memberId);
     if (!membersIds.includes(userId)) throw new ForbiddenException('Vous ne faites pas partie de ce groupe !');

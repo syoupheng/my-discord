@@ -1,29 +1,20 @@
-import { gql, useQuery } from "@apollo/client";
-import { PrivateConversation } from "../../types/private-conversation";
-import useLogoutOnError from "../auth/useLogoutOnError";
+import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client";
 
-export const GET_AUTH_USER_CONVERSATIONS = gql`
-  query GetFriends {
+export const GET_AUTH_USER_CONVERSATIONS = graphql(`
+  query GetConversations {
     me {
       privateConversations {
-        id
-        createdAt
-        member {
-          id
-          username
-        }
+        ...PrivateConversation
       }
     }
   }
-`;
-
-interface AuthFriendsResponse {
-  me: { privateConversations: PrivateConversation[] };
-}
+`);
 
 const usePrivateConversations = () => {
-  const onError = useLogoutOnError();
-  return useQuery<AuthFriendsResponse>(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only", onError });
+  const { data } = useQuery(GET_AUTH_USER_CONVERSATIONS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.privateConversations;
 };
 
 export default usePrivateConversations;

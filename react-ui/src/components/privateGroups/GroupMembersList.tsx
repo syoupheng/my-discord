@@ -1,16 +1,16 @@
+import NoResultsIcon from "@/components/Icons/NoResultsIcon";
+import ValidateIcon from "@/components/Icons/ValidateIcon";
+import UserAvatar from "@/components/shared/UserAvatar";
+import { FriendFragment } from "@/gql/graphql";
 import { forwardRef } from "react";
-import { Friend } from "../../types/user";
-import NoResultsIcon from "../Icons/NoResultsIcon";
-import ValidateIcon from "../Icons/ValidateIcon";
-import UserAvatar from "../shared/UserAvatar";
 
-interface Props {
-  filterFriends: Friend[];
+type Props = {
+  filterFriends: FriendFragment[];
   handleClick: (id: number) => void;
   hoveredIndex?: number;
   handleHover: (idx: number) => void;
   isSelected: (id: number) => boolean;
-}
+};
 
 const GroupMembersList = forwardRef<HTMLDivElement, Props>(
   ({ filterFriends, handleClick, hoveredIndex = 0, handleHover, isSelected }, friendListRef) => {
@@ -25,15 +25,15 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
       );
 
     return (
-      <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0">
-        {filterFriends.map(({ status, username, id }, idx) => (
+      <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0 small-scroll-container">
+        {filterFriends.map(({ status, username, id, avatarColor, discriminator }, idx) => (
           <div onClick={() => handleClick(id)} key={id} className="cursor-pointer py-[1px] mr-1 ml-3" onMouseOver={() => handleHover(idx)}>
             <div
               className={`${
                 hoveredIndex === idx && "bg-primary-dark-500"
               } rounded-[3px] h-10 py-[6px] px-2 whitespace-nowrap text-ellipsis overflow-hidden flex items-center justify-start flex-nowrap`}
             >
-              <UserAvatar status={status} />
+              <UserAvatar avatarColor={avatarColor} status={status} />
               <div className="flex-auto whitespace-nowrap text-ellipsis overflow-hidden mx-[10px] flex flex-nowrap justify-start items-baseline">
                 <strong className="mr-1 text-sm text-secondary-light font-normal">{username}</strong>
                 <div
@@ -42,7 +42,7 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
                   } opacity-50 flex justify-start items-center overflow-hidden leading-[1.1] text-sm font-medium`}
                 >
                   <span className="block overflow-hidden text-ellipsis whitespace-nowrap flex-initial">{username}</span>
-                  <span>#{id}</span>
+                  <span>#{discriminator}</span>
                 </div>
               </div>
               <span className="flex shrink-0 grow-0 basis-auto items-center relative max-w-full">

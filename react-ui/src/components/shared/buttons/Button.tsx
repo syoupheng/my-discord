@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import clsx from "clsx";
+import { ComponentProps } from "react";
 
 type Variant = "red" | "blue" | "transparent";
 
@@ -17,25 +18,23 @@ const variantMap: Record<Variant, { color: string; hover: string }> = {
   },
 };
 
-export interface ButtonProps {
-  children: ReactNode;
-  type?: "submit";
-  disabled?: boolean;
-  className?: string;
+export type ButtonProps = ComponentProps<"button"> & {
   variant?: Variant;
-  onClick?: any;
-}
+  fullWidth?: boolean;
+};
 
-const Button = ({ children, className, disabled = false, variant = "blue", ...props }: ButtonProps) => {
+const Button = ({ children, className, disabled = false, variant = "blue", fullWidth = false, ...props }: ButtonProps) => {
   return (
     <button
       {...props}
       disabled={disabled}
-      className={`${
-        disabled ? "cursor-not-allowed opacity-50" : variantMap[variant].hover + " cursor-pointer"
-      } ${className} transition ease-in-out duration-150 text-white rounded-[3px] ${
-        variantMap[variant].color
-      } flex justify-center items-center border-0`}
+      className={clsx(
+        className,
+        "focus:outline-none flex justify-center items-center border-0 transition ease-in-out duration-150 text-white rounded-[3px] py-2 px-4",
+        disabled ? "cursor-not-allowed opacity-50" : `${variantMap[variant].hover} cursor-pointer`,
+        variantMap[variant].color,
+        fullWidth && "w-full"
+      )}
     >
       {children}
     </button>

@@ -1,24 +1,24 @@
-import useDeleteFriendRequest from "../../hooks/friend-requests/useDeleteFriendRequest";
-import useIgnoreFriendRequest from "../../hooks/friend-requests/useIgnoreFriendRequest";
-import useConfirmFriend from "../../hooks/friends/useConfirmFriend";
-import { FriendRequest } from "../../types/user";
-import CancelIcon from "../Icons/CancelIcon";
-import ValidateIcon from "../Icons/ValidateIcon";
-import FriendActionBtn from "./FriendActionBtn";
-import FriendItemContainer from "./FriendItemContainer";
-import FriendItemTag from "./FriendItemTag";
+import FriendActionBtn from "@/components/FriendsPage/FriendActionBtn";
+import FriendItemContainer from "@/components/FriendsPage/FriendItemContainer";
+import FriendItemTag from "@/components/FriendsPage/FriendItemTag";
+import CancelIcon from "@/components/Icons/CancelIcon";
+import ValidateIcon from "@/components/Icons/ValidateIcon";
+import { FriendRequestFragment } from "@/gql/graphql";
+import useDeleteFriendRequest from "@/hooks/friend-requests/useDeleteFriendRequest";
+import useIgnoreFriendRequest from "@/hooks/friend-requests/useIgnoreFriendRequest";
+import useConfirmFriend from "@/hooks/friends/useConfirmFriend";
 
-interface Props {
-  friendRequest: FriendRequest;
-}
+type Props = {
+  friendRequest: FriendRequestFragment;
+};
 
 const FriendRequestItem = ({ friendRequest }: Props) => {
-  const [ignoreRequest] = useIgnoreFriendRequest(friendRequest.id);
-  const [deleteRequest] = useDeleteFriendRequest(friendRequest.id);
-  const [confirmRequest] = useConfirmFriend();
+  const [ignoreRequest, { loading: ignoring }] = useIgnoreFriendRequest(friendRequest.id);
+  const [deleteRequest, { loading: deleting }] = useDeleteFriendRequest(friendRequest.id);
+  const [confirmRequest, { loading: confirming }] = useConfirmFriend();
 
   return (
-    <FriendItemContainer onClick={() => console.log("clicked")}>
+    <FriendItemContainer>
       <FriendItemTag friendRequest={friendRequest} />
       <div className="ml-2 flex">
         {friendRequest.requestStatus === "RECEIVED" ? (
@@ -28,8 +28,15 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
               icon={<ValidateIcon size={20} />}
               description="Accepter"
               hoverColor="green"
+              isLoading={confirming}
             />
-            <FriendActionBtn action={ignoreRequest} icon={<CancelIcon />} description="Ignorer" hoverColor="red" />
+            <FriendActionBtn
+              action={ignoreRequest}
+              icon={<CancelIcon />}
+              description="Ignorer"
+              hoverColor="red"
+              isLoading={ignoring}
+            />
           </>
         ) : (
           <FriendActionBtn
@@ -37,6 +44,7 @@ const FriendRequestItem = ({ friendRequest }: Props) => {
             icon={<CancelIcon />}
             description="Annuler"
             hoverColor="red"
+            isLoading={deleting}
           />
         )}
       </div>

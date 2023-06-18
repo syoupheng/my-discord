@@ -1,37 +1,30 @@
-import { gql } from "@apollo/client";
 import { useEffect } from "react";
-import { FriendRequest } from "../../types/user";
-import useAuthUser from "../auth/useAuthUser";
+import { graphql } from "@/gql";
+import { AuthUserSubscriptionParams } from "@/components/PrivateApp";
 
-const NEW_FRIEND_REQUEST_SUBSCRIPTION = gql`
+const NEW_FRIEND_REQUEST_SUBSCRIPTION = graphql(`
   subscription OnFriendRequestReceived($userId: Int!) {
     friendRequestReceived(userId: $userId) {
-      id
-      username
-      requestStatus
+      ...FriendRequest
     }
   }
-`;
+`);
 
-const useNewFriendRequestSub = () => {
-  const { subscribeToMore, data } = useAuthUser();
-
+const useNewFriendRequestSub = ({ authUserId, subscribeToMore }: AuthUserSubscriptionParams) => {
   useEffect(() => {
     let unsubscribe: () => void;
-    if (data) {
-      unsubscribe = subscribeToMore<{ friendRequestReceived: FriendRequest }>({
-        document: NEW_FRIEND_REQUEST_SUBSCRIPTION,
-        variables: { userId: data.me.id },
-        updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) return prev;
-          const newFriendRequest = subscriptionData.data.friendRequestReceived;
-          if (prev.me.friendRequests.some((request) => request.id === newFriendRequest.id)) return prev;
-          const newData = { ...prev.me, friendRequests: [newFriendRequest, ...prev.me.friendRequests] };
+    unsubscribe = subscribeToMore({
+      document: NEW_FRIEND_REQUEST_SUBSCRIPTION,
+      variables: { userId: authUserId },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newFriendRequest = subscriptionData.data.friendRequestReceived;
+        if (prev.me.friendRequests.some((request) => request.id === newFriendRequest.id)) return prev;
+        const newData = { ...prev.me, friendRequests: [newFriendRequest, ...prev.me.friendRequests] };
 
-          return { me: newData };
-        },
-      });
-    }
+        return { me: newData };
+      },
+    });
 
     return () => !!unsubscribe && unsubscribe();
   }, []);

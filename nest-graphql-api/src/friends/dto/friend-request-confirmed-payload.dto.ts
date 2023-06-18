@@ -4,7 +4,7 @@ import { Friend } from '../entities/friends.entity';
 
 @ObjectType()
 export class FriendRequestConfirmedPayload {
-  @Field((type) => Friend)
+  @Field(() => Friend)
   newFriend: Friend;
 
   @Field(() => PrivateConversation)

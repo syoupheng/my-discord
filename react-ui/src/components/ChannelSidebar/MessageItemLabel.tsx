@@ -1,7 +1,7 @@
-import useTooltip from "../../hooks/ui/useTooltip";
-import Tooltip from "../shared/Tooltip";
+import Tooltip from "@/components/shared/Tooltip";
+import useTooltip from "@/hooks/ui/useTooltip";
 
-interface Props {
+type Props = {
   nbMembers?: number | null;
   label: string;
 }

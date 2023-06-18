@@ -1,10 +1,9 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-interface Props {
-  children: ReactNode;
+type Props = PropsWithChildren & {
   animate?: boolean;
   shadow?: boolean;
-}
+};
 
 const FormContainer = ({ children, animate = true, shadow = true }: Props) => {
   return (

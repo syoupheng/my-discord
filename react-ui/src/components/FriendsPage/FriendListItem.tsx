@@ -1,31 +1,19 @@
-import { useState, MouseEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import useShowConversation from "../../hooks/private-conversation/useShowConversation";
-import { PrivateConversation } from "../../types/private-conversation";
-import { Friend } from "../../types/user";
-import CancelIcon from "../Icons/CancelIcon";
-import MessageIcon from "../Icons/MessageIcon";
-import DeleteFriendDialog from "./DeleteFriendDialog";
-import FriendActionBtn from "./FriendActionBtn";
-import FriendItemContainer from "./FriendItemContainer";
-import FriendItemTag from "./FriendItemTag";
+import DeleteFriendDialog from "@/components/FriendsPage/DeleteFriendDialog";
+import FriendActionBtn from "@/components/FriendsPage/FriendActionBtn";
+import FriendItemContainer from "@/components/FriendsPage/FriendItemContainer";
+import FriendItemTag from "@/components/FriendsPage/FriendItemTag";
+import CancelIcon from "@/components/Icons/CancelIcon";
+import MessageIcon from "@/components/Icons/MessageIcon";
+import { FriendFragment, PrivateConversationFragment } from "@/gql/graphql";
+import useFriendListItem from "@/hooks/friends/useFriendListItem";
 
-interface Props {
-  friend: Friend;
-  conversations: PrivateConversation[];
-}
+type Props = {
+  friend: FriendFragment;
+  conversation: PrivateConversationFragment | undefined;
+};
 
-const FriendListItem = ({ friend, conversations }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showConversation] = useShowConversation({ friendId: friend.id, redirect: true });
-  const navigate = useNavigate();
-  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
-    const conversation = conversations.find(({ member }) => member.id === friend.id);
-    if (conversation) {
-      navigate(`/channels/@me/conversations/${conversation.id}`);
-    } else showConversation();
-  };
-
+const FriendListItem = ({ friend, conversation }: Props) => {
+  const { handleClick, setIsOpen, isOpen } = useFriendListItem(friend, conversation);
   return (
     <FriendItemContainer onClick={handleClick}>
       <FriendItemTag friend={friend} />

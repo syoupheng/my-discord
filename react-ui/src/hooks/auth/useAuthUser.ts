@@ -1,31 +1,19 @@
-import { gql, useQuery, WatchQueryFetchPolicy } from "@apollo/client";
-import { AUTH_USER_FIELDS } from "../../fragments/auth";
-import { User } from "../../types/user";
-import useLogoutOnError from "./useLogoutOnError";
+import { graphql } from "@/gql";
+import { GetAuthUserQuery } from "@/gql/graphql";
+import useLogoutOnError from "@/hooks/auth/useLogoutOnError";
+import { QueryHookOptions, useQuery } from "@apollo/client";
 
-export const GET_AUTH_USER = gql`
-  ${AUTH_USER_FIELDS}
+export const GET_AUTH_USER = graphql(`
   query GetAuthUser {
     me {
-      ...AuthUserFields
+      ...AuthUser
     }
   }
-`;
+`);
 
-interface QueryOptions {
-  fetchPolicy?: WatchQueryFetchPolicy;
-}
-
-interface AuthUserResponse {
-  me: User;
-}
-
-const useAuthUser = ({ fetchPolicy }: QueryOptions = { fetchPolicy: "cache-first" }) => {
+const useAuthUser = (options?: QueryHookOptions<GetAuthUserQuery>) => {
   const onError = useLogoutOnError();
-  return useQuery<AuthUserResponse>(GET_AUTH_USER, {
-    fetchPolicy,
-    onError,
-  });
+  return useQuery(GET_AUTH_USER, { ...options, onError });
 };
 
 export default useAuthUser;

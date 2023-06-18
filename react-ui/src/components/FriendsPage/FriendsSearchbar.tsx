@@ -1,9 +1,9 @@
-import { ChangeEvent, useEffect, useRef } from "react";
-import useFriendsTab from "../../hooks/friendsNavTab/useFriendsTab";
-import ClearIcon from "../Icons/ClearIcon";
-import SearchIcon from "../Icons/SearchIcon";
+import ClearIcon from "@/components/Icons/ClearIcon";
+import SearchIcon from "@/components/Icons/SearchIcon";
+import useFriendsTab from "@/hooks/friendsNavTab/useFriendsTab";
+import { ChangeEvent, useRef, useState } from "react";
 
-interface Props {
+type Props = {
   search: string;
   handleChange: (search: string) => void;
 }
@@ -16,8 +16,11 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
   };
 
   const [selectedTab] = useFriendsTab();
-
-  useEffect(() => handleChange(""), [selectedTab]);
+  const [previousTab, setPreviousTab] = useState(selectedTab);
+  if (previousTab !== selectedTab) {
+    setPreviousTab(selectedTab);
+    handleChange("");
+  }
 
   return (
     <div className="flex flex-none mt-4 mr-5 mb-2 ml-[30px] overflow-hidden rounded bg-tertiary">
@@ -32,15 +35,11 @@ const FriendsSearchbar = ({ search, handleChange }: Props) => {
         />
         <div
           onClick={search !== "" ? () => handleChange("") : undefined}
-          className={`h-8 w-8 flex items-center justify-center ${
-            search === "" ? "cursor-text" : "cursor-pointer"
-          }`}
+          className={`h-8 w-8 flex items-center justify-center ${search === "" ? "cursor-text" : "cursor-pointer"}`}
         >
           <div className="h-5 w-5">
             {search === "" ? (
-              <SearchIcon
-                className={`text-h-secondary h-full w-full ${isDirty.current && "animate-spin-45"}`}
-              />
+              <SearchIcon className={`text-h-secondary h-full w-full ${isDirty.current && "animate-spin-45"}`} />
             ) : (
               <ClearIcon className="text-h-secondary h-full w-full animate-spin-45" />
             )}

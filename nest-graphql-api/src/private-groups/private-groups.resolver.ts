@@ -1,47 +1,60 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Args, Context, Int, Mutation, Parent, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
+import { ChannelMember } from '../users/entities/channel-member.entity';
 import { IDataLoaders } from '../dataloader/dataloader.interface';
-import { ConversationMember } from '../private-conversations/entities/conversation-member.entity';
 import { EditNameInput } from './dto/edit-name.input';
 import { PrivateGroup } from './entities/private-group.entity';
 import { PrivateGroupsService } from './private-groups.service';
+import { AuthUser } from '../auth/entities/auth-user.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Public } from '../auth/decorators/public.decorator';
+import { Inject } from '@nestjs/common';
+import { PUB_SUB } from '../pubsub/pubsub.module';
+import { PubSub } from 'graphql-subscriptions';
 
-@Resolver((of) => PrivateGroup)
+@Resolver(() => PrivateGroup)
 export class PrivateGroupsResolver {
-  constructor(private readonly privateGroupsService: PrivateGroupsService) {}
+  constructor(
+    private readonly privateGroupsService: PrivateGroupsService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
-  @Mutation((returns) => PrivateGroup)
-  @UseGuards(JwtAuthGuard)
-  createGroup(@Args('membersIds', { type: () => [Int] }) membersIds: number[], @Context() ctx) {
-    return this.privateGroupsService.create(membersIds, ctx.req.user);
+  @Mutation(() => PrivateGroup)
+  createGroup(@Args('membersIds', { type: () => [Int] }) membersIds: number[], @CurrentUser() user: AuthUser): Promise<PrivateGroup> {
+    return this.privateGroupsService.create(membersIds, user);
   }
 
-  @Mutation((returns) => PrivateGroup)
-  @UseGuards(JwtAuthGuard)
-  editGroupName(@Args('editNameInput') editNameInput: EditNameInput, @Context() ctx) {
-    return this.privateGroupsService.editName(editNameInput, ctx.req.user.id);
+  @Mutation(() => PrivateGroup)
+  editGroupName(@Args('editNameInput') editNameInput: EditNameInput, @CurrentUser() user: AuthUser): Promise<PrivateGroup> {
+    return this.privateGroupsService.editName(editNameInput, user.id);
   }
 
-  @Mutation((returns) => PrivateGroup)
-  @UseGuards(JwtAuthGuard)
+  @Mutation(() => PrivateGroup)
   addGroupMembers(
     @Args('groupId', { type: () => Int }) groupId: number,
     @Args('membersIds', { type: () => [Int] }) membersIds: number[],
-    @Context() ctx,
-  ) {
-    return this.privateGroupsService.addMember(groupId, membersIds, ctx.req.user.id);
+    @CurrentUser() user: AuthUser,
+  ): Promise<PrivateGroup> {
+    return this.privateGroupsService.addMember(groupId, membersIds, user.id);
   }
 
-  @Mutation((returns) => PrivateGroup)
-  @UseGuards(JwtAuthGuard)
-  leaveGroup(@Args('groupId', { type: () => Int }) groupId: number, @Context() ctx) {
-    return this.privateGroupsService.leave(groupId, ctx.req.user.id);
+  @Mutation(() => PrivateGroup)
+  leaveGroup(@Args('groupId', { type: () => Int }) groupId: number, @CurrentUser() user: AuthUser): Promise<PrivateGroup> {
+    return this.privateGroupsService.leave(groupId, user.id);
   }
 
-  @ResolveField('members', (returns) => [ConversationMember])
-  getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders) {
-    const { id } = privateGroup;
-    return loaders.groupMembersLoader.load(id);
+  @ResolveField('members', () => [ChannelMember])
+  getMembers(@Parent() privateGroup: PrivateGroup, @Context('loaders') loaders: IDataLoaders): Promise<ChannelMember[]> {
+    loaders.groupMembersLoader.clear(privateGroup.id);
+    return loaders.groupMembersLoader.load(privateGroup.id);
+  }
+
+  @Public()
+  @Subscription(() => PrivateGroup, {
+    filter: ({ newPrivateGroup }, variables) => newPrivateGroup.membersIds.includes(variables.userId),
+    resolve: ({ newPrivateGroup }) => newPrivateGroup.payload,
+  })
+  modifiedPrivateGroup(@Args('userId', { type: () => Int }) userId: number) {
+    return this.pubSub.asyncIterator('modifiedPrivateGroup');
   }
 }

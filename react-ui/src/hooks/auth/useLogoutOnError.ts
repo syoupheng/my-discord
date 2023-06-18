@@ -1,5 +1,5 @@
+import useLogout from "@/hooks/auth/useLogout";
 import { ApolloError } from "@apollo/client";
-import useLogout from "./useLogout";
 
 const useLogoutOnError = () => {
   const [logout] = useLogout();

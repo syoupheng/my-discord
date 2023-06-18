@@ -1,26 +1,28 @@
+import ChannelSidebarItem from "@/components/ChannelSidebar/ChannelSidebarItem";
+import LeaveGroupDialog from "@/components/ChannelSidebar/LeaveGroupDialog";
+import MessageItemLabel from "@/components/ChannelSidebar/MessageItemLabel";
+import ChannelIcon from "@/components/Icons/ChannelIcon";
+import { PrivateGroupFragment } from "@/gql/graphql";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { PrivateGroup } from "../../types/private-group";
-import GroupIcon from "../Icons/GroupIcon";
-import ChannelSidebarItem from "./ChannelSidebarItem";
-import LeaveGroupDialog from "./LeaveGroupDialog";
-import MessageItemLabel from "./MessageItemLabel";
 
-interface Props {
-  group: PrivateGroup;
-}
+type Props = {
+  group: PrivateGroupFragment;
+};
 
 const PrivateGroupItem = ({ group }: Props) => {
-  const { members, id, name } = group;
+  const { members, id, name, avatarColor } = group;
   const location = useLocation();
-  const isActive = location.pathname === `/channels/@me/groups/${id}`;
+  const isActive = location.pathname === `/channels/@me/${id}`;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <ChannelSidebarItem url={`/groups/${id}`} onClose={() => setIsOpen(true)} isActive={isActive}>
+    <ChannelSidebarItem url={`/${id}`} onClose={() => setIsOpen(true)} isActive={isActive}>
       <div className="flex items-center px-2">
-        <GroupIcon className="mr-3 w-8 h-8 shrink-0" />
-        <MessageItemLabel label={name} nbMembers={members.length} />
+        <div className=" shrink-0 mr-3">
+          <ChannelIcon avatarColor={avatarColor} size="sm" channelType="group" />
+        </div>
+        <MessageItemLabel label={name ?? ""} nbMembers={members.length} />
         <LeaveGroupDialog modalOpen={isOpen} onModalOpen={setIsOpen} group={group} />
       </div>
     </ChannelSidebarItem>

@@ -1,27 +1,20 @@
-import { FriendRequest } from "../../types/user";
+import { graphql } from "@/gql";
+import { useQuery } from "@apollo/client";
 
-import { gql, useApolloClient } from "@apollo/client";
-import { GET_AUTH_USER } from "../auth/useAuthUser";
-import { AUTH_USER_CACHE_ID } from "../../apollo.config";
-
-const useFriendRequests = (): FriendRequest[] => {
-  const client = useApolloClient();
-  const { friendRequests } = client.readFragment({
-    id: AUTH_USER_CACHE_ID,
-    fragment: gql`
-      fragment friendRequests on AuthUser {
-        friendRequests {
-          id
-          username
-          requestStatus
-        }
+export const GET_AUTH_USER_FRIEND_REQUESTS = graphql(`
+  query GetAuthUserFriendRequest {
+    me {
+      friendRequests {
+        ...FriendRequest
       }
-    `,
-  });
+    }
+  }
+`);
 
-  const result = client.watchQuery({ query: GET_AUTH_USER });
-
-  return friendRequests;
+const useFriendRequests = () => {
+  const { data } = useQuery(GET_AUTH_USER_FRIEND_REQUESTS, { fetchPolicy: "cache-only" });
+  if (!data) throw new Error("This hook should be called in the authenticated part of the app");
+  return data.me.friendRequests;
 };
 
 export default useFriendRequests;

@@ -1,135 +1,73 @@
 import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { PUB_SUB } from '../pubsub/pubsub.module';
-import { FriendRequestsService } from '../friend-requests/friend-requests.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { Friend } from './entities/friends.entity';
-import { User } from '../users/entities/user.entity';
+import { FriendRequestRepository } from '../prisma/repositories/friend-requests.repository';
+import { FriendsRepository } from '../prisma/repositories/friends.repository';
+import { PrivateConversationsRepository } from '../prisma/repositories/private-conversations.repository';
+import { AuthUser } from 'src/auth/entities/auth-user.entity';
 
 @Injectable()
 export class FriendsService {
-  constructor(private friendRequestsService: FriendRequestsService, private prisma: PrismaService, @Inject(PUB_SUB) private pubSub: PubSub) {}
+  constructor(
+    private friendsRepository: FriendsRepository,
+    private friendRequestRepository: FriendRequestRepository,
+    private privateConversationsRepository: PrivateConversationsRepository,
+    private prisma: PrismaService,
+    // @ts-expect-error need to upgrade nestjs ?
+    @Inject(PUB_SUB) private pubSub: PubSub,
+  ) {}
 
   async findById(friendId: number, authUserId: number): Promise<Friend> {
-    const friend = await this.prisma.friendsWith.findFirst({
-      where: {
-        OR: [
-          { isFriendsWithId: friendId, hasFriendsId: authUserId },
-          { isFriendsWithId: authUserId, hasFriendsId: friendId },
-        ],
-      },
-      include: {
-        isFriendsWith: {
-          select: {
-            id: true,
-            username: true,
-            status: true,
-          },
-        },
-        hasFriends: {
-          select: {
-            id: true,
-            username: true,
-            status: true,
-          },
-        },
-      },
-    });
-
+    const friend = await this.friendsRepository.findUsersFriendById({ userId: authUserId, friendId });
     if (!friend) throw new NotFoundException("Vous n'êtes pas amis avec cet utilisateur !");
-
     const { isFriendsWith, hasFriends } = friend;
-    const { id, username, status } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
-    return { id, username, status: UserStatus[status] };
+    const { id, username, status, createdAt, avatarColor, discriminator } = friendId === isFriendsWith.id ? isFriendsWith : hasFriends;
+    return { id, username, discriminator, createdAt, avatarColor, status: UserStatus[status] };
   }
 
   async findAll(authUserId: number): Promise<Friend[]> {
-    const rawFriends = await this.prisma.friendsWith.findMany({
-      where: {
-        OR: [{ isFriendsWithId: authUserId }, { hasFriendsId: authUserId }],
-      },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        hasFriends: {
-          select: {
-            id: true,
-            username: true,
-            status: true,
-          },
-        },
-        isFriendsWith: {
-          select: {
-            id: true,
-            username: true,
-            status: true,
-          },
-        },
-      },
-    });
-
+    const rawFriends = await this.friendsRepository.findAllFriends(authUserId);
     const friends = rawFriends.map(({ hasFriends, isFriendsWith }) => {
-      const { id, username, status } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
-      return { id, username, status: UserStatus[status] };
+      const { id, username, discriminator, status, createdAt, avatarColor } = hasFriends.id === authUserId ? isFriendsWith : hasFriends;
+      return { id, username, discriminator, createdAt, avatarColor, status: UserStatus[status] };
     });
-
     return friends;
   }
 
-  async add(friendId: number, authUser: User) {
-    const { id: authUserId, username, status } = authUser;
+  async add(friendId: number, authUser: AuthUser) {
+    const { id: authUserId, username, status, discriminator, avatarColor } = authUser;
     const uniqueInput = {
       senderId: friendId,
       recipientId: authUserId,
     };
-    const friendRequest = await this.friendRequestsService.findOne(uniqueInput);
+    const friendRequest = await this.friendRequestRepository.findOne(uniqueInput);
     if (!friendRequest) throw new ForbiddenException("Cet utilisateur ne vous a pas envoyé de demande d'ami !");
-    const deleteFriendRequest = this.prisma.friendRequest.delete({
-      where: {
-        senderId_recipientId: uniqueInput,
-      },
-    });
+    const conversation = await this.privateConversationsRepository.findByFriendIds(authUserId, friendId);
 
-    const addNewFriend = this.prisma.friendsWith.create({
-      data: { isFriendsWithId: friendId, hasFriendsId: authUserId },
-    });
+    const deleteFriendRequest = this.friendRequestRepository.delete(uniqueInput);
 
-    const conversation = await this.prisma.privateConversation.findFirst({
-      where: {
-        OR: [
-          { friend_1_id: friendId, friend_2_id: authUserId },
-          { friend_1_id: authUserId, friend_2_id: friendId },
-        ],
-      },
-    });
+    const addNewFriend = this.friendsRepository.create({ userId: authUserId, friendId });
 
-    const createPrivateConversation = this.prisma.privateConversation.create({
-      data: { friend_1_id: friendId, friend_2_id: authUserId },
-    });
+    const createPrivateConversation = this.privateConversationsRepository.create(authUserId, friendId);
 
     const handlePrivateConversation = conversation
-      ? this.prisma.privateConversation.update({
-          where: { friend_1_id_friend_2_id: { friend_1_id: conversation.friend_1_id, friend_2_id: conversation.friend_2_id } },
-          data: { display1: true, display2: true },
+      ? this.privateConversationsRepository.updateManyMembersInChannels({
+          membersIds: [friendId, authUserId],
+          channelId: conversation.id,
+          payload: { hidden: false },
         })
       : createPrivateConversation;
 
     await this.prisma.$transaction([deleteFriendRequest, addNewFriend, handlePrivateConversation]);
     const newFriend = await this.findById(friendId, authUserId);
-    const newConversation =
-      conversation ??
-      (await this.prisma.privateConversation.findFirst({
-        where: {
-          OR: [
-            { friend_1_id: friendId, friend_2_id: authUserId },
-            { friend_1_id: authUserId, friend_2_id: friendId },
-          ],
-        },
-      }));
+    const newConversation = conversation ?? (await this.privateConversationsRepository.findByFriendIds(authUserId, friendId));
     this.pubSub.publish('friendRequestConfirmed', {
       friendRequestConfirmed: {
         senderId: newFriend.id,
-        newFriend: { id: authUserId, username, status },
+        newFriend: { id: authUserId, username, discriminator, status, avatarColor },
         newConversation: { ...newConversation, memberId: authUserId },
       },
     });
@@ -138,14 +76,7 @@ export class FriendsService {
 
   async delete(friendId: number, authUserId: number) {
     await this.findById(friendId, authUserId);
-    await this.prisma.friendsWith.deleteMany({
-      where: {
-        OR: [
-          { isFriendsWithId: friendId, hasFriendsId: authUserId },
-          { isFriendsWithId: authUserId, hasFriendsId: friendId },
-        ],
-      },
-    });
+    await this.friendsRepository.delete(authUserId, friendId);
     this.pubSub.publish('friendDeleted', { friendDeleted: { friendToRemoveId: authUserId, userId: friendId } });
   }
 }

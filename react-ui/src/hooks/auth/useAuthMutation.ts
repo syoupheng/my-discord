@@ -1,4 +1,6 @@
+import { ERROR_MESSAGE } from "@/utils/apollo";
 import { DocumentNode, MutationHookOptions, OperationVariables, useApolloClient, useMutation } from "@apollo/client";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const useAuthMutation = <TData = any, TVariables = OperationVariables>(mutation: DocumentNode, options?: MutationHookOptions<TData, TVariables>) => {
@@ -15,7 +17,7 @@ const useAuthMutation = <TData = any, TVariables = OperationVariables>(mutation:
             navigate("/login");
           }
         }
-        throw error;
+        toast.error(ERROR_MESSAGE);
       }),
   });
 };

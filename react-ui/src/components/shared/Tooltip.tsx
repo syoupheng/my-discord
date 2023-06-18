@@ -1,5 +1,5 @@
-import { Size, TooltipDirection, TPosition } from "../../types/tooltip";
-import Portal from "./Portal";
+import Portal from "@/components/shared/Portal";
+import { Size, TooltipDirection, TPosition } from "@/types/tooltip";
 
 const sizeMaps: Record<Size, string> = {
   sm: "text-xs",
@@ -14,12 +14,12 @@ const directionMaps: Record<TooltipDirection, { transform: string; animation: st
   right: { transform: "translateY(-50%)", animation: "animate-tooltip-right" },
 };
 
-interface Props {
+type Props = {
   tooltipTxt: string;
   direction?: TooltipDirection;
   size?: Size;
   position: TPosition;
-}
+};
 
 const Tooltip = ({ tooltipTxt, direction = "up", size = "md", position }: Props) => {
   return (
@@ -32,6 +32,7 @@ const Tooltip = ({ tooltipTxt, direction = "up", size = "md", position }: Props)
           left: position.left,
           top: position.top,
           transform: directionMaps[direction].transform,
+          zIndex: 9999,
         }}
       >
         {tooltipTxt}

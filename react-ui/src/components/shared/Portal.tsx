@@ -1,11 +1,7 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 import { createPortal } from "react-dom";
 
-interface Props {
-  children: ReactNode;
-}
-
-const Portal = ({ children }: Props) => {
+const Portal = ({ children }: PropsWithChildren) => {
   return createPortal(children, document.body);
 };
 

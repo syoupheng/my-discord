@@ -4,7 +4,19 @@
 
 @layer base {
   html {
-    font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "ABC Ginto Normal", Whitney, "Helvetica Neue", Helvetica, Arial,
+      sans-serif;
+    height: 100vh;
+    --secondary-color: #2f3137;
+    --tertiary-color: #1f2123;
+  }
+
+  body {
+    height: 100%;
+  }
+
+  #root {
+    height: 100%;
   }
 }
 
@@ -20,10 +32,60 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #1f2123 inset;
 }
 
+.form-input:-webkit-autofill {
+  -webkit-text-fill-color: #dddedf !important;
+}
+
 .mp-btn:hover .tooltip {
   --tw-scale-x: 1;
   --tw-scale-y: 1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.main-sidebar::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+}
+
+.small-scroll-container::-webkit-scrollbar {
+  width: 5px;
+}
+
+.small-scroll-container::-webkit-scrollbar-thumb,
+.small-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.small-scroll-container:hover::-webkit-scrollbar-thumb {
+  background: var(--tertiary-color);
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 16px;
+}
+
+.scroll-container::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  min-height: 40px;
+  background-color: var(--tertiary-color);
+}
+
+.scroll-container::-webkit-scrollbar-track,
+.scroll-container::-webkit-scrollbar-thumb {
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background-color: var(--secondary-color);
+  opacity: 0.6;
 }
