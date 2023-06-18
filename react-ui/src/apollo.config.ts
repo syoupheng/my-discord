@@ -1,9 +1,11 @@
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import { onError } from "@apollo/client/link/error";
-import { getMainDefinition } from "@apollo/client/utilities";
+import { Reference, getMainDefinition } from "@apollo/client/utilities";
 import { ApolloClient, HttpLink, InMemoryCache, from, split } from "@apollo/client";
 import { toast } from "react-hot-toast";
+import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
+import { getMillisecondsDiff } from "@/utils/dates";
 
 const httpLink = new HttpLink({ uri: import.meta.env.VITE_API_URL, credentials: "include" });
 
@@ -37,15 +39,15 @@ export const client = new ApolloClient({
           getMessages: {
             keyArgs: ["channelId"],
             // merge: messagesMerger,
-            // read(existing: { cursor: string; messages: Reference[] }, { readField }: { readField: ReadFieldFunction }) {
-            //   if (existing)
-            //     return {
-            //       cursor: existing.cursor,
-            //       messages: existing.messages
-            //         .slice(0)
-            //         .sort((message1, message2) => getMillisecondsDiff(readField("createdAt", message2)!, readField("createdAt", message1)!)),
-            //     };
-            // },
+            read(existing: { cursor: string; messages: Reference[] }, { readField }: { readField: ReadFieldFunction }) {
+              if (existing)
+                return {
+                  cursor: existing.cursor,
+                  messages: existing.messages
+                    .slice(0)
+                    .sort((message1, message2) => getMillisecondsDiff(readField("createdAt", message1)!, readField("createdAt", message2)!)),
+                };
+            },
           },
         },
       },

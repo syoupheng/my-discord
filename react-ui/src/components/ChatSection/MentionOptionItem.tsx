@@ -8,10 +8,10 @@ type Props = {
   authUser: AuthUserFragment;
   mentionSearch: string;
   active: boolean;
-}
+};
 
 const MentionOptionItem = ({ mention, authUser, mentionSearch, active }: Props) => {
-  const { username, id, avatarColor } = mention;
+  const { username, id, avatarColor, discriminator } = mention;
   const { friends, id: authUserId, status: authUserStatus } = authUser;
   const editor = useSlate();
   const { path, offset } = editor.selection?.anchor!;
@@ -23,7 +23,7 @@ const MentionOptionItem = ({ mention, authUser, mentionSearch, active }: Props) 
       },
     });
 
-    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${id}`, children: [{ text: "" }] });
+    Transforms.insertNodes(editor, { type: "mention", tag: `${username}#${discriminator}`, children: [{ text: "" }] });
     Transforms.move(editor, { distance: 1, unit: "offset" });
     Transforms.insertText(editor, " ");
     ReactEditor.focus(editor);
@@ -44,7 +44,7 @@ const MentionOptionItem = ({ mention, authUser, mentionSearch, active }: Props) 
           </div>
           <div className="grow-0 shrink-0 basis-auto ml-4 overflow-hidden whitespace-nowrap text-ellipsis font-normal text-xs">
             <span>{username}</span>
-            <span className="opacity-60">#{id}</span>
+            <span className="opacity-60">#{discriminator}</span>
           </div>
         </div>
       </div>
