@@ -155,6 +155,7 @@ export class MessagesService {
   }
 
   async callChatGPT(channelId: number, mentionsIds: number[], membersInChannel: MembersInChannel[], message: Message) {
+    const DEFAUL_RESPONSE = "Désolé, je ne peux pas répondre à ta question pour le moment...N'hésite pas à me relancer un peu plus tard !";
     const chatGptUser = this.chatGptService.getChatGptUserInChannel(membersInChannel, mentionsIds);
     if (!chatGptUser) return;
     const chatGptMessages = await this.chatGptService.buildChatGptPrompt(message, chatGptUser, channelId);
@@ -162,18 +163,17 @@ export class MessagesService {
     const interval = setInterval(() => {
       this.publishTypingNotification(channelId, chatGptUser.memberId, chatGptUser.member.username, membersInChannel);
     }, 4000);
+    let response = DEFAUL_RESPONSE;
     try {
       const { data } = await this.chatGptService.createChatCompletion(chatGptMessages);
       clearInterval(interval);
-      if (!data) return;
-      const response = data.choices[0].message?.content;
-      if (!response) return;
-      this.send({ channelId, content: response, respondsToId: message.id }, chatGptUser.memberId);
+      if (data) response = data.choices[0].message?.content ?? DEFAUL_RESPONSE;
     } catch (err: any) {
       clearInterval(interval);
       if ('response' in err && err.response?.status === 429) {
         console.error('Too many requests');
       } else console.error(err);
     }
+    this.send({ channelId, content: response, respondsToId: message.id }, chatGptUser.memberId);
   }
 }
