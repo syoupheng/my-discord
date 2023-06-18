@@ -25,7 +25,7 @@ const GroupMembersList = forwardRef<HTMLDivElement, Props>(
       );
 
     return (
-      <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0">
+      <div ref={friendListRef} className="overflow-x-hidden overflow-y-scroll max-h-[190px] relative flex-auto min-h-0 small-scroll-container">
         {filterFriends.map(({ status, username, id, avatarColor, discriminator }, idx) => (
           <div onClick={() => handleClick(id)} key={id} className="cursor-pointer py-[1px] mr-1 ml-3" onMouseOver={() => handleHover(idx)}>
             <div

@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 const MainLayout = () => {
   return (
     <div className="flex">
-      <Sidebar className="bg-tertiary w-[72px] pt-1">
+      <Sidebar className="bg-tertiary w-[72px] pt-1 main-sidebar">
         <PrivateMessagesButton />
         <UnreadMessageNotifications />
         <div className="my-2 flex justify-center w-[72px]">

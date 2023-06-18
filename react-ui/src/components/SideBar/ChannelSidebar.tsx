@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 const ChannelSidebar = ({ children }: PropsWithChildren) => {
   return (
     <>
-      <Sidebar className="bg-secondary w-[240px] overflow-y-auto">
+      <Sidebar className={`bg-secondary w-[240px] overflow-y-auto small-scroll-container`}>
         {children}
         <div className="fixed bottom-0" style={{ width: "240px" }}>
           <UserInfo />

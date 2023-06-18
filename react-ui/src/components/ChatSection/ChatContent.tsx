@@ -42,7 +42,11 @@ const ChatContent = () => {
           {unreadMessages.length > 0 && (
             <NewMessagesBar newMessagesRef={newMessagesRef} unreadMessages={unreadMessages} oldestUnreadMessage={oldestUnreadMessage} />
           )}
-          <div ref={scrollContainerRef} className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0" style={{ overflowAnchor: "none" }}>
+          <div
+            ref={scrollContainerRef}
+            className="absolute inset-0 overflow-y-scroll overflow-x-hidden min-h-0 scroll-container"
+            style={{ overflowAnchor: "none" }}
+          >
             <LoadingMessagesSkeleton className="absolute inset-0" show={loadingMessages && messages.length === 0} />
             {messagesData && (
               <ol className="flex flex-col min-h-0 overflow-hidden list-none justify-end items-stretch relative animate-fade-in-slow">
