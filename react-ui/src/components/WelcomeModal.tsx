@@ -20,7 +20,7 @@ const WelcomeModal = () => {
   return (
     <MyModal isOpen={isOpen} setIsOpen={setIsOpen}>
       <MyModal.Panel className=" h-auto min-h-0 relative max-h-full flex flex-col" style={{ width: "480px" }}>
-        <div className="relative overflow-x-hidden overflow-y-scroll">
+        <div className="relative overflow-x-hidden overflow-y-scroll scroll-container">
           <div className="relative overflow-hidden">
             <div className="flex justify-center mb-4 mt-8">
               <WelcomeToDiscord size={150} />
